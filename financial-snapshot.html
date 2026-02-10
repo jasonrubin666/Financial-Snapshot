@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Snapshot</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 2rem;
+      background: #e8e8e8;
+    }
+    .chart-wrapper {
+      width: 1200px;
+      height: 600px;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+    }
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #eee;
+    }
+    .chart-header h2 {
+      margin: 0;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #555;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    #viewSelect {
+      background: #f5f5f5;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.875rem;
+    }
+    .chart-container {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+    }
+    .chart-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .note {
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="chart-wrapper">
+    <div class="chart-header">
+      <h2>Net Investments</h2>
+      <select id="viewSelect">
+        <option value="1month" selected>1 month</option>
+        <option value="year">This year</option>
+      </select>
+    </div>
+    <div class="chart-container">
+      <canvas id="netInvestmentsChart"></canvas>
+    </div>
+  </div>
+  <p class="note">Run a local server from this folder to load the CSV. Example: <code>python -m http.server 8000</code> then open <code>http://localhost:8000/financial-snapshot.html</code></p>
+
+  <script>
+    const csvPath = 'CSV Working prototype - Sheet1.csv';
+    let chartInstance = null;
+    let rawData = [];
+
+    function parseDate(str) {
+      const [m, d, y] = str.split('/').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    function formatShortDate(dateStr) {
+      const d = parseDate(dateStr);
+      return monthNames[d.getMonth()] + ' ' + d.getDate();
+    }
+
+    function movingAverage(values, window) {
+      const result = [];
+      for (let i = 0; i < values.length; i++) {
+        if (i < window - 1) {
+          result.push(null);
+        } else {
+          const slice = values.slice(i - window + 1, i + 1);
+          result.push(slice.reduce((a, b) => a + b, 0) / window);
+        }
+      }
+      return result;
+    }
+
+    function filterData(view) {
+      if (view === '1month') {
+        const latest = rawData[rawData.length - 1]?.dateObj;
+        if (!latest) return { labels: [], values: [] };
+        const cutoff = new Date(latest);
+        cutoff.setMonth(cutoff.getMonth() - 1);
+        const filtered = rawData.filter(r => r.dateObj >= cutoff);
+        return {
+          labels: filtered.map(r => formatShortDate(r.dateStr)),
+          values: filtered.map(r => r.value)
+        };
+      } else {
+        const latest = rawData[rawData.length - 1]?.dateObj;
+        if (!latest) return { labels: [], values: [] };
+        const yearStart = new Date(latest.getFullYear(), 0, 1);
+        const filtered = rawData.filter(r =>
+          r.dateObj >= yearStart &&
+          r.dateObj.getDay() === 6  // Saturday
+        );
+        return {
+          labels: filtered.map(r => formatShortDate(r.dateStr)),
+          values: filtered.map(r => r.value)
+        };
+      }
+    }
+
+    function updateChart(view) {
+      const { labels, values } = filterData(view);
+      const maWindow = view === '1month' ? 7 : 4;
+      const maValues = movingAverage(values, maWindow);
+      if (chartInstance) {
+        chartInstance.data.labels = labels;
+        chartInstance.data.datasets[0].data = values;
+        chartInstance.data.datasets[1].data = maValues;
+        chartInstance.data.datasets[1].label = view === '1month' ? '7-day MA' : '4-week MA';
+        chartInstance.update();
+      }
+    }
+
+    async function loadAndChart() {
+      const response = await fetch(csvPath);
+      const text = await response.text();
+      const lines = text.trim().split('\n');
+      const data = lines.slice(1).filter(line => line.trim());
+
+      rawData = data.map(line => {
+        const cols = line.split(',');
+        const dateStr = cols[0];
+        return {
+          dateStr,
+          dateObj: parseDate(dateStr),
+          value: parseFloat(cols[4]) || 0
+        };
+      });
+
+      const view = document.getElementById('viewSelect').value;
+      const { labels, values } = filterData(view);
+      const maWindow = view === '1month' ? 7 : 4;
+      const maValues = movingAverage(values, maWindow);
+
+      const ctx = document.getElementById('netInvestmentsChart').getContext('2d');
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            data: values,
+            borderColor: '#0ea5e9',
+            backgroundColor: 'rgba(14, 165, 233, 0.2)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 24,
+            pointBackgroundColor: '#0ea5e9',
+            borderWidth: 6,
+          }, {
+            data: maValues,
+            borderColor: 'rgba(14, 165, 233, 0.5)',
+            fill: false,
+            tension: 0.3,
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            borderWidth: 2,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              filter: (item) => item.datasetIndex === 0,
+              animation: { duration: 0 },
+              callbacks: {
+                label: (ctx) => '$' + ctx.raw.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+              }
+            },
+          },
+          scales: {
+            x: {
+              title: { display: false },
+              grid: { display: false },
+              ticks: { color: '#555', font: { size: 11 } },
+            },
+            y: {
+              min: 0,
+              max: 50000000,
+              title: { display: true, text: 'Net Investments ($)', color: '#555', font: { size: 11 } },
+              grid: { color: 'rgba(0,0,0,0.06)' },
+              ticks: {
+                color: '#555',
+                font: { size: 11 },
+                callback: value => '$' + (value / 1000000).toFixed(2) + 'M'
+              }
+            }
+          }
+        }
+      });
+
+      document.getElementById('viewSelect').addEventListener('change', (e) => {
+        updateChart(e.target.value);
+      });
+    }
+
+    loadAndChart().catch(err => {
+      document.body.innerHTML = '<h1>Error loading data</h1><p>' + err.message + '</p><p>Make sure to run a local server from this folder (e.g. <code>python -m http.server 8000</code>) and open the page via localhost.</p>';
+    });
+  </script>
+</body>
+</html>
