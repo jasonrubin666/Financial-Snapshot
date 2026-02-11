@@ -4,87 +4,139 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Financial Snapshot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    :root {
+      --bg: #f7f8fa;
+      --bg-card: #ffffff;
+      --text: #1a1d21;
+      --text-muted: #6b7280;
+      --text-light: #9ca3af;
+      --border: #e5e7eb;
+      --accent: #0f766e;
+      --accent-light: #14b8a6;
+      --header-bg: #0f172a;
+      --header-text: #f8fafc;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.05);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; }
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      margin: 2rem;
-      background: #e8e8e8;
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 3rem 0.75rem 4rem;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 0.75rem;
+    }
+    .chart-section {
+      margin-bottom: 2.75rem;
+    }
+    .chart-section:last-of-type {
+      margin-bottom: 0;
+    }
+    .chart-section[data-visible="false"] {
+      display: none;
     }
     .chart-wrapper {
-      width: 1200px;
-      height: 600px;
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      height: 800px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
+      border: 1px solid var(--border);
     }
     .chart-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid #eee;
-      background: #404040;
-      color: #f5f5f5;
-      border-radius: 6px 6px 0 0;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 1.25rem 1rem;
+      background: var(--header-bg);
+      color: var(--header-text);
+      border-radius: var(--radius) var(--radius) 0 0;
     }
     .chart-header h2 {
-      margin: 0;           
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #f5f5f5;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--header-text);
     }
     .chart-header-controls {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      margin-left: auto;
     }
     .chart-header .chart-select {
-      background: #555;
-      color: #f5f5f5;
-      border-color: #666;
+      background: rgba(255,255,255,0.1);
+      color: var(--header-text);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .chart-header .chart-select:hover {
+      background: rgba(255,255,255,0.15);
     }
     .chart-header .info-icon {
-      border-color: #999;
-      color: #e0e0e0;
+      border-color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.8);
     }
     .chart-select {
-      background: #f5f5f5;
-      color: #333;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 0.4rem 0.75rem;
-      font-size: 0.875rem;
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 1rem;
+      font-size: 0.8125rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .chart-select:hover {
+      border-color: var(--text-light);
+    }
+    .chart-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.2);
     }
     .chart-container {
       flex: 1;
       position: relative;
       min-height: 0;
+      padding: 1.25rem 1rem;
+      overflow: hidden;
     }
     .chart-container canvas {
       width: 100% !important;
       height: 100% !important;
     }
-    .chart-section {
-      margin-bottom: 1.5rem;
-    }
-    .chart-section[data-visible="false"] {
-      display: none;
-    }
     .projection-inputs {
-      padding: 0.5rem 1.25rem;
-      border-bottom: 1px solid #eee;
-      font-size: 0.7rem;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+      background: #fafbfc;
     }
     .projection-inputs-row {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.6rem 1rem;
+      gap: 0.5rem 1.25rem;
       margin-bottom: 0.5rem;
     }
     .projection-inputs-row:last-child {
@@ -95,104 +147,216 @@
       justify-content: center;
     }
     .projection-inputs-row .spacer {
-      width: 3rem;
+      width: 1.25rem;
     }
     .projection-inputs label {
       display: flex;
       align-items: center;
       gap: 0.35rem;
+      color: var(--text-muted);
     }
     .projection-inputs input {
-      width: 3.75rem;
-      padding: 0.2rem 0.35rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 0.7rem;
+      width: 6rem;
+      padding: 0.3rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      font-family: inherit;
       text-align: right;
+      background: var(--bg-card);
+      transition: border-color 0.15s;
+    }
+    .projection-inputs input:focus {
+      outline: none;
+      border-color: var(--accent);
     }
     .projection-inputs input.input-narrow {
-      width: 1.875rem;
+      width: 3.75rem;
+    }
+    .projection-inputs input.input-simulations {
+      width: 4.5rem;
     }
     .projection-inputs input.input-mc,
     .chart-header input.input-mc {
-      width: 1.5rem;
+      width: 3rem;
       text-align: right;
     }
     .projection-inputs .net-return {
-      color: #555;
-      font-weight: 500;
+      color: var(--text);
+      font-weight: 600;
     }
-    .note {
-      font-size: 0.75rem;
-      color: #999;
-      margin-top: 2rem;
+    .projection-inputs-row span[style*="font-weight: bold"] {
+      font-weight: 600;
+      color: var(--text);
+    }
+    details {
+      margin: 1rem 1rem 1.25rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+    details summary {
+      cursor: pointer;
+      padding: 0.5rem 0;
+      font-weight: 500;
+      color: var(--text);
+    }
+    details summary:hover {
+      color: var(--accent);
+    }
+    details[open] summary {
+      margin-bottom: 0.75rem;
+    }
+    .note code {
+      background: rgba(0,0,0,0.06);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
     }
     .info-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      margin-left: 0.15rem;
-      width: 0.85em;
-      height: 0.85em;
+      margin-left: 0.25rem;
+      width: 1em;
+      height: 1em;
       border-radius: 50%;
-      border: 1px solid #888;
-      font-size: 0.55em;
+      border: 1px solid currentColor;
+      font-size: 0.6em;
       font-style: normal;
-      font-weight: 400;
-      color: #666;
+      font-weight: 500;
       cursor: help;
       vertical-align: middle;
+      opacity: 0.7;
+    }
+    .info-icon:hover {
+      opacity: 1;
     }
     .info-icon .info-tooltip {
       visibility: hidden;
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      bottom: calc(100% + 8px);
+      bottom: calc(100% + 10px);
       width: 320px;
-      padding: 0.75rem 1rem;
-      background: #333;
-      color: #fff;
+      padding: 1rem 1.25rem;
+      background: var(--header-bg);
+      color: var(--header-text);
       font-size: 0.75rem;
       font-weight: 400;
-      line-height: 1.5;
+      line-height: 1.6;
       text-align: left;
       white-space: normal;
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
       z-index: 100;
     }
     .info-icon:hover .info-tooltip {
       visibility: visible;
     }
     .key-figures-wrapper {
-      width: 1200px;
-      height: 100px;
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      padding: 2.25rem 2.5rem;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       display: flex;
       align-items: center;
-      padding: 0 1.25rem;
-      font-size: 1.5rem;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 1.5rem 0;
+      border: 1px solid var(--border);
     }
     .key-figures-wrapper .key-fig-item {
       display: flex;
-      align-items: baseline;
-      gap: 0.5rem;
-      margin-right: 2rem;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      min-width: 140px;
     }
     .key-figures-wrapper .key-fig-label {
-      color: #555;
-      font-weight: 800;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
     .key-figures-wrapper .key-fig-value {
-      font-weight: 500;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .page-header {
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+    .page-header h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .page-subtitle {
+      margin: 0;
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .chart-header button.chart-select,
+    .chart-header select.chart-select {
+      padding: 0.4rem 0.85rem;
+      font-size: 0.8125rem;
+    }
+    .note {
+      margin-top: 3.5rem;
+      padding: 1.5rem 2rem;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    details summary {
+      user-select: none;
+    }
+    .breakdown-table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.8125rem;
+    }
+    .breakdown-table th,
+    .breakdown-table td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .breakdown-table th {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .breakdown-table td { color: var(--text); }
+    .breakdown-table tr td:nth-child(n+2),
+    .breakdown-table tr th:nth-child(n+2) { text-align: right; }
+    @media (max-width: 768px) {
+      body { padding: 2rem 1rem 3rem; }
+      .chart-header { padding: 1rem 1.25rem; }
+      .chart-container { padding: 1rem 1.25rem; }
+      .projection-inputs { padding: 0.5rem 1.25rem; }
+      .key-figures-wrapper { padding: 1.5rem 1.25rem; gap: 1.5rem; }
     }
   </style>
 </head>
 <body>
+  <div class="page-container">
+  <header class="page-header">
+    <h1>Financial Snapshot</h1>
+    <p class="page-subtitle">Net investments, key indicators & wealth projections</p>
+  </header>
   <div id="chart-sections">
     <section id="chart-net-investments" class="chart-section" data-chart-id="net-investments" data-visible="true">
       <div class="chart-wrapper chart-full-width">
@@ -210,9 +374,9 @@
         <div class="chart-container">
           <canvas id="netInvestments-canvas"></canvas>
         </div>
-        <details style="margin: 1rem 1.25rem; font-size: 0.8rem;">
-          <summary style="cursor: pointer;">Data</summary>
-          <div id="netinv-data-breakdown" style="margin-top: 0.5rem; max-height: 200px; overflow: auto;"></div>
+        <details>
+          <summary>Data</summary>
+          <div id="netinv-data-breakdown" class="breakdown-content" style="max-height: 200px; overflow: auto;"></div>
         </details>
       </div>
     </section>
@@ -252,9 +416,9 @@
         <div class="chart-container">
           <canvas id="wealthProjection-canvas"></canvas>
         </div>
-        <details style="margin: 1rem 1.25rem; font-size: 0.8rem;">
-          <summary style="cursor: pointer;">Year-by-year breakdown</summary>
-          <div id="wealth-breakdown" style="margin-top: 0.5rem; max-height: 200px; overflow: auto;"></div>
+        <details>
+          <summary>Year-by-year breakdown</summary>
+          <div id="wealth-breakdown" class="breakdown-content" style="max-height: 200px; overflow: auto;"></div>
         </details>
       </div>
     </section>
@@ -270,14 +434,14 @@ Real estate: Home value grows each year by a random appreciation rate centered o
 Inflation: Each year's inflation is random (normal around your assumed rate, with default 1.5% volatility and a 1% floor). Cost of living rises with this simulated inflation in each scenario.
 
 For each scenario, net investments, real estate, and net worth are projected year by year. The chart shows the 10th, 25th, 50th, 75th, and 90th percentiles at each year, plus 5 sample paths. Downsize house and COL changes are applied in the year you specify.</span></span></h2>
-          <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+          <div class="chart-header-controls">
             <button type="button" id="mc-rerun" class="chart-select">Rerun</button>
             <button type="button" id="mc-reset" class="chart-select">Reset</button>
           </div>
         </div>
         <div class="projection-inputs">
           <div class="projection-inputs-row row1">
-            <label>Simulations <input type="text" class="input-narrow" id="mc-simulations" value="10000" style="width: 3rem;"></label>
+            <label>Simulations <input type="text" class="input-narrow input-simulations" id="mc-simulations" value="10000"></label>
             <label>Return volatility <input type="text" class="input-mc" id="mc-returnVolatility" value="17">%</label>
             <label>Home appreciation vol. <input type="text" class="input-mc" id="mc-homeApprecVolatility" value="5">%</label>
             <label>Inflation vol. <input type="text" class="input-mc" id="mc-inflationVolatility" value="1.5">%</label>
@@ -287,14 +451,15 @@ For each scenario, net investments, real estate, and net worth are projected yea
         <div class="chart-container">
           <canvas id="wealthMonteCarlo-canvas"></canvas>
         </div>
-        <details style="margin: 1rem 1.25rem; font-size: 0.8rem;">
-          <summary style="cursor: pointer;">Year-by-year breakdown (50% Net Investment path)</summary>
-          <div id="mc-breakdown" style="margin-top: 0.5rem; max-height: 200px; overflow: auto;"></div>
+        <details>
+          <summary>Year-by-year breakdown (50% Net Investment path)</summary>
+          <div id="mc-breakdown" class="breakdown-content" style="max-height: 200px; overflow: auto;"></div>
         </details>
       </div>
     </section>
   </div>
   <p class="note">Run a local server from this folder to load the CSV. Example: <code>python -m http.server 8000</code> then open <code>http://localhost:8000/financial-snapshot.html</code></p>
+  </div>
 
   <script>
     const csvPath = 'CSV Working prototype - Sheet1.csv';
@@ -606,8 +771,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
 
         const allPct = [...netPct.filter(Boolean), ...(sp500Pct || []).filter(Boolean)];
         const pad = 1.5;
-        const pctMin = allPct.length ? Math.min(0, ...allPct) - pad : -5;
-        const pctMax = allPct.length ? Math.max(0, ...allPct) + pad : 5;
+        const pctMinRaw = allPct.length ? Math.min(0, ...allPct) - pad : -5;
+        const pctMaxRaw = allPct.length ? Math.max(0, ...allPct) + pad : 5;
+        const pctMin = Math.round(pctMinRaw * 10) / 10;
+        const pctMax = Math.round(pctMaxRaw * 10) / 10;
         const dollarMin = base * (1 + pctMin / 100);
         const dollarMax = base * (1 + pctMax / 100);
 
@@ -645,8 +812,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
           netInv: fmtDollar(rawNet[i]),
           sp500: fmtSp(rawSp[i])
         }));
-        el.innerHTML = '<table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="text-align:left;padding:2px 8px;border-bottom:1px solid #ccc">Date</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Net Investment</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">S&P 500</th></tr></thead><tbody>' +
-          rows.map(r => `<tr><td style="padding:2px 8px">${r.date}</td><td style="text-align:right;padding:2px 8px">${r.netInv}</td><td style="text-align:right;padding:2px 8px">${r.sp500}</td></tr>`).join('') + '</tbody></table>';
+        el.innerHTML = '<table class="breakdown-table"><thead><tr><th>Date</th><th>Net Investment</th><th>S&P 500</th></tr></thead><tbody>' +
+          rows.map(r => `<tr><td>${r.date}</td><td>${r.netInv}</td><td>${r.sp500}</td></tr>`).join('') + '</tbody></table>';
       },
 
       show() { setChartVisible(this.id, true); },
@@ -734,8 +901,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
 
         const allPct = [...netPct.filter(Boolean), ...(sp500Pct || []).filter(Boolean)];
         const pad = 1.5;
-        const pctMin = allPct.length ? Math.min(0, ...allPct) - pad : -5;
-        const pctMax = allPct.length ? Math.max(0, ...allPct) + pad : 5;
+        const pctMinRaw = allPct.length ? Math.min(0, ...allPct) - pad : -5;
+        const pctMaxRaw = allPct.length ? Math.max(0, ...allPct) + pad : 5;
+        const pctMin = Math.round(pctMinRaw * 10) / 10;
+        const pctMax = Math.round(pctMaxRaw * 10) / 10;
         const dollarMin = base * (1 + pctMin / 100);
         const dollarMax = base * (1 + pctMax / 100);
 
@@ -826,7 +995,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
               ticks: {
                 color: '#555',
                 font: { size: 11 },
-                callback: (value) => value != null ? value + '%' : ''
+                callback: (value) => value != null ? Number(value).toFixed(1) + '%' : ''
               }
             },
             y1: {
@@ -990,8 +1159,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const pct = n => (n * 100).toFixed(2) + '%';
         const ret = (r, i) => i === 0 ? '—' : r.postTaxEarnings && rows[i - 1].netInvestment ? pct(r.postTaxEarnings / rows[i - 1].netInvestment) : '—';
         const infl = (r, i) => i === 0 || !rows[i - 1].costOfLiving ? '—' : pct((r.costOfLiving / rows[i - 1].costOfLiving) - 1);
-        el.innerHTML = '<table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="text-align:left;padding:2px 8px;border-bottom:1px solid #ccc">Year</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Net Investment</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Post-Tax Earnings</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Return</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Cost of Living</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Inflation</th></tr></thead><tbody>' +
-          rows.map((r, i) => `<tr><td style="padding:2px 8px">${r.year}</td><td style="text-align:right;padding:2px 8px">${fmt(r.netInvestment)}</td><td style="text-align:right;padding:2px 8px">${fmt(r.postTaxEarnings)}</td><td style="text-align:right;padding:2px 8px">${ret(r, i)}</td><td style="text-align:right;padding:2px 8px">${fmt(r.costOfLiving)}</td><td style="text-align:right;padding:2px 8px">${infl(r, i)}</td></tr>`).join('') + '</tbody></table>';
+        el.innerHTML = '<table class="breakdown-table"><thead><tr><th>Year</th><th>Net Investment</th><th>Post-Tax Earnings</th><th>Return</th><th>Cost of Living</th><th>Inflation</th></tr></thead><tbody>' +
+          rows.map((r, i) => `<tr><td>${r.year}</td><td>${fmt(r.netInvestment)}</td><td>${fmt(r.postTaxEarnings)}</td><td>${ret(r, i)}</td><td>${fmt(r.costOfLiving)}</td><td>${infl(r, i)}</td></tr>`).join('') + '</tbody></table>';
       },
 
       update() {
@@ -1258,8 +1427,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const pct = n => (n * 100).toFixed(2) + '%';
         const ret = (rr, i) => i === 0 ? '—' : rr.postTaxEarnings && rows[i - 1].netInvestment ? pct(rr.postTaxEarnings / rows[i - 1].netInvestment) : '—';
         const infl = (rr, i) => i === 0 || !rows[i - 1].costOfLiving ? '—' : pct((rr.costOfLiving / rows[i - 1].costOfLiving) - 1);
-        el.innerHTML = '<table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="text-align:left;padding:2px 8px;border-bottom:1px solid #ccc">Year</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Net Investment</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Post-Tax Earnings</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Return</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Cost of Living</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Inflation</th></tr></thead><tbody>' +
-          rows.map((rr, i) => `<tr><td style="padding:2px 8px">${rr.year}</td><td style="text-align:right;padding:2px 8px">${fmt(rr.netInvestment)}</td><td style="text-align:right;padding:2px 8px">${fmt(rr.postTaxEarnings)}</td><td style="text-align:right;padding:2px 8px">${ret(rr, i)}</td><td style="text-align:right;padding:2px 8px">${fmt(rr.costOfLiving)}</td><td style="text-align:right;padding:2px 8px">${infl(rr, i)}</td></tr>`).join('') + '</tbody></table>';
+        el.innerHTML = '<table class="breakdown-table"><thead><tr><th>Year</th><th>Net Investment</th><th>Post-Tax Earnings</th><th>Return</th><th>Cost of Living</th><th>Inflation</th></tr></thead><tbody>' +
+          rows.map((rr, i) => `<tr><td>${rr.year}</td><td>${fmt(rr.netInvestment)}</td><td>${fmt(rr.postTaxEarnings)}</td><td>${ret(rr, i)}</td><td>${fmt(rr.costOfLiving)}</td><td>${infl(rr, i)}</td></tr>`).join('') + '</tbody></table>';
       },
 
       update() {
@@ -1319,7 +1488,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
             scales: {
               x: { title: { display: false }, grid: { display: false }, ticks: { color: '#555', font: { size: 11 }, maxRotation: 0 } },
               y: {
-                min: 0, max: 100000000,
+                min: 0, max: 120000000,
                 title: { display: true, text: 'Net worth ($)', color: '#555', font: { size: 11 } },
                 grid: { color: 'rgba(0,0,0,0.06)' },
                 ticks: { color: '#555', font: { size: 11 }, stepSize: 10000000, callback: value => '$' + (value / 1000000) + 'M' }
