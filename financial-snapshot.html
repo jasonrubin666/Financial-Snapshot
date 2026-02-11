@@ -98,7 +98,7 @@
     }
     .projection-inputs input.input-mc,
     .chart-header input.input-mc {
-      width: 1rem;
+      width: 1.5rem;
       text-align: right;
     }
     .projection-inputs .net-return {
@@ -109,6 +109,45 @@
       font-size: 0.75rem;
       color: #999;
       margin-top: 2rem;
+    }
+    .info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-left: 0.15rem;
+      width: 0.85em;
+      height: 0.85em;
+      border-radius: 50%;
+      border: 1px solid #888;
+      font-size: 0.55em;
+      font-style: normal;
+      font-weight: 400;
+      color: #666;
+      cursor: help;
+      vertical-align: middle;
+    }
+    .info-icon .info-tooltip {
+      visibility: hidden;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: calc(100% + 8px);
+      width: 320px;
+      padding: 0.75rem 1rem;
+      background: #333;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: left;
+      white-space: normal;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 100;
+    }
+    .info-icon:hover .info-tooltip {
+      visibility: visible;
     }
   </style>
 </head>
@@ -166,16 +205,30 @@
     <section id="chart-wealth-montecarlo" class="chart-section" data-chart-id="wealth-montecarlo" data-visible="true">
       <div class="chart-wrapper chart-full-width">
         <div class="chart-header">
-          <h2>Monte Carlo</h2>
-          <label style="font-size: 0.8rem;">Simulations <input type="text" class="input-narrow" id="mc-simulations" value="1000" style="width: 3rem;"></label>
-          <label style="font-size: 0.8rem;">Return volatility <input type="text" class="input-mc" id="mc-returnVolatility" value="17">%</label>
-          <label style="font-size: 0.8rem;">Home appreciation vol. <input type="text" class="input-mc" id="mc-homeApprecVolatility" value="5">%</label>
-          <label style="font-size: 0.8rem;">Inflation vol. <input type="text" class="input-mc" id="mc-inflationVolatility" value="1.5">%</label>
+          <h2>Monte Carlo<span class="info-icon">i<span class="info-tooltip">This simulation runs thousands of parallel scenarios (default 10,000) to project your wealth over time. Each scenario uses different random draws for each year.
+
+Investment returns: Drawn from a normal distribution around your assumed net return, with volatility you specify (default 17%). Returns and inflation are correlated (default -0.3) to model stagflation.
+
+Real estate: Home value grows each year by a random appreciation rate centered on your assumed rate, with volatility you specify (default 5%).
+
+Inflation: Each year's inflation is random (normal around your assumed rate, with default 1.5% volatility and a 1% floor). Cost of living rises with this simulated inflation in each scenario.
+
+For each scenario, net investments, real estate, and net worth are projected year by year. The chart shows the 10th, 25th, 50th, 75th, and 90th percentiles at each year, plus 5 sample paths. Downsize house and COL changes are applied in the year you specify.</span></span></h2>
+          <label style="font-size: 0.7rem;">Simulations <input type="text" class="input-narrow" id="mc-simulations" value="10000" style="width: 3rem;"></label>
+          <label style="font-size: 0.7rem;">Return volatility <input type="text" class="input-mc" id="mc-returnVolatility" value="17">%</label>
+          <label style="font-size: 0.7rem;">Home appreciation vol. <input type="text" class="input-mc" id="mc-homeApprecVolatility" value="5">%</label>
+          <label style="font-size: 0.7rem;">Inflation vol. <input type="text" class="input-mc" id="mc-inflationVolatility" value="1.5">%</label>
+          <label style="font-size: 0.7rem;">Infl.–return corr. <input type="text" class="input-mc" id="mc-inflationReturnCorr" value="-0.3"></label>
+          <button type="button" id="mc-rerun" class="chart-select" style="margin-left: 0.5rem;">Rerun</button>
           <button type="button" id="mc-reset" class="chart-select" style="margin-left: 0.5rem;">Reset</button>
         </div>
         <div class="chart-container">
           <canvas id="wealthMonteCarlo-canvas"></canvas>
         </div>
+        <details style="margin: 1rem 1.25rem; font-size: 0.8rem;">
+          <summary style="cursor: pointer;">Year-by-year breakdown (50% Net Investment path)</summary>
+          <div id="mc-breakdown" style="margin-top: 0.5rem; max-height: 200px; overflow: auto;"></div>
+        </details>
       </div>
     </section>
   </div>
@@ -509,8 +562,11 @@
         const { netReturnPct, costOfLiving, inflation, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount } = this.getInputs();
         const rows = this.computeBreakdown(this.startingWealth, netReturnPct / 100, costOfLiving, inflation / 100, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount);
         const fmt = n => '$' + Math.round(n).toLocaleString();
-        el.innerHTML = '<table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="text-align:left;padding:2px 8px;border-bottom:1px solid #ccc">Year</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Net Investment</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Post-Tax Earnings</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Cost of Living</th></tr></thead><tbody>' +
-          rows.map(r => `<tr><td style="padding:2px 8px">${r.year}</td><td style="text-align:right;padding:2px 8px">${fmt(r.netInvestment)}</td><td style="text-align:right;padding:2px 8px">${fmt(r.postTaxEarnings)}</td><td style="text-align:right;padding:2px 8px">${fmt(r.costOfLiving)}</td></tr>`).join('') + '</tbody></table>';
+        const pct = n => (n * 100).toFixed(2) + '%';
+        const ret = (r, i) => i === 0 ? '—' : r.postTaxEarnings && rows[i - 1].netInvestment ? pct(r.postTaxEarnings / rows[i - 1].netInvestment) : '—';
+        const infl = (r, i) => i === 0 || !rows[i - 1].costOfLiving ? '—' : pct((r.costOfLiving / rows[i - 1].costOfLiving) - 1);
+        el.innerHTML = '<table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="text-align:left;padding:2px 8px;border-bottom:1px solid #ccc">Year</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Net Investment</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Post-Tax Earnings</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Return</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Cost of Living</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Inflation</th></tr></thead><tbody>' +
+          rows.map((r, i) => `<tr><td style="padding:2px 8px">${r.year}</td><td style="text-align:right;padding:2px 8px">${fmt(r.netInvestment)}</td><td style="text-align:right;padding:2px 8px">${fmt(r.postTaxEarnings)}</td><td style="text-align:right;padding:2px 8px">${ret(r, i)}</td><td style="text-align:right;padding:2px 8px">${fmt(r.costOfLiving)}</td><td style="text-align:right;padding:2px 8px">${infl(r, i)}</td></tr>`).join('') + '</tbody></table>';
       },
 
       update() {
@@ -599,7 +655,7 @@
       }
     };
 
-    const monteCarloDefaults = { simulations: '1000', returnVolatility: '17', homeApprecVolatility: '5', inflationVolatility: '1.5' };
+    const monteCarloDefaults = { simulations: '10000', returnVolatility: '17', homeApprecVolatility: '5', inflationVolatility: '1.5', inflationReturnCorr: '-0.3' };
     const MC_STORAGE_KEY = 'financial-snapshot-montecarlo-inputs';
 
     // Monte Carlo chart
@@ -619,7 +675,7 @@
       },
 
       saveToStorage() {
-        const vals = { simulations: document.getElementById('mc-simulations')?.value ?? '1000', returnVolatility: document.getElementById('mc-returnVolatility')?.value ?? '17', homeApprecVolatility: document.getElementById('mc-homeApprecVolatility')?.value ?? '5', inflationVolatility: document.getElementById('mc-inflationVolatility')?.value ?? '1.5' };
+        const vals = { simulations: document.getElementById('mc-simulations')?.value ?? '10000', returnVolatility: document.getElementById('mc-returnVolatility')?.value ?? '17', homeApprecVolatility: document.getElementById('mc-homeApprecVolatility')?.value ?? '5', inflationVolatility: document.getElementById('mc-inflationVolatility')?.value ?? '1.5', inflationReturnCorr: document.getElementById('mc-inflationReturnCorr')?.value ?? '-0.3' };
         try { localStorage.setItem(MC_STORAGE_KEY, JSON.stringify(vals)); } catch (_) {}
       },
 
@@ -630,6 +686,7 @@
         if (el('mc-returnVolatility')) el('mc-returnVolatility').value = merged.returnVolatility ?? monteCarloDefaults.returnVolatility;
         if (el('mc-homeApprecVolatility')) el('mc-homeApprecVolatility').value = merged.homeApprecVolatility ?? monteCarloDefaults.homeApprecVolatility;
         if (el('mc-inflationVolatility')) el('mc-inflationVolatility').value = merged.inflationVolatility ?? monteCarloDefaults.inflationVolatility;
+        if (el('mc-inflationReturnCorr')) el('mc-inflationReturnCorr').value = merged.inflationReturnCorr ?? monteCarloDefaults.inflationReturnCorr;
       },
 
       reset() {
@@ -640,11 +697,13 @@
 
       getInputs() {
         const wp = wealthProjectionChart.getInputs();
-        const sims = parseInt(document.getElementById('mc-simulations')?.value, 10) || 1000;
+        const sims = parseInt(document.getElementById('mc-simulations')?.value, 10) || 10000;
         const vol = parseFloat(document.getElementById('mc-returnVolatility')?.value) || 17;
         const homeVol = parseFloat(document.getElementById('mc-homeApprecVolatility')?.value) || 5;
         const inflationVol = parseFloat(document.getElementById('mc-inflationVolatility')?.value) || 1.5;
-        return { ...wp, simulations: Math.min(5000, Math.max(100, sims)), returnVolatility: vol, homeApprecVolatility: homeVol, inflationVolatility: inflationVol };
+        const corr = parseFloat(document.getElementById('mc-inflationReturnCorr')?.value);
+        const inflationReturnCorr = !isNaN(corr) ? Math.max(-1, Math.min(1, corr)) : -0.3;
+        return { ...wp, simulations: Math.min(5000, Math.max(100, sims)), returnVolatility: vol, homeApprecVolatility: homeVol, inflationVolatility: inflationVol, inflationReturnCorr };
       },
 
       computeRealEstatePath(startingRealEstate, downsizeHouseYear, downsizeHouseAmount, getAppreciation) {
@@ -659,41 +718,59 @@
         return values;
       },
 
-      computePath(startingWealth, costOfLiving, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount, getReturn, getInflation) {
+      computePath(startingWealth, costOfLiving, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount, getReturnAndInflation) {
         const values = [startingWealth];
+        const colPath = [0];
         let effectiveCOL = costOfLiving;
         for (let t = 1; t < this.numYears; t++) {
           const year = this.startYear + t;
           if (year === downsizeCOLYear) effectiveCOL = Math.max(0, effectiveCOL + downsizeCOLAmount);
-          const r = getReturn(t);
+          colPath.push(effectiveCOL);
+          const { return: r, inflation: infl } = getReturnAndInflation(t);
           let growth = values[t - 1] * (1 + r);
           if (year === downsizeHouseYear) growth += downsizeHouseAmount;
           values.push(Math.max(0, growth - effectiveCOL));
-          const infl = Math.max(0.01, getInflation(t));
-          effectiveCOL = effectiveCOL * (1 + infl);
+          effectiveCOL = effectiveCOL * (1 + Math.max(0.01, infl));
         }
-        return values;
+        return { values, colPath };
       },
 
       runSimulations() {
-        const { netReturnPct, costOfLiving, inflation, homeAppreciation, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount, simulations, returnVolatility, homeApprecVolatility, inflationVolatility } = this.getInputs();
+        const { netReturnPct, costOfLiving, inflation, homeAppreciation, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount, simulations, returnVolatility, homeApprecVolatility, inflationVolatility, inflationReturnCorr } = this.getInputs();
         const netReturnDec = netReturnPct / 100;
         const volDec = returnVolatility / 100;
         const homeApprecDec = homeAppreciation / 100;
         const homeVolDec = homeApprecVolatility / 100;
         const inflationDec = inflation / 100;
         const inflationVolDec = inflationVolatility / 100;
+        const rho = Math.max(-0.99, Math.min(0.99, inflationReturnCorr));
+        const rhoAdj = Math.sqrt(1 - rho * rho);
 
         const netInvPaths = [];
+        const colPaths = [];
         const realEstatePaths = [];
         const netWorthPaths = [];
 
         for (let i = 0; i < simulations; i++) {
-          const netInv = this.computePath(
+          const getReturnAndInflation = () => {
+            const z1 = normalRandom(0, 1);
+            const z2 = normalRandom(0, 1);
+            const infl = inflationDec + inflationVolDec * z1;
+            const r = netReturnDec + volDec * (rho * z1 + rhoAdj * z2);
+            return { return: Math.max(-0.5, r), inflation: Math.max(0.01, infl) };
+          };
+          const inflCache = [];
+          const retCache = [];
+          for (let t = 1; t < this.numYears; t++) {
+            const draw = getReturnAndInflation();
+            inflCache.push(draw.inflation);
+            retCache.push(draw.return);
+          }
+          const { values: netInv, colPath } = this.computePath(
             this.startingWealth, costOfLiving, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount,
-            () => Math.max(-0.5, normalRandom(netReturnDec, volDec)),
-            () => Math.max(0.01, normalRandom(inflationDec, inflationVolDec))
+            (t) => ({ return: retCache[t - 1], inflation: inflCache[t - 1] })
           );
+          colPaths.push(colPath);
           const realEstate = this.computeRealEstatePath(
             this.startingRealEstate, downsizeHouseYear, downsizeHouseAmount,
             () => Math.max(-0.3, normalRandom(homeApprecDec, homeVolDec))
@@ -722,11 +799,42 @@
           return out;
         }
 
+        const medianCOL = [];
+        for (let t = 0; t < this.numYears; t++) {
+          const vals = colPaths.map(p => p[t]);
+          medianCOL.push(percentile(vals, 50));
+        }
+
         return {
           netInv: { ...calcPercentiles(netInvPaths), samples: pickSamples(netInvPaths, 5) },
           realEstate: { ...calcPercentiles(realEstatePaths), samples: pickSamples(realEstatePaths, 5) },
-          netWorth: { ...calcPercentiles(netWorthPaths), samples: pickSamples(netWorthPaths, 5) }
+          netWorth: { ...calcPercentiles(netWorthPaths), samples: pickSamples(netWorthPaths, 5) },
+          medianCOL
         };
+      },
+
+      computeBreakdownFromMedian(medianNetInv, medianCOL) {
+        const rows = [{ year: this.startYear, netInvestment: medianNetInv[0], postTaxEarnings: 0, costOfLiving: 0 }];
+        for (let t = 1; t < this.numYears; t++) {
+          const year = this.startYear + t;
+          const effectiveCOL = medianCOL[t];
+          const postTaxEarnings = Math.max(0, medianNetInv[t] - medianNetInv[t - 1] + effectiveCOL);
+          rows.push({ year, netInvestment: medianNetInv[t], postTaxEarnings, costOfLiving: effectiveCOL });
+        }
+        return rows;
+      },
+
+      renderBreakdown(runResult) {
+        const el = document.getElementById('mc-breakdown');
+        if (!el || this.startingWealth == null) return;
+        const r = runResult || this.runSimulations();
+        const rows = this.computeBreakdownFromMedian(r.netInv.p50, r.medianCOL);
+        const fmt = n => '$' + Math.round(n).toLocaleString();
+        const pct = n => (n * 100).toFixed(2) + '%';
+        const ret = (rr, i) => i === 0 ? '—' : rr.postTaxEarnings && rows[i - 1].netInvestment ? pct(rr.postTaxEarnings / rows[i - 1].netInvestment) : '—';
+        const infl = (rr, i) => i === 0 || !rows[i - 1].costOfLiving ? '—' : pct((rr.costOfLiving / rows[i - 1].costOfLiving) - 1);
+        el.innerHTML = '<table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="text-align:left;padding:2px 8px;border-bottom:1px solid #ccc">Year</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Net Investment</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Post-Tax Earnings</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Return</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Cost of Living</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Inflation</th></tr></thead><tbody>' +
+          rows.map((rr, i) => `<tr><td style="padding:2px 8px">${rr.year}</td><td style="text-align:right;padding:2px 8px">${fmt(rr.netInvestment)}</td><td style="text-align:right;padding:2px 8px">${fmt(rr.postTaxEarnings)}</td><td style="text-align:right;padding:2px 8px">${ret(rr, i)}</td><td style="text-align:right;padding:2px 8px">${fmt(rr.costOfLiving)}</td><td style="text-align:right;padding:2px 8px">${infl(rr, i)}</td></tr>`).join('') + '</tbody></table>';
       },
 
       update() {
@@ -738,6 +846,7 @@
         [r.netInv.p10, r.netInv.p25, r.netInv.p50, r.netInv.p75, r.netInv.p90, ...r.netInv.samples].forEach((data, i) => d[10 + i].data = data);
         [r.netWorth.p10, r.netWorth.p25, r.netWorth.p50, r.netWorth.p75, r.netWorth.p90, ...r.netWorth.samples].forEach((data, i) => d[20 + i].data = data);
         this.instance.update();
+        this.renderBreakdown(r);
       },
 
       show() { setChartVisible(this.id, true); },
@@ -794,10 +903,13 @@
           }
         });
 
-        ['mc-simulations', 'mc-returnVolatility', 'mc-homeApprecVolatility', 'mc-inflationVolatility'].forEach(id => {
+        this.renderBreakdown(r);
+
+        ['mc-simulations', 'mc-returnVolatility', 'mc-homeApprecVolatility', 'mc-inflationVolatility', 'mc-inflationReturnCorr'].forEach(id => {
           const el = document.getElementById(id);
           if (el) { el.addEventListener('input', () => { this.update(); this.saveToStorage(); }); el.addEventListener('change', () => { this.update(); this.saveToStorage(); }); }
         });
+        document.getElementById('mc-rerun')?.addEventListener('click', () => this.update());
         document.getElementById('mc-reset')?.addEventListener('click', () => this.reset());
 
         ['wealth-preTaxReturn', 'wealth-taxRate', 'wealth-costOfLiving', 'wealth-inflation', 'wealth-homeAppreciation', 'wealth-downsizeHouseYear', 'wealth-downsizeHouseAmount', 'wealth-downsizeCOLYear', 'wealth-downsizeCOLAmount'].forEach(id => {
