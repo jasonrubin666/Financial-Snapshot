@@ -38,6 +38,11 @@
       letter-spacing: 0.05em;
       text-transform: uppercase;
     }
+    .chart-header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
     .chart-header .chart-select {
       background: #555;
       color: #f5f5f5;
@@ -193,11 +198,14 @@
       <div class="chart-wrapper chart-full-width">
         <div class="chart-header">
           <h2>Net Investments</h2>
-          <select id="netInvestments-viewSelect" class="chart-select">
-            <option value="1month" selected>1 month</option>
-            <option value="90days">90 days</option>
-            <option value="year">This year</option>
-          </select>
+          <div class="chart-header-controls">
+            <select id="netInvestments-viewSelect" class="chart-select">
+              <option value="1month" selected>1 month</option>
+              <option value="90days">90 days</option>
+              <option value="year">This year</option>
+            </select>
+            <button type="button" id="netInvestments-saveCsv" class="chart-select" title="Save extended CSV (writes to file in Chrome/Edge, else downloads)">Save CSV</button>
+          </div>
         </div>
         <div class="chart-container">
           <canvas id="netInvestments-canvas"></canvas>
@@ -218,7 +226,7 @@
     <section id="chart-wealth-projection" class="chart-section" data-chart-id="wealth-projection" data-visible="true">
       <div class="chart-wrapper chart-full-width">
         <div class="chart-header">
-          <h2>Wealth projection</h2>
+          <h2>Basic Wealth projection</h2>
           <button type="button" id="wealth-reset" class="chart-select">Reset</button>
         </div>
         <div class="projection-inputs">
@@ -305,6 +313,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
     function toYahooDate(d) {
       const y = d.getFullYear(), m = (d.getMonth() + 1).toString().padStart(2, '0'), day = d.getDate().toString().padStart(2, '0');
       return y + '-' + m + '-' + day;
+    }
+
+    function formatDateForCsv(d) {
+      return (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear();
     }
 
     function movingAverage(values, window) {
@@ -534,6 +546,58 @@ For each scenario, net investments, real estate, and net worth are projected yea
       show() { setChartVisible(this.id, true); },
       hide() { setChartVisible(this.id, false); },
 
+      extendRawDataToToday() {
+        if (this.rawData.length === 0) return;
+        const last = this.rawData[this.rawData.length - 1];
+        const lastDate = new Date(last.dateObj.getFullYear(), last.dateObj.getMonth(), last.dateObj.getDate());
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const oneDay = 24 * 60 * 60 * 1000;
+        let d = new Date(lastDate.getTime() + oneDay);
+        while (d <= today) {
+          const dateStr = formatDateForCsv(d);
+          this.rawData.push({
+            dateStr,
+            dateObj: new Date(d),
+            value: last.value,
+            rawRow: [dateStr, last.rawRow[1], last.rawRow[2], last.rawRow[3], last.rawRow[4]]
+          });
+          d.setTime(d.getTime() + oneDay);
+        }
+      },
+
+      getExtendedCsvContent() {
+        if (this.rawData.length === 0) return '';
+        const header = 'Date,Net worth,Real Estate,Vehicles,Net Investments';
+        const rows = this.rawData.map(r => r.rawRow.join(','));
+        return header + '\n' + rows.join('\n');
+      },
+
+      async saveToCsv() {
+        if (this.rawData.length === 0) return;
+        const csv = this.getExtendedCsvContent();
+        try {
+          if ('showOpenFilePicker' in window) {
+            const [handle] = await window.showOpenFilePicker({
+              types: [{ description: 'CSV files', accept: { 'text/csv': ['.csv'] } }],
+              mode: 'readwrite'
+            });
+            const writable = await handle.createWritable();
+            await writable.write(csv);
+            await writable.close();
+            return;
+          }
+        } catch (e) {
+          if (e.name === 'AbortError') return;
+        }
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'net-investments-extended.csv';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      },
+
       async init() {
         const response = await fetch(csvPath);
         const text = await response.text();
@@ -543,8 +607,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
         this.rawData = data.map(line => {
           const cols = line.split(',');
           const dateStr = cols[0];
-          return { dateStr, dateObj: parseDate(dateStr), value: parseFloat(cols[4]) || 0 };
+          const rawRow = [cols[0] || '', cols[1] || '', cols[2] || '', cols[3] || '', cols[4] || ''];
+          return { dateStr, dateObj: parseDate(dateStr), value: parseFloat(cols[4]) || 0, rawRow };
         });
+        this.extendRawDataToToday();
 
         const view = document.getElementById('netInvestments-viewSelect').value;
         const { labels, values, dateObjs } = this.filterData(view);
@@ -680,6 +746,9 @@ For each scenario, net investments, real estate, and net worth are projected yea
 
         document.getElementById('netInvestments-viewSelect').addEventListener('change', (e) => {
           this.update(e.target.value);
+        });
+        document.getElementById('netInvestments-saveCsv').addEventListener('click', () => {
+          this.saveToCsv();
         });
       }
     };
