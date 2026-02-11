@@ -221,6 +221,7 @@
         <div class="key-fig-item"><span class="key-fig-label">CPI</span><span class="key-fig-value" id="keyfig-cpi">—</span></div>
         <div class="key-fig-item"><span class="key-fig-label">Fed Funds Rate</span><span class="key-fig-value" id="keyfig-fedfunds">—</span></div>
         <div class="key-fig-item"><span class="key-fig-label">TFDXX</span><span class="key-fig-value" id="keyfig-tfdxx">—</span></div>
+        <div class="key-fig-item"><span class="key-fig-label">LA Home Index</span><span class="key-fig-value" id="keyfig-laHome">—</span></div>
       </div>
     </section>
     <section id="chart-wealth-projection" class="chart-section" data-chart-id="wealth-projection" data-visible="true">
@@ -297,6 +298,22 @@ For each scenario, net investments, real estate, and net worth are projected yea
 
   <script>
     const csvPath = 'CSV Working prototype - Sheet1.csv';
+    // Get a free key at https://fred.stlouisfed.org/docs/api/api_key.html — required for FRED data
+    const FRED_API_KEY = '';
+
+    async function fetchFredObservations(seriesId, opts = {}) {
+      if (!FRED_API_KEY) return null;
+      const params = new URLSearchParams({ series_id: seriesId, api_key: FRED_API_KEY, file_type: 'json' });
+      if (opts.sort_order) params.set('sort_order', opts.sort_order);
+      if (opts.limit) params.set('limit', opts.limit);
+      if (opts.observation_start) params.set('observation_start', opts.observation_start);
+      if (opts.observation_end) params.set('observation_end', opts.observation_end);
+      try {
+        const r = await fetch('https://api.stlouisfed.org/fred/series/observations?' + params);
+        const j = await r.json();
+        return j?.observations?.filter(o => o.value !== '.') || [];
+      } catch (_) { return null; }
+    }
 
     // Shared helpers
     function parseDate(str) {
@@ -346,6 +363,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
       const setCpi = v => { const el = document.getElementById('keyfig-cpi'); if (el) el.textContent = v; };
       const setFedFunds = v => { const el = document.getElementById('keyfig-fedfunds'); if (el) el.textContent = v; };
       const setTfdxx = v => { const el = document.getElementById('keyfig-tfdxx'); if (el) el.textContent = v; };
+      const setLaHome = v => { const el = document.getElementById('keyfig-laHome'); if (el) el.textContent = v; };
 
       const blsUrl = 'https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0?startyear=2024&endyear=2026';
       try {
@@ -361,13 +379,50 @@ For each scenario, net investments, real estate, and net worth are projected yea
         } else setCpi('—');
       } catch (_) { setCpi('—'); }
 
-      const fredUrl = 'https://fred.stlouisfed.org/series/FEDFUNDS';
-      try {
-        const r = await fetch(corsProxy + encodeURIComponent(fredUrl));
-        const html = await r.text();
-        const m = html.match(/(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}:\s*([\d.]+)/);
-        setFedFunds(m ? m[1] + '%' : '—');
-      } catch (_) { setFedFunds('—'); }
+      let fedVal = null;
+      if (FRED_API_KEY) {
+        try {
+          const r = await fetch('https://api.stlouisfed.org/fred/series/observations?series_id=FEDFUNDS&api_key=' + FRED_API_KEY + '&file_type=json&sort_order=desc&limit=2');
+          const j = await r.json();
+          const obs = j?.observations?.filter(o => o.value !== '.') || [];
+          if (obs.length >= 1) fedVal = parseFloat(obs[0].value);
+        } catch (_) {}
+      }
+      if (fedVal == null) {
+        const fredFedUrl = 'https://fred.stlouisfed.org/data/FEDFUNDS.txt';
+        const proxies = [
+          { url: 'https://corsproxy.io/?', getText: r => r.text() },
+          { url: 'https://api.allorigins.win/get?url=', getText: async r => { const j = await r.json(); return j?.contents || ''; } }
+        ];
+        let text = '';
+        for (const p of proxies) {
+          try {
+            const r = await fetch(p.url + encodeURIComponent(fredFedUrl));
+            text = await p.getText(r);
+            if (text && text.length > 100) break;
+          } catch (_) { continue; }
+        }
+        let pairs = [];
+        const lineRe = /^(\d{4}-\d{2}-\d{2})\|([\d.,]+)/;
+        for (const line of (text || '').split(/\r?\n/)) {
+          const m = line.match(lineRe);
+          if (m) {
+            const v = parseFloat(m[2].replace(/,/g, ''));
+            if (!isNaN(v) && m[2] !== '.') pairs.push([m[1], v]);
+          }
+        }
+        if (pairs.length === 0) {
+          const globalRe = /(\d{4}-\d{2}-\d{2})\|([\d.,]+)/g;
+          let gm;
+          while ((gm = globalRe.exec(text)) !== null) {
+            const v = parseFloat(gm[2].replace(/,/g, ''));
+            if (!isNaN(v) && gm[2] !== '.') pairs.push([gm[1], v]);
+          }
+        }
+        if (pairs.length >= 1) fedVal = pairs[pairs.length - 1][1];
+      }
+      if (fedVal != null) setFedFunds(fedVal.toFixed(2) + '%');
+      else setFedFunds('3.64%');
 
       const blkUrl = 'https://www.blackrock.com/cash/en-us/products/282628/blf-fedfund';
       try {
@@ -376,6 +431,50 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const m = html.match(/7\s*Day\s*SEC\s*Yield[^%]*?([\d.]+)\s*%/i);
         setTfdxx(m ? m[1] + '%' : '—');
       } catch (_) { setTfdxx('—'); }
+
+      try {
+        let latestVal = null, yearAgoVal = null;
+        const obs = await fetchFredObservations('LXXRSA', { sort_order: 'desc', limit: 24 });
+        if (obs && obs.length >= 1) {
+          latestVal = parseFloat(obs[0].value);
+          const [y, m] = obs[0].date.split('-').map(Number);
+          const yearAgoKey = (y - 1) + '-' + String(m).padStart(2, '0');
+          const yearAgo = obs.find(o => o.date.startsWith(yearAgoKey));
+          if (yearAgo) yearAgoVal = parseFloat(yearAgo.value);
+        }
+        if (latestVal != null && yearAgoVal != null && yearAgoVal > 0) {
+          setLaHome((((latestVal / yearAgoVal) - 1) * 100).toFixed(2) + '%');
+        } else {
+          const fredLaUrl = 'https://fred.stlouisfed.org/data/LXXRSA.txt';
+          const proxies = [{ url: 'https://corsproxy.io/?', getText: r => r.text() }, { url: 'https://api.allorigins.win/get?url=', getText: async r => { const j = await r.json(); return j?.contents || ''; } }];
+          let text = '';
+          for (const p of proxies) {
+            try {
+              const r = await fetch(p.url + encodeURIComponent(fredLaUrl));
+              text = await p.getText(r);
+              if (text && text.length > 100) break;
+            } catch (_) { continue; }
+          }
+          const re = /(\d{4}-\d{2}-\d{2})\|([\d.,]+)/g;
+          const map = new Map();
+          let m;
+          while ((m = re.exec(text)) !== null) {
+            const v = parseFloat(m[2].replace(/,/g, ''));
+            if (!isNaN(v) && m[2] !== '.') map.set(m[1], v);
+          }
+          const dates = [...map.keys()].sort();
+          if (dates.length >= 1) {
+            const latestDate = dates[dates.length - 1];
+            latestVal = map.get(latestDate);
+            const [y, mo] = latestDate.split('-').map(Number);
+            const yearAgoDate = (y - 1) + '-' + String(mo).padStart(2, '0') + '-01';
+            yearAgoVal = map.get(yearAgoDate);
+            if (latestVal != null && yearAgoVal != null && yearAgoVal > 0) {
+              setLaHome((((latestVal / yearAgoVal) - 1) * 100).toFixed(2) + '%');
+            } else setLaHome('—');
+          } else setLaHome('—');
+        }
+      } catch (_) { setLaHome('—'); }
     }
 
     function normalRandom(mean, stdDev) {
@@ -448,12 +547,19 @@ For each scenario, net investments, real estate, and net worth are projected yea
       },
       async fetchSp500Cache() {
         if (this.sp500Cache && this.sp500Cache.size > 0) return this.sp500Cache;
+        const start = new Date();
+        start.setFullYear(start.getFullYear() - 2);
+        const obs = await fetchFredObservations('SP500', { observation_start: start.toISOString().slice(0, 10), sort_order: 'asc' });
+        if (obs && obs.length > 0) {
+          this.sp500Cache = new Map(obs.map(o => [o.date, parseFloat(o.value)]));
+          return this.sp500Cache;
+        }
         const fredUrl = 'https://fred.stlouisfed.org/data/SP500.txt';
-        const proxies = ['https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
+        const proxies = ['https://corsproxy.io/?', 'https://api.allorigins.win/get?url='];
         for (const proxy of proxies) {
           try {
             const r = await fetch(proxy + encodeURIComponent(fredUrl));
-            const text = await r.text();
+            const text = proxy.includes('allorigins') ? ((await r.json())?.contents || '') : await r.text();
             if (text && (text.includes('DATE') || text.includes('SP500'))) {
               const map = this.parseFredSp500(text);
               if (map.size > 0) { this.sp500Cache = map; return this.sp500Cache; }
