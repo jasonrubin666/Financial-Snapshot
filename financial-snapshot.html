@@ -28,14 +28,14 @@
       border-bottom: 1px solid #eee;
     }
     .chart-header h2 {
-      margin: 0;
-      font-size: 0.75rem;
-      font-weight: 500;
+      margin: 0;           
+      font-size: 1.rem;
+      font-weight: 800;
       color: #555;
       letter-spacing: 0.05em;
       text-transform: uppercase;
     }
-    #viewSelect {
+    .chart-select {
       background: #f5f5f5;
       color: #333;
       border: 1px solid #ddd;
@@ -52,6 +52,50 @@
       width: 100% !important;
       height: 100% !important;
     }
+    .chart-section {
+      margin-bottom: 1.5rem;
+    }
+    .chart-section[data-visible="false"] {
+      display: none;
+    }
+    .projection-inputs {
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid #eee;
+      font-size: 0.875rem;
+    }
+    .projection-inputs-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .projection-inputs-row:last-child {
+      margin-bottom: 0;
+    }
+    .projection-inputs-row.row1,
+    .projection-inputs-row.row2 {
+      justify-content: center;
+    }
+    .projection-inputs-row .spacer {
+      width: 3rem;
+    }
+    .projection-inputs label {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .projection-inputs input {
+      width: 3.75rem;
+      padding: 0.3rem 0.4rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.875rem;
+    }
+    .projection-inputs .net-return {
+      color: #555;
+      font-weight: 500;
+    }
     .note {
       font-size: 0.75rem;
       color: #999;
@@ -60,25 +104,62 @@
   </style>
 </head>
 <body>
-  <div class="chart-wrapper">
-    <div class="chart-header">
-      <h2>Net Investments</h2>
-      <select id="viewSelect">
-        <option value="1month" selected>1 month</option>
-        <option value="year">This year</option>
-      </select>
-    </div>
-    <div class="chart-container">
-      <canvas id="netInvestmentsChart"></canvas>
-    </div>
+  <div id="chart-sections">
+    <section id="chart-net-investments" class="chart-section" data-chart-id="net-investments" data-visible="true">
+      <div class="chart-wrapper chart-full-width">
+        <div class="chart-header">
+          <h2>Net Investments</h2>
+          <select id="netInvestments-viewSelect" class="chart-select">
+            <option value="1month" selected>1 month</option>
+            <option value="90days">90 days</option>
+            <option value="year">This year</option>
+          </select>
+        </div>
+        <div class="chart-container">
+          <canvas id="netInvestments-canvas"></canvas>
+        </div>
+      </div>
+    </section>
+    <section id="chart-wealth-projection" class="chart-section" data-chart-id="wealth-projection" data-visible="true">
+      <div class="chart-wrapper chart-full-width">
+        <div class="chart-header">
+          <h2>Wealth projection</h2>
+        </div>
+        <div class="projection-inputs">
+          <div class="projection-inputs-row row1">
+            <label>Pre Tax Return <input type="text" id="wealth-preTaxReturn" value="7.30">%</label>
+            <label>State/Fed Tax Rate <input type="text" id="wealth-taxRate" value="45.00">%</label>
+            <label class="net-return">Net Return <span id="wealth-netReturn">4.02</span>%</label>
+            <label>Cost of Living $<input type="text" id="wealth-costOfLiving" value="1500000"></label>
+            <label>Inflation <input type="text" id="wealth-inflation" value="3.0">%</label>
+          </div>
+          <div class="projection-inputs-row row2">
+            <span>Downsize House</span>
+            <label>Year <input type="text" id="wealth-downsizeHouseYear" value="2037"></label>
+            <label>Amount $<input type="text" id="wealth-downsizeHouseAmount" value="10000000"></label>
+            <span class="spacer"></span>
+            <span>Downsize COL</span>
+            <label>Year <input type="text" id="wealth-downsizeCOLYear" value="2037"></label>
+            <label>Amount $<input type="text" id="wealth-downsizeCOLAmount" value="-200000"></label>
+            <button type="button" id="wealth-reset" class="chart-select" style="margin-left: 1rem;">Reset</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="wealthProjection-canvas"></canvas>
+        </div>
+        <details style="margin: 1rem 1.25rem; font-size: 0.8rem;">
+          <summary style="cursor: pointer;">Year-by-year breakdown</summary>
+          <div id="wealth-breakdown" style="margin-top: 0.5rem; max-height: 200px; overflow: auto;"></div>
+        </details>
+      </div>
+    </section>
   </div>
   <p class="note">Run a local server from this folder to load the CSV. Example: <code>python -m http.server 8000</code> then open <code>http://localhost:8000/financial-snapshot.html</code></p>
 
   <script>
     const csvPath = 'CSV Working prototype - Sheet1.csv';
-    let chartInstance = null;
-    let rawData = [];
 
+    // Shared helpers
     function parseDate(str) {
       const [m, d, y] = str.split('/').map(Number);
       return new Date(y, m - 1, d);
@@ -103,68 +184,89 @@
       return result;
     }
 
-    function filterData(view) {
-      if (view === '1month') {
-        const latest = rawData[rawData.length - 1]?.dateObj;
-        if (!latest) return { labels: [], values: [] };
-        const cutoff = new Date(latest);
-        cutoff.setMonth(cutoff.getMonth() - 1);
-        const filtered = rawData.filter(r => r.dateObj >= cutoff);
-        return {
-          labels: filtered.map(r => formatShortDate(r.dateStr)),
-          values: filtered.map(r => r.value)
-        };
-      } else {
-        const latest = rawData[rawData.length - 1]?.dateObj;
-        if (!latest) return { labels: [], values: [] };
-        const yearStart = new Date(latest.getFullYear(), 0, 1);
-        const filtered = rawData.filter(r =>
-          r.dateObj >= yearStart &&
-          r.dateObj.getDay() === 6  // Saturday
-        );
-        return {
-          labels: filtered.map(r => formatShortDate(r.dateStr)),
-          values: filtered.map(r => r.value)
-        };
-      }
+    // Chart registry: add charts here to show/hide or reorder
+    const chartRegistry = {
+      'net-investments': document.getElementById('chart-net-investments'),
+      'wealth-projection': document.getElementById('chart-wealth-projection')
+    };
+
+    function setChartVisible(chartId, visible) {
+      const el = chartRegistry[chartId];
+      if (el) el.setAttribute('data-visible', visible);
     }
 
-    function updateChart(view) {
-      const { labels, values } = filterData(view);
-      const maWindow = view === '1month' ? 7 : 4;
-      const maValues = movingAverage(values, maWindow);
-      if (chartInstance) {
-        chartInstance.data.labels = labels;
-        chartInstance.data.datasets[0].data = values;
-        chartInstance.data.datasets[1].data = maValues;
-        chartInstance.data.datasets[1].label = view === '1month' ? '7-day MA' : '4-week MA';
-        chartInstance.update();
-      }
+    function isChartVisible(chartId) {
+      return chartRegistry[chartId]?.getAttribute('data-visible') !== 'false';
     }
 
-    async function loadAndChart() {
-      const response = await fetch(csvPath);
-      const text = await response.text();
-      const lines = text.trim().split('\n');
-      const data = lines.slice(1).filter(line => line.trim());
+    // Net Investments chart
+    const netInvestmentsChart = {
+      id: 'net-investments',
+      instance: null,
+      rawData: [],
 
-      rawData = data.map(line => {
-        const cols = line.split(',');
-        const dateStr = cols[0];
-        return {
-          dateStr,
-          dateObj: parseDate(dateStr),
-          value: parseFloat(cols[4]) || 0
-        };
-      });
+      filterData(view) {
+        const d = this.rawData;
+        if (view === '1month') {
+          const latest = d[d.length - 1]?.dateObj;
+          if (!latest) return { labels: [], values: [] };
+          const cutoff = new Date(latest);
+          cutoff.setMonth(cutoff.getMonth() - 1);
+          const filtered = d.filter(r => r.dateObj >= cutoff);
+          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value) };
+        } else if (view === '90days') {
+          const latest = d[d.length - 1]?.dateObj;
+          if (!latest) return { labels: [], values: [] };
+          const cutoff = new Date(latest);
+          cutoff.setDate(cutoff.getDate() - 90);
+          const filtered = d.filter(r => r.dateObj >= cutoff);
+          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value) };
+        } else {
+          const latest = d[d.length - 1]?.dateObj;
+          if (!latest) return { labels: [], values: [] };
+          const yearStart = new Date(latest.getFullYear(), 0, 1);
+          const filtered = d.filter(r => r.dateObj >= yearStart && r.dateObj.getDay() === 6);
+          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value) };
+        }
+      },
 
-      const view = document.getElementById('viewSelect').value;
-      const { labels, values } = filterData(view);
-      const maWindow = view === '1month' ? 7 : 4;
-      const maValues = movingAverage(values, maWindow);
+      update(view) {
+        const { labels, values } = this.filterData(view);
+        const maWindow = (view === '1month' || view === '90days') ? 7 : 4;
+        const maValues = movingAverage(values, maWindow);
+        const goalLine = labels.map(() => 45000000);
+        if (this.instance) {
+          this.instance.data.labels = labels;
+          this.instance.data.datasets[0].data = values;
+          this.instance.data.datasets[1].data = maValues;
+          this.instance.data.datasets[2].data = goalLine;
+          this.instance.update();
+        }
+      },
 
-      const ctx = document.getElementById('netInvestmentsChart').getContext('2d');
-      chartInstance = new Chart(ctx, {
+      show() { setChartVisible(this.id, true); },
+      hide() { setChartVisible(this.id, false); },
+
+      async init() {
+        const response = await fetch(csvPath);
+        const text = await response.text();
+        const lines = text.trim().split('\n');
+        const data = lines.slice(1).filter(line => line.trim());
+
+        this.rawData = data.map(line => {
+          const cols = line.split(',');
+          const dateStr = cols[0];
+          return { dateStr, dateObj: parseDate(dateStr), value: parseFloat(cols[4]) || 0 };
+        });
+
+        const view = document.getElementById('netInvestments-viewSelect').value;
+        const { labels, values } = this.filterData(view);
+        const maWindow = (view === '1month' || view === '90days') ? 7 : 4;
+        const maValues = movingAverage(values, maWindow);
+        const goalLine = labels.map(() => 45000000);
+
+        const ctx = document.getElementById('netInvestments-canvas').getContext('2d');
+        this.instance = new Chart(ctx, {
         type: 'line',
         data: {
           labels,
@@ -174,10 +276,10 @@
             backgroundColor: 'rgba(14, 165, 233, 0.2)',
             fill: true,
             tension: 0.3,
-            pointRadius: 4,
-            pointHoverRadius: 24,
+            pointRadius: 3,
+            pointHoverRadius: 8,
             pointBackgroundColor: '#0ea5e9',
-            borderWidth: 6,
+            borderWidth: 4,
           }, {
             data: maValues,
             borderColor: 'rgba(14, 165, 233, 0.5)',
@@ -186,11 +288,21 @@
             pointRadius: 0,
             pointHoverRadius: 0,
             borderWidth: 2,
+          }, {
+            data: goalLine,
+            borderColor: '#22c55e',
+            fill: false,
+            tension: 0,
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            borderWidth: 4,
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: false,
+          layout: { padding: 10 },
           plugins: {
             legend: { display: false },
             tooltip: {
@@ -208,26 +320,221 @@
               ticks: { color: '#555', font: { size: 11 } },
             },
             y: {
-              min: 0,
-              max: 50000000,
+              min: 35000000,
+              max: 45000000,
               title: { display: true, text: 'Net Investments ($)', color: '#555', font: { size: 11 } },
               grid: { color: 'rgba(0,0,0,0.06)' },
               ticks: {
                 color: '#555',
                 font: { size: 11 },
-                callback: value => '$' + (value / 1000000).toFixed(2) + 'M'
+                stepSize: 2500000,
+                callback: value => '$' + (value / 1000000).toFixed(1) + 'M'
               }
             }
           }
         }
       });
 
-      document.getElementById('viewSelect').addEventListener('change', (e) => {
-        updateChart(e.target.value);
-      });
-    }
+        document.getElementById('netInvestments-viewSelect').addEventListener('change', (e) => {
+          this.update(e.target.value);
+        });
+      }
+    };
 
-    loadAndChart().catch(err => {
+    // Wealth Projection chart
+    const wealthProjectionDefaults = {
+      preTaxReturn: '7.30',
+      taxRate: '45.00',
+      costOfLiving: '1500000',
+      inflation: '3.0',
+      downsizeHouseYear: '2037',
+      downsizeHouseAmount: '10000000',
+      downsizeCOLYear: '2037',
+      downsizeCOLAmount: '-200000'
+    };
+    const WEALTH_STORAGE_KEY = 'financial-snapshot-wealth-inputs';
+
+    const wealthProjectionChart = {
+      id: 'wealth-projection',
+      instance: null,
+      startYear: 2026,
+      numYears: 41,
+
+      loadStored() {
+        try {
+          const stored = localStorage.getItem(WEALTH_STORAGE_KEY);
+          return stored ? JSON.parse(stored) : null;
+        } catch { return null; }
+      },
+
+      saveToStorage() {
+        const vals = this.getInputValues();
+        try { localStorage.setItem(WEALTH_STORAGE_KEY, JSON.stringify(vals)); } catch (_) {}
+      },
+
+      getInputValues() {
+        return {
+          preTaxReturn: document.getElementById('wealth-preTaxReturn').value,
+          taxRate: document.getElementById('wealth-taxRate').value,
+          costOfLiving: document.getElementById('wealth-costOfLiving').value,
+          inflation: document.getElementById('wealth-inflation').value,
+          downsizeHouseYear: document.getElementById('wealth-downsizeHouseYear').value,
+          downsizeHouseAmount: document.getElementById('wealth-downsizeHouseAmount').value,
+          downsizeCOLYear: document.getElementById('wealth-downsizeCOLYear').value,
+          downsizeCOLAmount: document.getElementById('wealth-downsizeCOLAmount').value
+        };
+      },
+
+      setInputValues(vals) {
+        document.getElementById('wealth-preTaxReturn').value = vals.preTaxReturn;
+        document.getElementById('wealth-taxRate').value = vals.taxRate;
+        document.getElementById('wealth-costOfLiving').value = vals.costOfLiving;
+        document.getElementById('wealth-inflation').value = vals.inflation;
+        document.getElementById('wealth-downsizeHouseYear').value = vals.downsizeHouseYear;
+        document.getElementById('wealth-downsizeHouseAmount').value = vals.downsizeHouseAmount;
+        document.getElementById('wealth-downsizeCOLYear').value = vals.downsizeCOLYear;
+        document.getElementById('wealth-downsizeCOLAmount').value = vals.downsizeCOLAmount;
+      },
+
+      reset() {
+        this.setInputValues(wealthProjectionDefaults);
+        this.saveToStorage();
+        this.updateNetReturnDisplay();
+        this.update();
+      },
+
+      getInputs() {
+        const preTax = parseFloat(document.getElementById('wealth-preTaxReturn').value) || 0;
+        const taxRate = parseFloat(document.getElementById('wealth-taxRate').value) || 0;
+        const costOfLiving = parseFloat(document.getElementById('wealth-costOfLiving').value) || 0;
+        const inflation = parseFloat(document.getElementById('wealth-inflation').value) || 0;
+        const downsizeHouseYear = parseInt(document.getElementById('wealth-downsizeHouseYear').value, 10) || 0;
+        const downsizeHouseAmount = parseFloat(document.getElementById('wealth-downsizeHouseAmount').value) || 0;
+        const downsizeCOLYear = parseInt(document.getElementById('wealth-downsizeCOLYear').value, 10) || 0;
+        const downsizeCOLAmount = parseFloat(document.getElementById('wealth-downsizeCOLAmount').value) || 0;
+        const netReturnPct = preTax * (1 - taxRate / 100);
+        return { preTax, taxRate, costOfLiving, inflation, netReturnPct, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount };
+      },
+
+      updateNetReturnDisplay() {
+        const { netReturnPct } = this.getInputs();
+        document.getElementById('wealth-netReturn').textContent = netReturnPct.toFixed(2);
+      },
+
+      computeProjection(startingWealth, netReturnDec, costOfLiving, inflationDec, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount) {
+        const values = [startingWealth];
+        let effectiveCOL = costOfLiving;
+        for (let t = 1; t < this.numYears; t++) {
+          const year = this.startYear + t;
+          if (year === downsizeCOLYear) effectiveCOL = Math.max(0, effectiveCOL + downsizeCOLAmount);
+          let growth = values[t - 1] * (1 + netReturnDec);
+          if (year === downsizeHouseYear) growth += downsizeHouseAmount;
+          values.push(Math.max(0, growth - effectiveCOL));
+          effectiveCOL = effectiveCOL * (1 + inflationDec);
+        }
+        return values;
+      },
+
+      computeBreakdown(startingWealth, netReturnDec, costOfLiving, inflationDec, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount) {
+        const rows = [{ year: this.startYear, netInvestment: startingWealth, postTaxEarnings: 0, costOfLiving: 0 }];
+        let wealth = startingWealth;
+        let effectiveCOL = costOfLiving;
+        for (let t = 1; t < this.numYears; t++) {
+          const year = this.startYear + t;
+          if (year === downsizeCOLYear) effectiveCOL = Math.max(0, effectiveCOL + downsizeCOLAmount);
+          const postTaxEarnings = wealth * netReturnDec;
+          let nextWealth = wealth + postTaxEarnings - effectiveCOL;
+          if (year === downsizeHouseYear) nextWealth += downsizeHouseAmount;
+          rows.push({ year, netInvestment: Math.max(0, nextWealth), postTaxEarnings, costOfLiving: effectiveCOL });
+          wealth = nextWealth;
+          effectiveCOL = effectiveCOL * (1 + inflationDec);
+        }
+        return rows;
+      },
+
+      renderBreakdown() {
+        const el = document.getElementById('wealth-breakdown');
+        if (!el || this.startingWealth == null) return;
+        const { netReturnPct, costOfLiving, inflation, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount } = this.getInputs();
+        const rows = this.computeBreakdown(this.startingWealth, netReturnPct / 100, costOfLiving, inflation / 100, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount);
+        const fmt = n => '$' + Math.round(n).toLocaleString();
+        el.innerHTML = '<table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="text-align:left;padding:2px 8px;border-bottom:1px solid #ccc">Year</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Net Investment</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Post-Tax Earnings</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Cost of Living</th></tr></thead><tbody>' +
+          rows.map(r => `<tr><td style="padding:2px 8px">${r.year}</td><td style="text-align:right;padding:2px 8px">${fmt(r.netInvestment)}</td><td style="text-align:right;padding:2px 8px">${fmt(r.postTaxEarnings)}</td><td style="text-align:right;padding:2px 8px">${fmt(r.costOfLiving)}</td></tr>`).join('') + '</tbody></table>';
+      },
+
+      update() {
+        const { netReturnPct, costOfLiving, inflation, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount } = this.getInputs();
+        const netReturnDec = netReturnPct / 100;
+        const inflationDec = inflation / 100;
+        const startingWealth = this.startingWealth;
+        if (startingWealth == null || !this.instance) return;
+        const values = this.computeProjection(startingWealth, netReturnDec, costOfLiving, inflationDec, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount);
+        this.instance.data.datasets[0].data = values;
+        this.instance.update();
+        this.renderBreakdown();
+      },
+
+      show() { setChartVisible(this.id, true); },
+      hide() { setChartVisible(this.id, false); },
+
+      async init() {
+        const response = await fetch(csvPath);
+        const text = await response.text();
+        const lines = text.trim().split('\n');
+        const data = lines.slice(1).filter(line => line.trim());
+        const lastRow = data[data.length - 1];
+        const cols = lastRow ? lastRow.split(',') : [];
+        this.startingWealth = cols[4] ? parseFloat(cols[4]) : 0;
+
+        const labels = [];
+        for (let y = this.startYear; y < this.startYear + this.numYears; y++) labels.push(y);
+
+        const { netReturnPct, costOfLiving, inflation, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount } = this.getInputs();
+        const netReturnDec = netReturnPct / 100;
+        const inflationDec = inflation / 100;
+        const values = this.computeProjection(this.startingWealth, netReturnDec, costOfLiving, inflationDec, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount);
+
+        const ctx = document.getElementById('wealthProjection-canvas').getContext('2d');
+        this.instance = new Chart(ctx, {
+          type: 'line',
+          data: { labels, datasets: [{ data: values, borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.2)', fill: true, tension: 0.3, pointRadius: 0, pointHoverRadius: 4, borderWidth: 4 }] },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: 10 },
+            plugins: { legend: { display: false }, tooltip: { animation: { duration: 0 }, callbacks: { label: (ctx) => '$' + ctx.raw.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) } } },
+            scales: {
+              x: { title: { display: false }, grid: { display: false }, ticks: { color: '#555', font: { size: 11 }, maxRotation: 0 } },
+              y: {
+                min: 0, max: 100000000,
+                title: { display: true, text: 'Projected wealth ($)', color: '#555', font: { size: 11 } },
+                grid: { color: 'rgba(0,0,0,0.06)' },
+                ticks: { color: '#555', font: { size: 11 }, stepSize: 10000000, callback: value => '$' + (value / 1000000) + 'M' }
+              }
+            }
+          }
+        });
+
+        const stored = this.loadStored();
+        if (stored) this.setInputValues(stored);
+        else this.setInputValues(wealthProjectionDefaults);
+
+        ['wealth-preTaxReturn', 'wealth-taxRate', 'wealth-costOfLiving', 'wealth-inflation', 'wealth-downsizeHouseYear', 'wealth-downsizeHouseAmount', 'wealth-downsizeCOLYear', 'wealth-downsizeCOLAmount'].forEach(id => {
+          const el = document.getElementById(id);
+          el.addEventListener('input', () => { this.updateNetReturnDisplay(); this.update(); this.saveToStorage(); });
+          el.addEventListener('change', () => { this.updateNetReturnDisplay(); this.update(); this.saveToStorage(); });
+        });
+        document.getElementById('wealth-reset').addEventListener('click', () => this.reset());
+        this.updateNetReturnDisplay();
+        this.renderBreakdown();
+      }
+    };
+
+    // Initialize all charts (reorder sections in HTML to change display order)
+    (async () => {
+      await netInvestmentsChart.init();
+      await wealthProjectionChart.init();
+    })().catch(err => {
       document.body.innerHTML = '<h1>Error loading data</h1><p>' + err.message + '</p><p>Make sure to run a local server from this folder (e.g. <code>python -m http.server 8000</code>) and open the page via localhost.</p>';
     });
   </script>
