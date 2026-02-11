@@ -26,14 +26,26 @@
       justify-content: space-between;
       padding: 1rem 1.25rem;
       border-bottom: 1px solid #eee;
+      background: #404040;
+      color: #f5f5f5;
+      border-radius: 6px 6px 0 0;
     }
     .chart-header h2 {
       margin: 0;           
-      font-size: 1.rem;
+      font-size: 1.25rem;
       font-weight: 800;
-      color: #555;
+      color: #f5f5f5;
       letter-spacing: 0.05em;
       text-transform: uppercase;
+    }
+    .chart-header .chart-select {
+      background: #555;
+      color: #f5f5f5;
+      border-color: #666;
+    }
+    .chart-header .info-icon {
+      border-color: #999;
+      color: #e0e0e0;
     }
     .chart-select {
       background: #f5f5f5;
@@ -149,6 +161,30 @@
     .info-icon:hover .info-tooltip {
       visibility: visible;
     }
+    .key-figures-wrapper {
+      width: 1200px;
+      height: 100px;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 1.25rem;
+      font-size: 1.5rem;
+    }
+    .key-figures-wrapper .key-fig-item {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-right: 2rem;
+    }
+    .key-figures-wrapper .key-fig-label {
+      color: #555;
+      font-weight: 800;
+    }
+    .key-figures-wrapper .key-fig-value {
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
@@ -166,12 +202,24 @@
         <div class="chart-container">
           <canvas id="netInvestments-canvas"></canvas>
         </div>
+        <details style="margin: 1rem 1.25rem; font-size: 0.8rem;">
+          <summary style="cursor: pointer;">Data</summary>
+          <div id="netinv-data-breakdown" style="margin-top: 0.5rem; max-height: 200px; overflow: auto;"></div>
+        </details>
+      </div>
+    </section>
+    <section id="chart-key-figures" class="chart-section" data-chart-id="key-figures" data-visible="true">
+      <div class="key-figures-wrapper">
+        <div class="key-fig-item"><span class="key-fig-label">CPI</span><span class="key-fig-value" id="keyfig-cpi">—</span></div>
+        <div class="key-fig-item"><span class="key-fig-label">Fed Funds Rate</span><span class="key-fig-value" id="keyfig-fedfunds">—</span></div>
+        <div class="key-fig-item"><span class="key-fig-label">TFDXX</span><span class="key-fig-value" id="keyfig-tfdxx">—</span></div>
       </div>
     </section>
     <section id="chart-wealth-projection" class="chart-section" data-chart-id="wealth-projection" data-visible="true">
       <div class="chart-wrapper chart-full-width">
         <div class="chart-header">
           <h2>Wealth projection</h2>
+          <button type="button" id="wealth-reset" class="chart-select">Reset</button>
         </div>
         <div class="projection-inputs">
           <div class="projection-inputs-row row1">
@@ -190,7 +238,6 @@
             <span style="font-weight: bold;">Downsize COL</span>
             <label>Year <input type="text" class="input-narrow" id="wealth-downsizeCOLYear" value="2037"></label>
             <label>Amount $<input type="text" id="wealth-downsizeCOLAmount" value="-200000"></label>
-            <button type="button" id="wealth-reset" class="chart-select" style="margin-left: 1rem;">Reset</button>
           </div>
         </div>
         <div class="chart-container">
@@ -214,13 +261,19 @@ Real estate: Home value grows each year by a random appreciation rate centered o
 Inflation: Each year's inflation is random (normal around your assumed rate, with default 1.5% volatility and a 1% floor). Cost of living rises with this simulated inflation in each scenario.
 
 For each scenario, net investments, real estate, and net worth are projected year by year. The chart shows the 10th, 25th, 50th, 75th, and 90th percentiles at each year, plus 5 sample paths. Downsize house and COL changes are applied in the year you specify.</span></span></h2>
-          <label style="font-size: 0.7rem;">Simulations <input type="text" class="input-narrow" id="mc-simulations" value="10000" style="width: 3rem;"></label>
-          <label style="font-size: 0.7rem;">Return volatility <input type="text" class="input-mc" id="mc-returnVolatility" value="17">%</label>
-          <label style="font-size: 0.7rem;">Home appreciation vol. <input type="text" class="input-mc" id="mc-homeApprecVolatility" value="5">%</label>
-          <label style="font-size: 0.7rem;">Inflation vol. <input type="text" class="input-mc" id="mc-inflationVolatility" value="1.5">%</label>
-          <label style="font-size: 0.7rem;">Infl.–return corr. <input type="text" class="input-mc" id="mc-inflationReturnCorr" value="-0.3"></label>
-          <button type="button" id="mc-rerun" class="chart-select" style="margin-left: 0.5rem;">Rerun</button>
-          <button type="button" id="mc-reset" class="chart-select" style="margin-left: 0.5rem;">Reset</button>
+          <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+            <button type="button" id="mc-rerun" class="chart-select">Rerun</button>
+            <button type="button" id="mc-reset" class="chart-select">Reset</button>
+          </div>
+        </div>
+        <div class="projection-inputs">
+          <div class="projection-inputs-row row1">
+            <label>Simulations <input type="text" class="input-narrow" id="mc-simulations" value="10000" style="width: 3rem;"></label>
+            <label>Return volatility <input type="text" class="input-mc" id="mc-returnVolatility" value="17">%</label>
+            <label>Home appreciation vol. <input type="text" class="input-mc" id="mc-homeApprecVolatility" value="5">%</label>
+            <label>Inflation vol. <input type="text" class="input-mc" id="mc-inflationVolatility" value="1.5">%</label>
+            <label>Infl.–return corr. <input type="text" class="input-mc" id="mc-inflationReturnCorr" value="-0.3"></label>
+          </div>
         </div>
         <div class="chart-container">
           <canvas id="wealthMonteCarlo-canvas"></canvas>
@@ -249,6 +302,11 @@ For each scenario, net investments, real estate, and net worth are projected yea
       return monthNames[d.getMonth()] + ' ' + d.getDate();
     }
 
+    function toYahooDate(d) {
+      const y = d.getFullYear(), m = (d.getMonth() + 1).toString().padStart(2, '0'), day = d.getDate().toString().padStart(2, '0');
+      return y + '-' + m + '-' + day;
+    }
+
     function movingAverage(values, window) {
       const result = [];
       for (let i = 0; i < values.length; i++) {
@@ -265,9 +323,48 @@ For each scenario, net investments, real estate, and net worth are projected yea
     // Chart registry: add charts here to show/hide or reorder
     const chartRegistry = {
       'net-investments': document.getElementById('chart-net-investments'),
+      'key-figures': document.getElementById('chart-key-figures'),
       'wealth-projection': document.getElementById('chart-wealth-projection'),
       'wealth-montecarlo': document.getElementById('chart-wealth-montecarlo')
     };
+
+    // Key figures: fetch CPI, Fed Funds Rate, TFDXX (uses CORS proxy for cross-origin)
+    const corsProxy = 'https://corsproxy.io/?';
+    async function fetchKeyFigures() {
+      const setCpi = v => { const el = document.getElementById('keyfig-cpi'); if (el) el.textContent = v; };
+      const setFedFunds = v => { const el = document.getElementById('keyfig-fedfunds'); if (el) el.textContent = v; };
+      const setTfdxx = v => { const el = document.getElementById('keyfig-tfdxx'); if (el) el.textContent = v; };
+
+      const blsUrl = 'https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0?startyear=2024&endyear=2026';
+      try {
+        const r = await fetch(corsProxy + encodeURIComponent(blsUrl));
+        const j = await r.json();
+        const data = j?.Results?.series?.[0]?.data?.filter(d => d.value && d.value !== '-') || [];
+        if (data.length >= 2) {
+          const latest = parseFloat(data[0].value);
+          const prevYear = parseInt(data[0].year) - 1;
+          const prev = data.find(d => d.period === data[0].period && parseInt(d.year) === prevYear);
+          const yoy = prev ? ((latest - parseFloat(prev.value)) / parseFloat(prev.value) * 100).toFixed(2) + '%' : '—';
+          setCpi(yoy);
+        } else setCpi('—');
+      } catch (_) { setCpi('—'); }
+
+      const fredUrl = 'https://fred.stlouisfed.org/series/FEDFUNDS';
+      try {
+        const r = await fetch(corsProxy + encodeURIComponent(fredUrl));
+        const html = await r.text();
+        const m = html.match(/(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}:\s*([\d.]+)/);
+        setFedFunds(m ? m[1] + '%' : '—');
+      } catch (_) { setFedFunds('—'); }
+
+      const blkUrl = 'https://www.blackrock.com/cash/en-us/products/282628/blf-fedfund';
+      try {
+        const r = await fetch(corsProxy + encodeURIComponent(blkUrl));
+        const html = await r.text();
+        const m = html.match(/7\s*Day\s*SEC\s*Yield[^%]*?([\d.]+)\s*%/i);
+        setTfdxx(m ? m[1] + '%' : '—');
+      } catch (_) { setTfdxx('—'); }
+    }
 
     function normalRandom(mean, stdDev) {
       const u1 = Math.random(), u2 = Math.random();
@@ -302,39 +399,136 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const d = this.rawData;
         if (view === '1month') {
           const latest = d[d.length - 1]?.dateObj;
-          if (!latest) return { labels: [], values: [] };
+          if (!latest) return { labels: [], values: [], dateObjs: [] };
           const cutoff = new Date(latest);
           cutoff.setMonth(cutoff.getMonth() - 1);
           const filtered = d.filter(r => r.dateObj >= cutoff);
-          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value) };
+          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value), dateObjs: filtered.map(r => r.dateObj) };
         } else if (view === '90days') {
           const latest = d[d.length - 1]?.dateObj;
-          if (!latest) return { labels: [], values: [] };
+          if (!latest) return { labels: [], values: [], dateObjs: [] };
           const cutoff = new Date(latest);
           cutoff.setDate(cutoff.getDate() - 90);
           const filtered = d.filter(r => r.dateObj >= cutoff);
-          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value) };
+          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value), dateObjs: filtered.map(r => r.dateObj) };
         } else {
           const latest = d[d.length - 1]?.dateObj;
-          if (!latest) return { labels: [], values: [] };
+          if (!latest) return { labels: [], values: [], dateObjs: [] };
           const yearStart = new Date(latest.getFullYear(), 0, 1);
           const filtered = d.filter(r => r.dateObj >= yearStart && r.dateObj.getDay() === 6);
-          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value) };
+          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value), dateObjs: filtered.map(r => r.dateObj) };
         }
       },
 
-      update(view) {
-        const { labels, values } = this.filterData(view);
+      sp500Cache: null,
+      parseFredSp500(text) {
+        const map = new Map();
+        const re = /(?:^|[^0-9])(\d{4}-\d{2}-\d{2})\|([\d,.]+)/g;
+        let m;
+        while ((m = re.exec(text)) !== null) {
+          const date = m[1];
+          const valStr = m[2].replace(/,/g, '').trim();
+          if (valStr === '.' || valStr === '') continue;
+          const v = parseFloat(valStr);
+          if (!isNaN(v)) map.set(date, v);
+        }
+        return map;
+      },
+      async fetchSp500Cache() {
+        if (this.sp500Cache && this.sp500Cache.size > 0) return this.sp500Cache;
+        const fredUrl = 'https://fred.stlouisfed.org/data/SP500.txt';
+        const proxies = ['https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
+        for (const proxy of proxies) {
+          try {
+            const r = await fetch(proxy + encodeURIComponent(fredUrl));
+            const text = await r.text();
+            if (text && (text.includes('DATE') || text.includes('SP500'))) {
+              const map = this.parseFredSp500(text);
+              if (map.size > 0) { this.sp500Cache = map; return this.sp500Cache; }
+            }
+          } catch (_) { continue; }
+        }
+        this.sp500Cache = new Map();
+        return this.sp500Cache;
+      },
+
+      alignSp500(dateObjs) {
+        if (!this.sp500Cache || this.sp500Cache.size === 0) return null;
+        const lookup = (d) => {
+          for (let i = 0; i < 10; i++) {
+            const t = new Date(d);
+            t.setDate(t.getDate() - i);
+            const v = this.sp500Cache.get(toYahooDate(t));
+            if (v != null) return v;
+          }
+          return null;
+        };
+        const vals = dateObjs.map(d => lookup(d));
+        let last = vals.find(v => v != null);
+        for (let i = 0; i < vals.length; i++) {
+          if (vals[i] != null) last = vals[i];
+          else vals[i] = last;
+        }
+        return vals.every(v => v != null) ? vals : null;
+      },
+
+      async update(view) {
+        const { labels, values, dateObjs } = this.filterData(view);
         const maWindow = (view === '1month' || view === '90days') ? 7 : 4;
         const maValues = movingAverage(values, maWindow);
-        const goalLine = labels.map(() => 45000000);
+        await this.fetchSp500Cache();
+        const sp500Values = this.alignSp500(dateObjs);
+
+        const base = values[0] || 1;
+        const netPct = values.map(v => ((v / base) - 1) * 100);
+        const maPct = maValues.map(v => v != null ? ((v / base) - 1) * 100 : null);
+        const goalPct = ((45000000 / base) - 1) * 100;
+        const goalLine = labels.map(() => goalPct);
+        const sp500Pct = sp500Values ? sp500Values.map(v => v != null ? ((v / sp500Values[0]) - 1) * 100 : null) : null;
+
+        const allPct = [...netPct.filter(Boolean), ...(sp500Pct || []).filter(Boolean)];
+        const pad = 1.5;
+        const pctMin = allPct.length ? Math.min(0, ...allPct) - pad : -5;
+        const pctMax = allPct.length ? Math.max(0, ...allPct) + pad : 5;
+        const dollarMin = base * (1 + pctMin / 100);
+        const dollarMax = base * (1 + pctMax / 100);
+
         if (this.instance) {
+          this.instance.rawNetInv = values;
+          this.instance.rawSp500 = sp500Values;
+          this.instance.dateObjs = dateObjs;
           this.instance.data.labels = labels;
-          this.instance.data.datasets[0].data = values;
-          this.instance.data.datasets[1].data = maValues;
+          this.instance.data.datasets[0].data = netPct;
+          this.instance.data.datasets[1].data = maPct;
           this.instance.data.datasets[2].data = goalLine;
+          this.instance.data.datasets[3].data = sp500Pct || labels.map(() => null);
+          this.instance.data.datasets[3].borderColor = sp500Pct ? '#ef4444' : 'transparent';
+          this.instance.options.scales.y.min = pctMin;
+          this.instance.options.scales.y.max = pctMax;
+          this.instance.options.scales.y1.min = dollarMin;
+          this.instance.options.scales.y1.max = dollarMax;
           this.instance.update();
+          this.renderDataBreakdown();
         }
+      },
+
+      renderDataBreakdown() {
+        const el = document.getElementById('netinv-data-breakdown');
+        if (!el || !this.instance) return;
+        const labels = this.instance.data.labels || [];
+        const rawNet = this.instance.rawNetInv || [];
+        const rawSp = this.instance.rawSp500 || [];
+        const dateObjs = this.instance.dateObjs || [];
+        const fmt = (d) => d ? monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() : '';
+        const fmtDollar = n => n != null ? '$' + Math.round(n).toLocaleString() : '—';
+        const fmtSp = n => n != null ? n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
+        const rows = labels.map((lab, i) => ({
+          date: fmt(dateObjs[i]) || lab,
+          netInv: fmtDollar(rawNet[i]),
+          sp500: fmtSp(rawSp[i])
+        }));
+        el.innerHTML = '<table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="text-align:left;padding:2px 8px;border-bottom:1px solid #ccc">Date</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">Net Investment</th><th style="text-align:right;padding:2px 8px;border-bottom:1px solid #ccc">S&P 500</th></tr></thead><tbody>' +
+          rows.map(r => `<tr><td style="padding:2px 8px">${r.date}</td><td style="text-align:right;padding:2px 8px">${r.netInv}</td><td style="text-align:right;padding:2px 8px">${r.sp500}</td></tr>`).join('') + '</tbody></table>';
       },
 
       show() { setChartVisible(this.id, true); },
@@ -353,10 +547,25 @@ For each scenario, net investments, real estate, and net worth are projected yea
         });
 
         const view = document.getElementById('netInvestments-viewSelect').value;
-        const { labels, values } = this.filterData(view);
+        const { labels, values, dateObjs } = this.filterData(view);
         const maWindow = (view === '1month' || view === '90days') ? 7 : 4;
         const maValues = movingAverage(values, maWindow);
-        const goalLine = labels.map(() => 45000000);
+        await this.fetchSp500Cache();
+        const sp500Values = this.alignSp500(dateObjs);
+
+        const base = values[0] || 1;
+        const netPct = values.map(v => ((v / base) - 1) * 100);
+        const maPct = maValues.map(v => v != null ? ((v / base) - 1) * 100 : null);
+        const goalPct = ((45000000 / base) - 1) * 100;
+        const goalLine = labels.map(() => goalPct);
+        const sp500Pct = sp500Values ? sp500Values.map(v => v != null ? ((v / sp500Values[0]) - 1) * 100 : null) : null;
+
+        const allPct = [...netPct.filter(Boolean), ...(sp500Pct || []).filter(Boolean)];
+        const pad = 1.5;
+        const pctMin = allPct.length ? Math.min(0, ...allPct) - pad : -5;
+        const pctMax = allPct.length ? Math.max(0, ...allPct) + pad : 5;
+        const dollarMin = base * (1 + pctMin / 100);
+        const dollarMax = base * (1 + pctMax / 100);
 
         const ctx = document.getElementById('netInvestments-canvas').getContext('2d');
         this.instance = new Chart(ctx, {
@@ -364,7 +573,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
         data: {
           labels,
           datasets: [{
-            data: values,
+            data: netPct,
+            yAxisID: 'y',
             borderColor: '#0ea5e9',
             backgroundColor: 'rgba(14, 165, 233, 0.2)',
             fill: true,
@@ -374,7 +584,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
             pointBackgroundColor: '#0ea5e9',
             borderWidth: 4,
           }, {
-            data: maValues,
+            data: maPct,
+            yAxisID: 'y',
             borderColor: 'rgba(14, 165, 233, 0.5)',
             fill: false,
             tension: 0.3,
@@ -383,12 +594,22 @@ For each scenario, net investments, real estate, and net worth are projected yea
             borderWidth: 2,
           }, {
             data: goalLine,
+            yAxisID: 'y',
             borderColor: '#22c55e',
             fill: false,
             tension: 0,
             pointRadius: 0,
             pointHoverRadius: 0,
             borderWidth: 4,
+          }, {
+            data: sp500Pct || labels.map(() => null),
+            yAxisID: 'y',
+            borderColor: sp500Pct ? '#ef4444' : 'transparent',
+            fill: false,
+            tension: 0.3,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 3,
           }]
         },
         options: {
@@ -399,10 +620,21 @@ For each scenario, net investments, real estate, and net worth are projected yea
           plugins: {
             legend: { display: false },
             tooltip: {
-              filter: (item) => item.datasetIndex === 0,
+              filter: (item) => item.datasetIndex === 0 || item.datasetIndex === 3,
               animation: { duration: 0 },
               callbacks: {
-                label: (ctx) => '$' + ctx.raw.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                label: (ctx) => {
+                  const rawNet = ctx.chart.rawNetInv?.[ctx.dataIndex];
+                  const rawSp = ctx.chart.rawSp500?.[ctx.dataIndex];
+                  const baseSp = ctx.chart.rawSp500?.[0];
+                  if (ctx.datasetIndex === 0 && rawNet != null) return 'Net Investments: $' + rawNet.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                  if (ctx.datasetIndex === 3 && rawSp != null && baseSp) {
+                    const pct = ((rawSp / baseSp) - 1) * 100;
+                    const sign = pct >= 0 ? '+' : '';
+                    return 'S&P 500: ' + rawSp.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' (' + sign + pct.toFixed(1) + '%)';
+                  }
+                  return '';
+                }
               }
             },
           },
@@ -413,20 +645,38 @@ For each scenario, net investments, real estate, and net worth are projected yea
               ticks: { color: '#555', font: { size: 11 } },
             },
             y: {
-              min: 35000000,
-              max: 45000000,
-              title: { display: true, text: 'Net Investments ($)', color: '#555', font: { size: 11 } },
-              grid: { color: 'rgba(0,0,0,0.06)' },
+              type: 'linear',
+              position: 'left',
+              min: pctMin,
+              max: pctMax,
+              title: { display: true, text: '% return', color: '#555', font: { size: 11 } },
+              grid: { color: 'rgba(0,0,0,0.08)' },
               ticks: {
                 color: '#555',
                 font: { size: 11 },
-                stepSize: 2500000,
-                callback: value => '$' + (value / 1000000).toFixed(1) + 'M'
+                callback: (value) => value != null ? value + '%' : ''
+              }
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              min: dollarMin,
+              max: dollarMax,
+              title: { display: true, text: 'Net Investments ($M)', color: '#555', font: { size: 11 } },
+              grid: { drawOnChartArea: false },
+              ticks: {
+                color: '#555',
+                font: { size: 11 },
+                callback: (value) => value != null ? '$' + (value / 1000000).toFixed(1) + 'm' : ''
               }
             }
           }
         }
       });
+        this.instance.rawNetInv = values;
+        this.instance.rawSp500 = sp500Values;
+        this.instance.dateObjs = dateObjs;
+        this.renderDataBreakdown();
 
         document.getElementById('netInvestments-viewSelect').addEventListener('change', (e) => {
           this.update(e.target.value);
@@ -922,6 +1172,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
     // Initialize all charts (reorder sections in HTML to change display order)
     (async () => {
       await netInvestmentsChart.init();
+      fetchKeyFigures();
       await wealthProjectionChart.init();
       await monteCarloChart.init();
     })().catch(err => {
