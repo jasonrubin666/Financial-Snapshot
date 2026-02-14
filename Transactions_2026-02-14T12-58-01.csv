@@ -1,16 +1,20 @@
 Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
+2026-02-14,Delta Airlines,Travel,Delta SkyMiles® Reserve Card (...2004),DELTA AIR LINES,,-15843.59,,Shared
+2026-02-14,Delta Airlines,Travel,Delta SkyMiles® Reserve Card (...2004),DELTA AIR LINES,,-4614.53,,Shared
 2026-02-14,Trifecta Nutrition,Restaurants,Bank of America Premium Rewards (...6538),"TRIFECTA NUTRITION, INC.",,-129.91,,Shared
+2026-02-13,Pampered Tails,Pet Wash,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-31.05,,Shared
+2026-02-13,Vulcania,Restaurants,Centurion® Card (...1009),AplPay VULCANIA RESTMAMMOTH LAKES CA,,-134.00,,Shared
 2026-02-13,Morgan Rubin,Kids Allowance,Jason and Agnes Checking (...8486),Online scheduled transfer to CHK 4626 Confirmation# XXXXX26660,,-40.00,,Shared
 2026-02-13,Bristol Farms,Groceries,Bank Of America Alex's Visa (...9604),BRISTOL FARMS 15,,-128.86,,Shared
 2026-02-13,Parking,Parking,Bank of America Premium Rewards (...6538),P3 LAX SMARTPARKING,Parking for DICE in LV,-120.00,Morgan Rose,Shared
 2026-02-13,Parking,Parking,Bank of America Premium Rewards (...6538),LAZ PARKING M17154,,-15.00,,Shared
 2026-02-13,AMC Theatres,Entertainment,Bank of America Premium Rewards (...6538),AMC 0450 GROVE 14,,-7.49,,Shared
-2026-02-13,Wetzel's Pretzels,Restaurants,Centurion® Card (...1009),WETZEL'S PRETZELS - S-136 GROV,,-27.03,,Shared
-2026-02-13,Vulcania,Restaurants,Centurion® Card (...1009),VULCANIA RESTAURANT,,-134.00,,Shared
-2026-02-13,Pampered Tails,Pet Wash,Centurion® Card (...1009),"MOEMENT, INC.",,-31.05,,Shared
+2026-02-13,Wetzel's Pretzels,Restaurants,Centurion® Card (...1009),WETZELS PRETZELS - S-136 GROVE,,-27.03,,Shared
 2026-02-13,Petco,Pet Food and Treats,Bank Of America Alex's Visa (...9604),PETCO VITAL CARE 4200,,-27.61,,Shared
 2026-02-13,The Waldorf Astoria,Restaurants,Bank of America Premium Rewards (...6538),WALDORF ASTORIA LV ZEN KI,Breakfast w/ Chris Jurney,-81.28,,Shared
 2026-02-13,Aria Patisserie,Restaurants,Bank of America Premium Rewards (...6538),ARIA - PATISSERIE,,-9.48,Morgan Rose,Shared
+2026-02-12,Uber Eats,Restaurants,Centurion® Card (...1009),UBER EATS help.uber.com CA,,-121.74,,Shared
+2026-02-12,Mammoth Mountain,Travel,Centurion® Card (...1009),MAMMOTH MTN BOOKINGSMAMMOTH LAKES CA,,-2665.00,,Shared
 2026-02-12,Leora Cafe,Restaurants,Bank Of America Alex's Visa (...9604),LEORA* LEORA - 9346 CI CHOWNOW.COM/OCA ,,-67.39,,Shared
 2026-02-12,California Science Center,Entertainment,Bank Of America Alex's Visa (...9604),CA Science Center Los Angeles CA ,,-61.90,,Shared
 2026-02-12,Ucla Store,Shopping,Bank of America Premium Rewards (...6538),UCLA STORE LOS ANGELES CA ,,-10.91,,Shared
@@ -27,13 +31,12 @@ Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
 2026-02-12,California Science Center,Entertainment,Bank Of America Alex's Visa (...9604),CALIFORNIA SCIENCE CENTER,,-20.00,,Shared
 2026-02-12,California Science Center,Entertainment,Bank Of America Alex's Visa (...9604),CA SC CTR FOUNDATION,,-13.00,,Shared
 2026-02-12,Salt & Ivy,Restaurants,Bank of America Premium Rewards (...6538),ARIA-SALT IVY CAFE PAT, Breakfast w/ Jase Raymond,-44.43,Morgan Rose,Shared
-2026-02-12,Uber Eats,Restaurants,Centurion® Card (...1009),UBER EATS,,-121.74,,Shared
-2026-02-12,Mammoth Mountain,Travel,Centurion® Card (...1009),MAMMOTH RESERV INNTOPIA,,-2665.00,,Shared
 2026-02-12,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPLACE PMTS,,-32.99,,Shared
 2026-02-12,Turkish Airlines,Airfare & Transportation,Centurion® Card (...1009),TURKISH AIRLINES,,-19708.66,,Shared
 2026-02-12,Aria Resort,Travel,Delta SkyMiles® Reserve Card (...2004),ARIA - ADV SALES,,-150.00,Morgan Rose,Shared
 2026-02-12,Aria Resort,Travel,Delta SkyMiles® Reserve Card (...2004),ARIA - ADV SALES,,-1.01,Morgan Rose,Shared
 2026-02-12,Curb Mobility,Taxi & Ride Shares,Bank of America Premium Rewards (...6538),CURB MOBILITY,DICE LV from Hotel,-36.84,Morgan Rose,Shared
+2026-02-11,Amex Saks,Rewards,Centurion® Card (...1009),AMEX Saks Credit,,250.00,,Shared
 2026-02-11,Cafe Knotted,Restaurants,Bank Of America Alex's Visa (...9604),TST*CAFE KNOTTED - CENTU Los Angeles CA ,,-29.30,,Shared
 2026-02-11,Sephora,Personal Care,Bank Of America Alex's Visa (...9604),SEPHORA CENTURY CITY LOS ANGELES CA ,,-50.49,,Shared
 2026-02-11,Bristol Farms,Groceries,Bank Of America Alex's Visa (...9604),BRISTOL FARMS 15 LOS ANGELES CA ,,-68.08,,Shared
@@ -251,7 +254,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-9457445-3204235
 2026-01-29,Eataly,Restaurants,Bank of America Premium Rewards (...6538),EATALY LA CATAPULT LOS ANGELES CA ,,-26.68,,Shared
 2026-01-29,Eataly,Restaurants,Bank of America Premium Rewards (...6538),EATALY LA CATAPULT LOS ANGELES CA ,,-16.69,,Shared
 2026-01-29,Pampered Tails,Pet Wash,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
-2026-01-29,Tony Bautista,Gardening Maintenance,1536 Skylark LLC (...2984),Zelle payment to TONY BAUTISTA Conf# h6m77og1h,,-3000.00,,Shared
+2026-01-29,Tony Bautista,Gardening Maintenance,1536 Skylark LLC (...2984),Zelle payment to TONY BAUTISTA Conf# h6m77og1h,,-3000.00,1536 Rental,Shared
 2026-01-29,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:TAX 679769 ID:6semk7cv9r8 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-2242.34,,Shared
 2026-01-29,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:REM 707757 ID:6semk7cv9r9 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-290.00,,Shared
 2026-01-29,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:NET 680457 ID:6semk7cv9r7 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-5712.26,,Shared

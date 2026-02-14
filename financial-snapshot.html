@@ -486,7 +486,13 @@
       border: 2px solid var(--header-bg);
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .budget-totals-stats {
+      display: flex;
+      align-items: center;
       gap: 3rem;
       flex-wrap: wrap;
     }
@@ -509,6 +515,7 @@
       letter-spacing: -0.02em;
     }
     .budget-save-csv-btn {
+      margin-left: auto;
       padding: 0.5rem 1rem;
       font-size: 0.875rem;
       font-weight: 500;
@@ -860,6 +867,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
       'Rental Maintenance', 'Rental Maintanance', 'Credit Card Payment', 'Balance Adjustment', 'Buy', 'Sell',
       'Income Taxes', 'Agnes Ambrus', 'Mortgage'
     ];
+    const IGNORED_TAGS = ['1536 Rental'];
     function resolveCategory(csvCategory) {
       const key = (csvCategory || '').trim().toLowerCase().replace(/\s+/g, ' ');
       if (IGNORED_CATEGORIES.some(ig => ig.toLowerCase() === key)) return null;
@@ -2263,9 +2271,22 @@ For each scenario, net investments, real estate, and net worth are projected yea
           totalBudget += this.getBudget(category);
           totalSpending += this.getSpendingForTotal(this.byCategory[category] || []);
         }
-        el.innerHTML = '<div class="budget-total-item"><span class="budget-total-label">Total Budget</span><span class="budget-total-value">$' + Math.round(totalBudget).toLocaleString() + '</span></div>' +
-          '<div class="budget-total-item"><span class="budget-total-label">Total Spending</span><span class="budget-total-value">$' + Math.round(Math.max(0, totalSpending)).toLocaleString() + '</span></div>' +
-          '<button type="button" id="budget-save-csv" class="budget-save-csv-btn">Save .csv</button>';
+        const spend = Math.max(0, totalSpending);
+        const pctBudget = totalBudget > 0 ? (spend / totalBudget) * 100 : 0;
+        const now = new Date();
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        const endOfYear = new Date(now.getFullYear(), 11, 31);
+        const daysInYear = Math.round((endOfYear - startOfYear) / 86400000) + 1;
+        const dayOfYear = Math.round((now - startOfYear) / 86400000) + 1;
+        const timeProgress = Math.min(1, Math.max(0, dayOfYear / daysInYear)) || 0.001;
+        const timeVariancePct = pctBudget / (timeProgress * 100) * 100;
+        const statsHtml = '<div class="budget-totals-stats">' +
+          '<div class="budget-total-item"><span class="budget-total-label">Total Spending</span><span class="budget-total-value">$' + Math.round(spend).toLocaleString() + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label">Total Budget</span><span class="budget-total-value">$' + Math.round(totalBudget).toLocaleString() + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label">% Budget</span><span class="budget-total-value">' + pctBudget.toFixed(1) + '%</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label">Time % Variance</span><span class="budget-total-value">' + (timeVariancePct || 0).toFixed(1) + '%</span></div>' +
+          '</div>';
+        el.innerHTML = statsHtml + '<button type="button" id="budget-save-csv" class="budget-save-csv-btn">Save .csv</button>';
         document.getElementById('budget-save-csv')?.addEventListener('click', () => this.exportBudgetsCsv());
       },
       async loadBudgetsFromCsv() {
@@ -2317,12 +2338,17 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const merchant = row[1] || '';
           const csvCat = row[2] || '';
           const amount = parseFloat(row[6]);
+          const tag = (row[7] || '').trim() || undefined;
           if (!dateStr || isNaN(amount)) continue;
           const d = parseDateIso(dateStr);
           if (isNaN(d.getTime()) || d.getFullYear() !== year) continue;
-          const category = resolveCategory(csvCat);
+          let category = resolveCategory(csvCat);
           if (category == null) continue;
-          this.transactions.push({ date: dateStr, dateObj: d, merchant, category, amount });
+          const isIgnoredTag = tag && IGNORED_TAGS.some(ig => ig === tag);
+          if (isIgnoredTag) {
+            category = 'Categorized but not Budgeted';
+          }
+          this.transactions.push({ date: dateStr, dateObj: d, merchant, category, tag, amount, hidden: !!isIgnoredTag });
         }
         this.byCategory = {};
         for (const t of this.transactions) {
@@ -2502,10 +2528,16 @@ For each scenario, net investments, real estate, and net worth are projected yea
             const sorted = [...txs].sort((a, b) => a.dateObj - b.dateObj);
             const fmt = d => d ? monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() : '';
             const amountFmt = n => n < 0 ? '$' + Math.abs(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : (n > 0 ? '$-' + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '$0.00');
-            let dataHtml = '<table class="breakdown-table"><thead><tr><th>Date</th><th>Merchant</th><th>Category</th><th>Amount</th></tr></thead><tbody>' +
-              sorted.map(t => `<tr><td>${fmt(t.dateObj)}</td><td>${(t.merchant || '').replace(/</g, '&lt;')}</td><td>${(t.category || '').replace(/</g, '&lt;')}</td><td>${amountFmt(t.amount)}</td></tr>`).join('') + '</tbody></table>';
-            if (category === 'Categorized but not Budgeted' && IGNORED_CATEGORIES.length) {
-              dataHtml += '<p class="budget-ignored-note">Ignored: ' + IGNORED_CATEGORIES.join(', ') + '</p>';
+            const visibleTxs = category === 'Categorized but not Budgeted' ? sorted.filter(t => !t.hidden) : sorted;
+            let dataHtml = '<table class="breakdown-table"><thead><tr><th>Date</th><th>Merchant</th><th>Category</th><th>Tag</th><th>Amount</th></tr></thead><tbody>' +
+              visibleTxs.map(t => `<tr><td>${fmt(t.dateObj)}</td><td>${(t.merchant || '').replace(/</g, '&lt;')}</td><td>${(t.category || '').replace(/</g, '&lt;')}</td><td>${(t.tag || '').replace(/</g, '&lt;')}</td><td>${amountFmt(t.amount)}</td></tr>`).join('') + '</tbody></table>';
+            if (category === 'Categorized but not Budgeted' && (IGNORED_CATEGORIES.length || IGNORED_TAGS.length)) {
+              if (IGNORED_CATEGORIES.length) {
+                dataHtml += '<p class="budget-ignored-note">Ignored Categories: ' + IGNORED_CATEGORIES.join(', ') + '</p>';
+              }
+              if (IGNORED_TAGS.length) {
+                dataHtml += '<p class="budget-ignored-note">Ignored Tags: ' + IGNORED_TAGS.join(', ') + '</p>';
+              }
             }
             dataEl.innerHTML = dataHtml;
           }
