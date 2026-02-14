@@ -406,10 +406,17 @@
       border-bottom: 1px solid rgba(255,255,255,0.15);
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 0.5rem;
       cursor: pointer;
       user-select: none;
       background: var(--header-bg);
+    }
+    .budget-grouping-title-inner { display: flex; align-items: center; gap: 0.5rem; }
+    .budget-group-total {
+      font-weight: 500;
+      font-size: 0.9rem;
+      opacity: 0.9;
     }
     .budget-grouping-title:hover {
       background: #1e293b;
@@ -2373,39 +2380,50 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const el = document.getElementById('budget-content');
         if (!el) return;
         this.chartInstances = {};
-        let html = '';
-        let lastGroup = '';
-        for (let i = 0; i < BUDGET_CATEGORIES.length; i++) {
-          const { grouping, category } = BUDGET_CATEGORIES[i];
-          const nextGroup = BUDGET_CATEGORIES[i + 1]?.grouping;
-          if (grouping !== lastGroup) {
-            if (lastGroup) html += '</div></div>';
-            lastGroup = grouping;
-            const groupId = 'group-' + grouping.replace(/[^a-zA-Z0-9]/g, '-');
-            html += `<div class="budget-grouping" data-expanded="true" data-grouping="${grouping.replace(/"/g, '&quot;')}">
-              <h3 class="budget-grouping-title"><span class="budget-grouping-toggle">▾</span>${grouping}</h3>
-              <div class="budget-grouping-categories">`;
-          }
+        const groupsWithSpend = new Set();
+        const groupBudgets = {};
+        const groupCategories = {};
+        for (const { grouping, category } of BUDGET_CATEGORIES) {
           const txs = this.byCategory[category] || [];
-          const spending = this.getSpending(txs);
-          const budget = this.getBudget(category);
-          const id = 'budget-chart-' + category.replace(/[^a-zA-Z0-9]/g, '-');
-          const inputId = 'budget-input-' + category.replace(/[^a-zA-Z0-9]/g, '-');
-          const labelId = 'budget-label-' + category.replace(/[^a-zA-Z0-9]/g, '-');
-          html += `<div class="budget-category-card" data-expanded="${spending > 0 ? 'true' : 'false'}" data-category="${category.replace(/"/g, '&quot;')}">
-            <div class="budget-category-header">
-              <span class="budget-category-header-inner">
-                <span class="budget-category-toggle">▾</span>
-                <span class="budget-category-label" id="${labelId}">${category} — $${spending.toLocaleString(undefined, { maximumFractionDigits: 0 })} / $${budget.toLocaleString()}</span>
-              </span>
-              <input type="text" class="budget-input" id="${inputId}" data-category="${category.replace(/"/g, '&quot;')}" value="${Math.round(budget).toLocaleString()}" inputmode="numeric">
-            </div>
-            <div class="budget-category-body">
-              <div class="budget-category-chart"><canvas id="${id}"></canvas></div>
-              <details><summary>Data</summary><div class="breakdown-content" id="budget-data-${id}" style="max-height: 200px; overflow: auto;"></div></details>
-            </div>
-          </div>`;
-          if (nextGroup !== grouping) html += '</div></div>';
+          if (this.getSpending(txs) > 0) groupsWithSpend.add(grouping);
+          groupBudgets[grouping] = (groupBudgets[grouping] || 0) + this.getBudget(category);
+          if (!groupCategories[grouping]) groupCategories[grouping] = [];
+          groupCategories[grouping].push(category);
+        }
+        const sortedGroups = [...new Set(BUDGET_CATEGORIES.map(b => b.grouping))].sort((a, b) => (groupBudgets[b] || 0) - (groupBudgets[a] || 0));
+        let html = '';
+        for (const grouping of sortedGroups) {
+          const groupExpanded = groupsWithSpend.has(grouping);
+          const groupTotal = groupBudgets[grouping] || 0;
+          const groupId = 'group-' + grouping.replace(/[^a-zA-Z0-9]/g, '-');
+          html += `<div class="budget-grouping" data-expanded="${groupExpanded}" data-grouping="${grouping.replace(/"/g, '&quot;')}">
+            <h3 class="budget-grouping-title">
+              <span class="budget-grouping-title-inner"><span class="budget-grouping-toggle">▾</span>${grouping}</span>
+              <span class="budget-group-total" id="budget-group-total-${groupId}">$${Math.round(groupTotal).toLocaleString()}</span>
+            </h3>
+            <div class="budget-grouping-categories">`;
+          for (const category of groupCategories[grouping]) {
+            const txs = this.byCategory[category] || [];
+            const spending = this.getSpending(txs);
+            const budget = this.getBudget(category);
+            const id = 'budget-chart-' + category.replace(/[^a-zA-Z0-9]/g, '-');
+            const inputId = 'budget-input-' + category.replace(/[^a-zA-Z0-9]/g, '-');
+            const labelId = 'budget-label-' + category.replace(/[^a-zA-Z0-9]/g, '-');
+            html += `<div class="budget-category-card" data-expanded="${spending > 0 ? 'true' : 'false'}" data-category="${category.replace(/"/g, '&quot;')}">
+              <div class="budget-category-header">
+                <span class="budget-category-header-inner">
+                  <span class="budget-category-toggle">▾</span>
+                  <span class="budget-category-label" id="${labelId}">${category} — $${spending.toLocaleString(undefined, { maximumFractionDigits: 0 })} / $${budget.toLocaleString()}</span>
+                </span>
+                <input type="text" class="budget-input" id="${inputId}" data-category="${category.replace(/"/g, '&quot;')}" data-grouping="${grouping.replace(/"/g, '&quot;')}" value="${Math.round(budget).toLocaleString()}" inputmode="numeric">
+              </div>
+              <div class="budget-category-body">
+                <div class="budget-category-chart"><canvas id="${id}"></canvas></div>
+                <details><summary>Data</summary><div class="breakdown-content" id="budget-data-${id}" style="max-height: 200px; overflow: auto;"></div></details>
+              </div>
+            </div>`;
+          }
+          html += '</div></div>';
         }
         el.innerHTML = html;
         const now = new Date();
@@ -2517,6 +2535,13 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 }
                 inputEl.value = Math.round(b).toLocaleString();
                 if (labelEl) labelEl.textContent = category + ' — $' + spend.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' / $' + b.toLocaleString();
+                const grouping = inputEl.getAttribute('data-grouping');
+                if (grouping) {
+                  const groupTotal = BUDGET_CATEGORIES.filter(bc => bc.grouping === grouping).reduce((s, bc) => s + this.getBudget(bc.category), 0);
+                  const groupId = 'group-' + grouping.replace(/[^a-zA-Z0-9]/g, '-');
+                  const groupTotalEl = document.getElementById('budget-group-total-' + groupId);
+                  if (groupTotalEl) groupTotalEl.textContent = '$' + Math.round(groupTotal).toLocaleString();
+                }
                 this.updateTotals();
               }
             };
