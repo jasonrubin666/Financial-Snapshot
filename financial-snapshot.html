@@ -385,6 +385,11 @@
     .page-content[data-visible="true"] {
       display: block;
     }
+    .budget-page-wrapper {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
     .budget-grouping {
       margin-bottom: 1.5rem;
       border: 1px solid var(--border);
@@ -723,8 +728,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
   </div>
   </div>
   <div id="page-budget" class="page-content" data-visible="false">
-    <div id="budget-totals-summary" class="budget-totals-summary"></div>
-    <div id="budget-content"></div>
+    <div class="budget-page-wrapper">
+      <div id="budget-totals-summary" class="budget-totals-summary"></div>
+      <div id="budget-content"></div>
+    </div>
   </div>
   <p class="note">Run a local server from this folder to load the CSV. Example: <code>python -m http.server 8000</code> then open <code>http://localhost:8000/financial-snapshot.html</code></p>
   </div>
@@ -746,7 +753,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const href = decodeURIComponent(m[1]).replace(/^\.\//, '');
           if (href.startsWith('Balances') && /\.csv$/i.test(href)) candidates.push(href);
         }
-        return candidates.length > 0 ? candidates[0] : 'Balances.csv';
+        candidates.sort();
+        return candidates.length > 0 ? candidates[candidates.length - 1] : 'Balances.csv';
       } catch (_) { return 'Balances.csv'; }
     }
     async function findTransactionsCsvPath() {
@@ -762,7 +770,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const href = decodeURIComponent(m[1]).replace(/^\.\//, '');
           if (href.toLowerCase().includes('transactions') && /\.csv$/i.test(href)) candidates.push(href);
         }
-        return candidates.length > 0 ? candidates[0] : 'Transactions.csv';
+        candidates.sort();
+        return candidates.length > 0 ? candidates[candidates.length - 1] : 'Transactions.csv';
       } catch (_) { return 'Transactions.csv'; }
     }
     async function findBudgetLimitsCsvPath() {
@@ -778,7 +787,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const href = decodeURIComponent(m[1]).replace(/^\.\//, '');
           if (href.toLowerCase().startsWith('budget_limits') && /\.csv$/i.test(href)) candidates.push(href);
         }
-        return candidates.length > 0 ? candidates[0] : null;
+        candidates.sort();
+        return candidates.length > 0 ? candidates[candidates.length - 1] : null;
       } catch (_) { return null; }
     }
     function parseCsvRow(line) {

@@ -7,7 +7,7 @@ Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
 2026-02-13,AMC Theatres,Entertainment,Bank of America Premium Rewards (...6538),AMC 0450 GROVE 14,,-7.49,,Shared
 2026-02-13,Wetzel's Pretzels,Restaurants,Centurion® Card (...1009),WETZEL'S PRETZELS - S-136 GROV,,-27.03,,Shared
 2026-02-13,Vulcania,Restaurants,Centurion® Card (...1009),VULCANIA RESTAURANT,,-134.00,,Shared
-2026-02-13,"MOEMENT, INC.",Business Services,Centurion® Card (...1009),"MOEMENT, INC.",,-31.05,,Shared
+2026-02-13,Pampered Tails,Pet Wash,Centurion® Card (...1009),"MOEMENT, INC.",,-31.05,,Shared
 2026-02-13,Petco,Pet Food and Treats,Bank Of America Alex's Visa (...9604),PETCO VITAL CARE 4200,,-27.61,,Shared
 2026-02-13,The Waldorf Astoria,Restaurants,Bank of America Premium Rewards (...6538),WALDORF ASTORIA LV ZEN KI,Breakfast w/ Chris Jurney,-81.28,,Shared
 2026-02-13,Aria Patisserie,Restaurants,Bank of America Premium Rewards (...6538),ARIA - PATISSERIE,,-9.48,Morgan Rose,Shared
@@ -15,9 +15,9 @@ Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
 2026-02-12,California Science Center,Entertainment,Bank Of America Alex's Visa (...9604),CA Science Center Los Angeles CA ,,-61.90,,Shared
 2026-02-12,Ucla Store,Shopping,Bank of America Premium Rewards (...6538),UCLA STORE LOS ANGELES CA ,,-10.91,,Shared
 2026-02-12,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *222CWE5NU2 650-5434800 DE ,,-50.00,Morgan Rose,Shared
-2026-02-12,Curb Taxi,Taxi & Ride Shares,Bank of America Premium Rewards (...6538),CURB LV TAXI NELLIS ASTORIA NY ,,-36.84,,Shared
+2026-02-12,Curb Taxi,Taxi & Ride Shares,Bank of America Premium Rewards (...6538),CURB LV TAXI NELLIS ASTORIA NY ,DICE LV to Hotel,-36.84,Morgan Rose,Shared
 2026-02-12,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*WD6U88R13,,-23.99,,Shared
-2026-02-12,Pampered Tails,Pet Food and Treats,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
+2026-02-12,Pampered Tails,Pet Wash,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
 2026-02-12,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:TAX 326107 ID:6semk7j3cb8 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-3117.08,,Shared
 2026-02-12,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:REM 343212 ID:6semk7j3cb9 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-290.00,,Shared
 2026-02-12,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:NET 326108 ID:6semk7j3cb7 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-6874.02,,Shared
@@ -33,7 +33,7 @@ Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
 2026-02-12,Turkish Airlines,Airfare & Transportation,Centurion® Card (...1009),TURKISH AIRLINES,,-19708.66,,Shared
 2026-02-12,Aria Resort,Travel,Delta SkyMiles® Reserve Card (...2004),ARIA - ADV SALES,,-150.00,Morgan Rose,Shared
 2026-02-12,Aria Resort,Travel,Delta SkyMiles® Reserve Card (...2004),ARIA - ADV SALES,,-1.01,Morgan Rose,Shared
-2026-02-12,Curb Mobility,Taxi & Ride Shares,Bank of America Premium Rewards (...6538),CURB MOBILITY,,-36.84,,Shared
+2026-02-12,Curb Mobility,Taxi & Ride Shares,Bank of America Premium Rewards (...6538),CURB MOBILITY,DICE LV from Hotel,-36.84,Morgan Rose,Shared
 2026-02-11,Cafe Knotted,Restaurants,Bank Of America Alex's Visa (...9604),TST*CAFE KNOTTED - CENTU Los Angeles CA ,,-29.30,,Shared
 2026-02-11,Sephora,Personal Care,Bank Of America Alex's Visa (...9604),SEPHORA CENTURY CITY LOS ANGELES CA ,,-50.49,,Shared
 2026-02-11,Bristol Farms,Groceries,Bank Of America Alex's Visa (...9604),BRISTOL FARMS 15 LOS ANGELES CA ,,-68.08,,Shared
@@ -159,7 +159,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-8986307-4863425
 2026-02-04,Transfer,Transfer,1536 Skylark LLC (...2984),Online Banking transfer to CHK 8486 Confirmation# XXXXX73918,,-13802.19,,Shared
 2026-02-04,Transfer,Transfer,Jason and Agnes Checking (...8486),Online Banking transfer from CHK 2984 Confirmation# XXXXX73918,,13802.19,,Shared
 2026-02-04,Chase,Credit Card Payment,Jason and Agnes Checking (...8486),CHASE CREDIT CRD DES:EPAY ID:XXXXX93965 INDN:JASON RUBIN CO ID:XXXXX39224 WEB,,-3800.00,,Shared
-2026-02-04,Apple,Electronics,Bank of America Premium Rewards (...6538),APPLE.COM/US 800-676-2775 CA ,,-1096.40,,Shared
+2026-02-04,Apple,Electronics,Bank of America Premium Rewards (...6538),APPLE.COM/US 800-676-2775 CA ,,-1096.40,Morgan Rose,Shared
 2026-02-03,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*0L9ZF4SL3,,-20.88,,Shared
 2026-02-03,Amazon,Health & Medical,Chase Amazon Card (...3726),AMAZON MKTPL*4608771F3,"2 x Pure Encapsulations B-Complex Plus - B Vitamins Supplement to Support Neurological Health, Cardiovascular Health, Energy Levels & Nervous System Support* - with Vitamin B12 & More - 60 Capsules - $26.40
 
@@ -181,7 +181,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-0316646-5145060
 2026-02-03,Starbucks,Restaurants,Bank of America Premium Rewards (...6538),STARBUCKS 05232 WEST HOLLYWOOCA ,,-5.65,,Shared
 2026-02-03,Santa Palm Car Wash,Automotive Maintenance,Bank of America Premium Rewards (...6538),SANTA PALM CAR WASH WEST HOLLYWOOCA ,,-79.99,,Shared
 2026-02-03,Petco,Pet Food and Treats,Bank of America Premium Rewards (...6538),PETCO 1505 WEST HOLLYWOOCA ,,-93.89,,Shared
-2026-02-03,Hayutin Associates,Education,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1161.00,,Shared
+2026-02-03,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1161.00,,Shared
 2026-02-03,Chase,Credit Card Payment,Chase Amazon Card (...3726),Payment Thank You-Mobile,,3800.00,,Shared
 2026-02-03,Delta Hotels,Travel,Delta SkyMiles® Reserve Card (...2004),HOTEL*Delta SEATTLE WA,,-286.79,,Shared
 2026-02-03,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:FEE 986650 ID:6semk7feeju INDN:Rubin Household CO ID:XXXXX64007 CCD,,-104.00,,Shared
@@ -373,7 +373,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-8730928-8312212
 2026-01-20,Trifecta Nutrition,Restaurants,Bank of America Premium Rewards (...6538),"TRIFECTA NUTRITION, INC. 5305648388 CA ",,14.99,,Shared
 2026-01-20,Trifecta Nutrition,Restaurants,Bank of America Premium Rewards (...6538),"TRIFECTA NUTRITION, INC. 5305648388 CA ",,14.99,,Shared
 2026-01-20,Santa Palm Car Wash,Automotive Maintenance,Bank of America Premium Rewards (...6538),SANTA PALM CAR WASH WEST HOLLYWOOCA ,,-39.99,,Shared
-2026-01-20,Hayutin Associates,Education,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
+2026-01-20,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
 2026-01-20,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *M57DXBDNU2 650-5434800 DE ,,-44.00,Morgan Rose,Shared
 2026-01-20,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *GRQ3VC5NU2 650-5434800 DE ,,-46.00,Morgan Rose,Shared
 2026-01-20,American Express,Rewards,Delta SkyMiles® Reserve Card (...2004),ADOBE WEBSALES SEATTLE,,10.00,,Shared
@@ -440,7 +440,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-4824467-6489019
 2026-01-15,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *4WDWCBMMU2 650-5434800 DE ,,-17.00,Morgan Rose,Shared
 2026-01-15,Ucla Store,Shopping,Bank Of America Alex's Visa (...9604),UCLA STORE LOS ANGELES CA ,,-11.97,,Shared
 2026-01-15,Jag Gym,Child Activities,Bank Of America Alex's Visa (...9604),ICP*JAG GYM CULVER CITY CA ,,-141.02,,Shared
-2026-01-15,Pampered Tails,Pet Food and Treats,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
+2026-01-15,Pampered Tails,Pet Wash,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
 2026-01-15,California Franchise Tax Board,Income Taxes,Jason and Agnes Checking (...8486),FRANCHISE TAX BO DES:PAYMENTS ID:XXXXX1043 PM INDN:RUBIN CO ID:XXXXX32045 WEB,,-150000.00,,Shared
 2026-01-15,Transfer,Transfer,Jason and Agnes Checking (...8486),Agent Assisted transfer from BRK 7062 Confirmation# XXXXX10658,,200000.00,,Shared
 2026-01-14,Transfer,Transfer,FSA,Brokerage Credit,,18503.24,,Shared
@@ -594,7 +594,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-9254123-5514638
 2026-01-06,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*L834F46D3,,-174.50,,Shared
 2026-01-06,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*N54TU9SX3,,-357.79,,Shared
 2026-01-06,Salad Bar,Groceries,Bank of America Premium Rewards (...6538),SALAD BAR LOS ANGELES CA ,,-12.36,,Shared
-2026-01-06,Hayutin Associates Inc,Education,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
+2026-01-06,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
 2026-01-06,Crossover,Subsciptions,Bank of America Premium Rewards (...6538),PAYPAL *CROSSOVER 651-523-9300 MN ,,-74.00,,Shared
 2026-01-06,Revolve,Clothing,Centurion® Card (...1009),REVOLVE CLOTHING CERRITOS CA,,-931.78,,Shared
 2026-01-05,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*RG3J89DZ3,"1 x Antelope - 1000 Piece Puzzle for Adults, Cat Castle Jigsaw Puzzles 1000 Pieces, High Resolution, Matte Finish, Smooth Edging, No Dust Creative Artistic Puzzle - $19.19
@@ -705,8 +705,8 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-4675009-1432263
 2025-12-31,LA City Housing,Rental Expense,Bank of America Premium Rewards (...6538),PSVJ *JPMC FEE 800-420-1663 NC ,,-0.77,1536 Rental,Shared
 2025-12-31,Mark P Goodman,Health & Medical,Bank of America Premium Rewards (...6538),"SQ *MARK P GOODMAN, M.D.,gosq.com CA ",,-3400.00,,Shared
 2025-12-31,LA City Housing,Rental Expense,Bank of America Premium Rewards (...6538),LA CITY HOUSING ONLINE 844-663-4411 CA ,,-31.05,1536 Rental,Shared
-2025-12-31,Pampered Tails,Pet Food and Treats,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
-2025-12-31,Pampered Tails,Pet Food and Treats,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-31.05,,Shared
+2025-12-31,Pampered Tails,Pet Wash,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
+2025-12-31,Pampered Tails,Pet Wash,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-31.05,,Shared
 2025-12-31,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),Check 194,Alex Simple IRA deductions and match ,-1200.00,,Shared
 2025-12-31,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),Check 193,Alex Simple IRA deductions and match ,-1200.00,,Shared
 2025-12-31,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),Check 192,Alex Simple IRA deductions and match ,-1200.00,,Shared
@@ -802,7 +802,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-2545181-5165844
 2025-12-23,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*8F1YO7913,"1 x Gorilla Hot Glue Gun Kit (Pack of 1 Full Size Hot Glue Gun and 45 Sticks) - Dual Temp, Precision Nozzle, and Easy Squeeze Trigger - $31.49
 
 https://www.amazon.com/gp/your-account/order-details?orderID=113-2681085-3284220",-34.56,Retail Sync,Shared
-2025-12-23,Hayutin Associates,Education,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1032.00,,Shared
+2025-12-23,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1032.00,,Shared
 2025-12-23,Clementine,Restaurants,Bank of America Premium Rewards (...6538),Clementine Los Angeles CA ,,-57.97,,Shared
 2025-12-23,Uber Eats,Restaurants,Centurion® Card (...1009),UBER EATS help.uber.com CA,,-62.16,,Shared
 2025-12-23,FedEx,Postage & Shipping,Centurion® Card (...1009),FEDEX OFFICE WEST HOLLYWOOD CA,,-462.96,,Shared
@@ -872,8 +872,8 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-8212344-5445007
 2025-12-18,Anthropic,Subsciptions,Bank of America Premium Rewards (...6538),CLAUDE.AI SUBSCRIPTION ANTHROPIC.COMCA ,,-20.00,Morgan Rose,Shared
 2025-12-18,Beverly Hills Pediatrics,Health & Medical,Bank of America Premium Rewards (...6538),BEVERLY HILLS PEDIATRICS HTTPS://WWWBECA ,,24.90,,Shared
 2025-12-18,Uber Eats,Restaurants,Centurion® Card (...1009),UBER EATS HTTPS://HELP.UBER.COCA,,-145.24,,Shared
-2025-12-18,Pampered Tails,Pet Food and Treats,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
-2025-12-18,Pampered Tails,Pet Food and Treats,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-31.05,,Shared
+2025-12-18,Pampered Tails,Pet Wash,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
+2025-12-18,Pampered Tails,Pet Wash,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-31.05,,Shared
 2025-12-18,Sodasense.com,Groceries,Bank Of America Alex's Visa (...9604),SODASENSE.COM WWW.SODASENSEWI ,,-46.07,,Shared
 2025-12-17,Employee Contributions,Paychecks,FSA,Employee Contributions,,192.30,,Shared
 2025-12-17,Beverly Hills Pediatrics,Health & Medical,Bank of America Premium Rewards (...6538),BEVERLY HILLS PEDIATRICS HTTPS://WWWBECA ,,-24.90,,Shared
@@ -1036,7 +1036,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-5022921-9937031
 2025-12-09,Uber Eats,Restaurants,Centurion® Card (...1009),UBER EATS help.uber.com CA,,-98.83,,Shared
 2025-12-09,Marlborough,Shopping,Centurion® Card (...1009),PB *MARLBOROUGH 0000LOS ANGELES CA,,-25.00,,Shared
 2025-12-09,Clementine,Restaurants,Centurion® Card (...1009),CLEMENTINE LOS ANGELES CA,,-67.58,,Shared
-2025-12-09,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
+2025-12-09,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
 2025-12-09,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*VS1DZ9853,"1 x Global Grub Original DIY Mochi Ice Cream Kit - Kit Includes Sweet Rice Flour, Potato Starch, Matcha Powder, Cocoa Powder, Ice Cream Mochi Maker, Dough Cutter, Cooking Instructions. Makes 32 Pieces - $40.95
 
 https://www.amazon.com/gp/your-account/order-details?orderID=112-2836884-3634655",-44.94,Retail Sync,Shared
@@ -1273,7 +1273,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-0060437-0184260
 2025-11-25,Kokusai Motorcars,Shopping,Bank of America Premium Rewards (...6538),NIHON KOTSU CO..LTD. TOKYO ,,-16.70,,Shared
 2025-11-25,Ninja,Restaurants,Bank of America Premium Rewards (...6538),SHIN OTEMACHI BLDG TOKYO ,,-749.37,,Shared
 2025-11-25,Miffy Cafe,Restaurants,Bank of America Premium Rewards (...6538),MIFFY CAFE TOKYO TOKYO ,,-61.70,,Shared
-2025-11-25,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
+2025-11-25,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
 2025-11-25,Tokyo Disney,Entertainment,Centurion® Card (...1009),TOKYO DISNEY RESORT CHIBA JP,,-43.57,,Shared
 2025-11-25,Uber,Taxi & Ride Shares,Delta SkyMiles® Reserve Card (...2004),UBER TRIP HTTPS://HELP.UBER.COAI,,-80.54,,Shared
 2025-11-25,Prime Video,Subsciptions,Chase Amazon Card (...3726),Prime Video Channels,,-7.99,,Shared
@@ -1501,7 +1501,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-8562910-1109032
 2025-11-11,Sur La Table,Shopping,Centurion® Card (...1009),SUR LA TABLE 71 GLENDALE CA,,-201.83,,Shared
 2025-11-11,Hot Topic,Clothing,Centurion® Card (...1009),HOT TOPIC GLENDALE CA,,-238.71,,Shared
 2025-11-11,Box Lunch,Restaurants,Centurion® Card (...1009),BOX LUNCH #4503 4503GLENDALE CA,,-27.00,,Shared
-2025-11-11,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1161.00,,Shared
+2025-11-11,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1161.00,,Shared
 2025-11-11,Zazzle,Shopping,Bank Of America Alex's Visa (...9604),ZAZZLE INC 888-892-9953 CA ,,-19.95,,Shared
 2025-11-11,Prime Video,Subsciptions,Chase Amazon Card (...3726),Prime Video Channels,,-2.99,,Shared
 2025-11-10,Brekkies,Restaurants,Centurion® Card (...1009),TST* BREKKIES 002355SOLVANG CA,,-53.84,,Shared
@@ -1669,7 +1669,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-3539361-5957026
 2025-10-28,Pacific Battleship Center,Entertainment,Centurion® Card (...1009),AplPay PAYPAL *USSIO8774469261 CA,,-201.65,,Shared
 2025-10-28,Queen Mary,Entertainment,Centurion® Card (...1009),AplPay FH* THE QUEENLONG BEACH CA,,-326.92,,Shared
 2025-10-28,Apple,Shopping,Centurion® Card (...1009),APPLE.COM/BILL INTERNET CHARGE CA,,-29.98,,Shared
-2025-10-28,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1483.50,,Shared
+2025-10-28,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1483.50,,Shared
 2025-10-28,DHL,Postage & Shipping,Bank of America Premium Rewards (...6538),PAYPAL *DHLEXPRESSU 954-595-1982 FL ,,-98.68,,Shared
 2025-10-28,Clementine,Restaurants,Bank of America Premium Rewards (...6538),Clementine Los Angeles CA ,,-32.26,,Shared
 2025-10-28,Warner Bros Hollywood,Shopping,Centurion® Card (...1009),WB STUDIO ENTERPRISEBURBANK CA,,-77.29,,Shared
@@ -2144,7 +2144,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-2587331-4897014
 2025-09-30,TikTok,Shopping,Centurion® Card (...1009),AplPay BT*TIKTOK SHOCULVER CITY CA,,-22.24,,Shared
 2025-09-30,Delta,Airfare & Transportation,Delta SkyMiles® Reserve Card (...2004),DELTA AIR LINES ATLANTA,,-69.88,,Shared
 2025-09-30,Nuts.com,Groceries,Bank of America Premium Rewards (...6538),"NUTS.COM, INC. 908-523-0333 NJ ",,-215.15,,Shared
-2025-09-30,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
+2025-09-30,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
 2025-09-30,Bokksu Boutique,Shopping,Centurion® Card (...1009),AplPay SP BTQ HASHI NEW YORK NY,,-215.77,,Shared
 2025-09-29,Mickey Fine Pharmacy,Health & Medical,Bank of America Premium Rewards (...6538),MICKEY FINE PHARMACY & GRBEVERLY HILLSCA ,,-33.21,,Shared
 2025-09-29,La Vaca Brazilian Grill,Restaurants,Bank of America Premium Rewards (...6538),LA VACA BRAZILIAN GRILL LOS ANGELES CA ,,-18.08,,Shared
@@ -2342,7 +2342,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-8136292-1244250
 2025-09-16,Whole Foods,Groceries,Bank Of America Alex's Visa (...9604),WHOLEFDS HOL 10109 WEST HOLLYWOOCA ,,-163.01,,Shared
 2025-09-16,LAX CNBC,Shopping,Delta SkyMiles® Reserve Card (...2004),AplPay PARADIES-LOS ATLANTA GA,,-3.69,,Shared
 2025-09-16,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*SG0IO0QY3,,-16.67,,Shared
-2025-09-16,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1685.34,,Shared
+2025-09-16,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1685.34,,Shared
 2025-09-16,B&H Photo Video,Electronics,Bank of America Premium Rewards (...6538),B&H PHOTO 800-606-6969 800-2215743 NY ,,-183.82,,Shared
 2025-09-16,Tony Bautista,Rental Maintenance,1536 Skylark LLC (...2984),PAYPAL DES:INST XFER ID:TONYBAUTISTA7 INDN:JASON RUBIN CO ID:PAYPALSI77 WEB,,-2600.00,1536 Rental,Shared
 2025-09-16,Saks Fifth Avenue,Shopping,Centurion® Card (...1009),AplPay SAKS FIFTH AVBEVERLY HILLS CA,,175.72,,Shared
@@ -2509,7 +2509,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-09-02,Instacart,Groceries,Bank Of America Alex's Visa (...9604),IC* INSTACART 888-246-7822 CA ,,-38.54,,Shared
 2025-09-02,Eataly,Restaurants,Bank Of America Alex's Visa (...9604),EATALY LA CATAPULT LOS ANGELES CA ,,-156.72,,Shared
 2025-09-02,Phil's Deli,Restaurants,Bank of America Premium Rewards (...6538),PHIL 'S DELI & GRILL LOS ANGELES CA ,,-24.89,,Shared
-2025-09-02,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1392.00,,Shared
+2025-09-02,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1392.00,,Shared
 2025-09-02,Zara,Clothing,Centurion® Card (...1009),ZARA USA LOS ANGELES CA,,-105.26,,Shared
 2025-09-02,Apple,Subsciptions,Centurion® Card (...1009),APPLE.COM/BILL INTERNET CHARGE CA,,-4.99,,Shared
 2025-09-02,Chase,Rewards,Chase Amazon Card (...3726),STATEMENT CREDIT,,121.00,,Shared
@@ -3016,7 +3016,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-07-09,Uber Eats,Restaurants,Delta SkyMiles® Reserve Card (...2004),UBER EATS help.uber.com CA,,-37.99,,Shared
 2025-07-09,Uber Eats,Restaurants,Delta SkyMiles® Reserve Card (...2004),UBER EATS help.uber.com CA,,-10.00,,Shared
 2025-07-08,Petco,Pet Food and Treats,Bank of America Premium Rewards (...6538),PETCO.COM 6989 858-453-7845 CA ,,-140.74,,Shared
-2025-07-08,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-889.33,,Shared
+2025-07-08,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-889.33,,Shared
 2025-07-08,Forumpizzeria,Restaurants,Bank of America Premium Rewards (...6538),ForumPizzeria Sopron ,,-108.53,,Shared
 2025-07-08,Prime Video,Subsciptions,Chase Amazon Card (...3726),Prime Video Channels,,-6.99,,Shared
 2025-07-08,Nordstrom,Shopping,Centurion® Card (...1009),AplPay NORDSTROM DIRhttp://shop.nordstroWA,,43.89,,Shared
@@ -3174,7 +3174,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-06-24,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*NQ1SQ2WG2,,-32.90,,Shared
 2025-06-24,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*NQ4XA6QC2,,-19.72,,Shared
 2025-06-24,Instacart,Groceries,Bank Of America Alex's Visa (...9604),IC* INSTACART 888-246-7822 CA ,,-174.71,,Shared
-2025-06-24,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-696.00,,Shared
+2025-06-24,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-696.00,,Shared
 2025-06-24,Carl's Jr.,Restaurants,Bank of America Premium Rewards (...6538),ACO CABOS T2 CARLS JR LOS CABOS BCS ,,-30.52,,Shared
 2025-06-24,Prime Video,Subsciptions,Chase Amazon Card (...3726),Prime Video *NO2K23970,,-9.99,,Shared
 2025-06-24,Transfer,Transfer,Jason and Agnes Checking (...8486),WIRE TYPE:WIRE IN DATE: XXXXX4 TIME:1336 ET TRN:XXXXXXXXXX528993 SEQ:C278610OFD062425/007092 ORIG:SILVER ARROW CARS LTD. ID:XXXXX780554 SND BK: DEUTSCHE BANK TRUST CO. AMERI ID:XXXXX1033 PMT DET:WWXXXXXXXXXX6188///URI/1999 FERRARI 355 GT,,209326.00,,Shared
@@ -3372,7 +3372,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-06-10,Quality Punch,Gifts,Bank of America Premium Rewards (...6538),QUALITY PUNCH INC 310-3460111 CA ,,-627.50,,Shared
 2025-06-10,Parking,Parking,Bank of America Premium Rewards (...6538),LAZ PARKING M17880-SKI LOS ANGELES CA ,,-8.00,,Shared
 2025-06-10,Parking,Parking,Bank of America Premium Rewards (...6538),LAZ PARKING M17880-SKI LOS ANGELES CA ,,-6.00,,Shared
-2025-06-10,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
+2025-06-10,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
 2025-06-10,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*NH20O8VI1,,-116.78,,Shared
 2025-06-10,Leaff Waffles,Restaurants,Centurion® Card (...1009),LEAFF WAFFLES INC. LOSANGELES CA,,-20.10,,Shared
 2025-06-10,Andsons Cafe,Restaurants,Centurion® Card (...1009),ANDSONS CAFE Beverly Hills CA,,-13.00,,Shared
@@ -3546,7 +3546,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-05-27,Dr. Dorfman,Health & Medical,Centurion® Card (...1009),DR BILL DORFMAN DDS LOS ANGELES CA,,-957.00,,Shared
 2025-05-27,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*N66J50C52,,-53.41,,Shared
 2025-05-27,Parking,Parking,Bank of America Premium Rewards (...6538),LAZ PARKING M17834ADVAM LOS ANGELES CA ,,-10.00,,Shared
-2025-05-27,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-2322.00,,Shared
+2025-05-27,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-2322.00,,Shared
 2025-05-27,The Floor Dance Academy,Child Activities,Bank Of America Alex's Visa (...9604),THE FLOOR DANCE ACADEMY 424-303-7497 CA ,,-150.00,,Shared
 2025-05-27,Southern California Gas,Natural Gas,Jason and Agnes Checking (...8486),SO CAL GAS DES:PAID SCGC ID:XXXXX17992 INDN:XXXXX1474XXXXX5862 CO ID:XXXXX52494 WEB,,-1856.63,,Shared
 2025-05-26,Hugo's,Restaurants,Bank of America Premium Rewards (...6538),TST* HUGO'S - WEST HOLLYWWEST HOLLYWOOCA ,,-80.25,,Shared
@@ -3893,7 +3893,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-04-30,OV Aesthetics,Personal Care,Centurion® Card (...1009),OV AESTHET* OV AESTHBEVERLY HILLS CA,,-992.00,,Shared
 2025-04-30,Avra Beverly Hills,Restaurants,Delta SkyMiles® Reserve Card (...2004),TST* AE BH 00124454 BEVERLY HILLS CA,,-539.37,,Shared
 2025-04-30,Plates by Lisa,Gifts,Jason and Agnes Checking (...8486),PLATES BY LISA DES:SALE ID: INDN:AGNES AMBRUS CO ID:XXXXX86202 WEB,,-500.00,,Shared
-2025-04-30,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1161.00,,Shared
+2025-04-30,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1161.00,,Shared
 2025-04-30,FedEx,Postage & Shipping,Bank of America Premium Rewards (...6538),FEDEX OFFIC18900018929 WEST HOLLYWOOCA ,,-19.88,,Shared
 2025-04-30,Target,Shopping,Bank Of America Alex's Visa (...9604),TARGET.COM * 800-591-3869 MN ,,-166.28,,Shared
 2025-04-30,OV Aesthetics,Employee Misc,Bank Of America Alex's Visa (...9604),OV AESTHETICS WWW.OVAESTHETCA ,,-472.00,,Shared
@@ -4046,7 +4046,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-04-16,Uber Eats,Restaurants,Delta SkyMiles® Reserve Card (...2004),Uber Trip help.uber.com CA,,-7.00,,Shared
 2025-04-16,Instacart,Groceries,Bank Of America Alex's Visa (...9604),IC* INSTACART 888-246-7822 CA ,,-108.41,,Shared
 2025-04-16,Parking,Parking,Bank of America Premium Rewards (...6538),WEHO PARKING METERS WEST HOLLYWOOCA ,,-3.50,,Shared
-2025-04-16,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
+2025-04-16,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
 2025-04-16,Chevron,Gas,Bank of America Premium Rewards (...6538),CHEVRON 0098744 WEST HOLLYWOOCA ,,-74.91,,Shared
 2025-04-15,Prime Video,Subsciptions,Chase Amazon Card (...3726),Prime Video *QU8JF9S13,,-2.99,,Shared
 2025-04-15,Great White,Restaurants,Centurion® Card (...1009),TST* GREAT WHITE MELLOS ANGELES CA,,-120.06,,Shared
@@ -4224,7 +4224,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-04-02,Academy of Music,Child Activities,Bank Of America Alex's Visa (...9604),ANGELES ACADEMY OF MUSIC 310-803-9286 CA ,,-327.00,,Shared
 2025-04-02,Organic Kids,Restaurants,Bank of America Premium Rewards (...6538),OKLA LUNCHES ORGANICKIDSLACA ,,-100.00,,Shared
 2025-04-02,Hotel Nia,Travel,Bank of America Premium Rewards (...6538),HOTEL NIA - PORTA BLU 650-9003434 CA ,,-8.42,Reimburse,Shared
-2025-04-02,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
+2025-04-02,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
 2025-04-01,VCA Animal Hospitals,Pet Health,Centurion® Card (...1009),VCA ANIMAL HOSP #101LOS ANGELES CA,,-2119.54,,Shared
 2025-04-01,Uber Eats,Restaurants,Delta SkyMiles® Reserve Card (...2004),Uber Trip help.uber.com CA,,-128.73,,Shared
 2025-04-01,Uber Eats,Restaurants,Delta SkyMiles® Reserve Card (...2004),Uber Trip help.uber.com CA,,-121.10,,Shared
@@ -4348,7 +4348,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-03-19,Netflix,Subsciptions,Bank of America Premium Rewards (...6538),Netflix 1 8445052993 CA ,,-24.99,,Shared
 2025-03-19,Parking,Parking,Bank of America Premium Rewards (...6538),LAZ PARKING M17880-SKI LOS ANGELES CA ,,-8.00,,Shared
 2025-03-19,Design AV,Misc Maintenance,Bank of America Premium Rewards (...6538),IN *DESIGN AV SYSTEMS INC818-5815769 CA ,,-80.00,,Shared
-2025-03-19,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1201.00,,Shared
+2025-03-19,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1201.00,,Shared
 2025-03-19,Farfetch,Clothing,Bank of America Premium Rewards (...6538),PAYPAL *FARFETCHUKL 35314369001 ,,-546.01,,Shared
 2025-03-18,Squishable,Shopping,Centurion® Card (...1009),SQUISHABLE Los Angeles CA,,-85.41,,Shared
 2025-03-18,Nordstrom,Clothing,Centurion® Card (...1009),NORDSTROM #384 00000LOS ANGELES CA,,-88.15,,Shared
@@ -4509,7 +4509,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-03-05,Instacart,Groceries,Bank of America Premium Rewards (...6538),IC* INSTACART 888-246-7822 CA ,,-137.96,,Shared
 2025-03-05,Instacart,Groceries,Bank of America Premium Rewards (...6538),IC* INSTACART 888-246-7822 CA ,,-103.76,,Shared
 2025-03-05,Instacart,Groceries,Bank of America Premium Rewards (...6538),IC* INSTACART 888-246-7822 CA ,,-7.57,,Shared
-2025-03-05,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
+2025-03-05,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
 2025-03-05,The Scoop Term,Restaurants,Bank of America Premium Rewards (...6538),687- THE SCOOP - TERM SAN FRANCISCOCA ,,-14.98,,Shared
 2025-03-04,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*V49JN0DW3,,-15.87,,Shared
 2025-03-04,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*GS6N959Y3,,-43.62,,Shared
@@ -4665,7 +4665,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-02-19,Farmshop,Restaurants,Centurion® Card (...1009),TST* FARMSHOP- SANTASANTA MONICA CA,,-34.50,,Shared
 2025-02-19,Farmshop,Restaurants,Centurion® Card (...1009),TST* FARMSHOP- SANTASANTA MONICA CA,,-4.50,,Shared
 2025-02-19,Halo Collar,Pet Health,Bank Of America Alex's Visa (...9604),HALOCOLLAR.COM WWW.HALOCOLLANJ ,,-9.99,,Shared
-2025-02-19,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
+2025-02-19,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
 2025-02-19,Apple,Subsciptions,Bank of America Premium Rewards (...6538),APPLE.COM/BILL 866-712-7753 CA ,,-9.99,,Shared
 2025-02-18,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*JT8OO1Q03,,-31.15,,Shared
 2025-02-18,Tomoko Spa,Personal Care,Centurion® Card (...1009),"TOMOKO SPA, INC. BEVERLY HILLS CA",,-510.00,,Shared
@@ -4860,7 +4860,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-02-05,The Floor Dance Academy,Child Activities,Bank Of America Alex's Visa (...9604),SQ *THE FLOOR DANCE ACADELOS ANGELES CA ,,-10.00,,Shared
 2025-02-05,GoDaddy,Subsciptions,Bank Of America Alex's Visa (...9604),DNH*GODADDY#3564842730 480-5058855 AZ ,,-165.48,,Shared
 2025-02-05,Miele,Misc Maintenance,Bank of America Premium Rewards (...6538),www.mieleusa.com 800-8437231 DE ,,-1563.13,,Shared
-2025-02-05,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
+2025-02-05,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
 2025-02-04,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*394H51SW3,,-24.24,,Shared
 2025-02-04,Ucla Store,Shopping,Centurion® Card (...1009),UCLA STORE 0000 LOS ANGELES CA,,-43.75,,Shared
 2025-02-04,Ucla Store,Shopping,Centurion® Card (...1009),UCLA STORE 0000 LOS ANGELES CA,,-12.09,,Shared
@@ -4996,7 +4996,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-01-22,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*Z509P09I1,,-250.54,,Shared
 2025-01-22,Pavilions,Groceries,Bank Of America Alex's Visa (...9604),PAVILIONS #2739 WEST HOLLYWOOCA ,,-108.77,,Shared
 2025-01-22,Chevron,Gas,Bank Of America Alex's Visa (...9604),CHEVRON 0093100 LOS ANGELES CA ,,-54.51,,Shared
-2025-01-22,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
+2025-01-22,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-1548.00,,Shared
 2025-01-22,YouTube,Subsciptions,Bank of America Premium Rewards (...6538),Google YouTubePremium 650-2530000 CA ,,-22.99,,Shared
 2025-01-21,Petco,Pet Food and Treats,Centurion® Card (...1009),PETCO 0908 0090 LOS ANGELES CA,,-22.97,,Shared
 2025-01-21,Organic Kids,Restaurants,Centurion® Card (...1009),OKLA LUNCHES LOS ANGELES CA,,-100.00,,Shared
@@ -5161,7 +5161,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-01-08,Bristol Farms,Groceries,Bank Of America Alex's Visa (...9604),BRISTOL FARMS 10 WEST HOLLYWOOCA ,,-233.23,,Shared
 2025-01-08,Shell,Gas,Bank of America Premium Rewards (...6538),SHELL OIL 57444178503 LOS ANGELES CA ,,-16.00,,Shared
 2025-01-08,Instacart,Groceries,Bank of America Premium Rewards (...6538),IC* INSTACART 888-246-7822 CA ,,-179.91,,Shared
-2025-01-08,Hayutin Associates Inc,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
+2025-01-08,Hayutin Associates,Tutoring,Bank of America Premium Rewards (...6538),HAYUTIN & ASSOCIATES- INC310-8297505 CA ,,-774.00,,Shared
 2025-01-08,Apple,Subsciptions,Bank of America Premium Rewards (...6538),APPLE.COM/BILL 866-712-7753 CA ,,-37.95,,Shared
 2025-01-08,Apple,Subsciptions,Bank of America Premium Rewards (...6538),APPLE.COM/BILL 866-712-7753 CA ,,5.80,,Shared
 2025-01-07,Sweet Lady Jane,Restaurants,Centurion® Card (...1009),TST* SWEET LADY JANESANTA MONICA CA,,-13.50,,Shared
