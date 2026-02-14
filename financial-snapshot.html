@@ -2356,7 +2356,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const id = 'budget-chart-' + category.replace(/[^a-zA-Z0-9]/g, '-');
           const inputId = 'budget-input-' + category.replace(/[^a-zA-Z0-9]/g, '-');
           const labelId = 'budget-label-' + category.replace(/[^a-zA-Z0-9]/g, '-');
-          html += `<div class="budget-category-card" data-expanded="true" data-category="${category.replace(/"/g, '&quot;')}">
+          html += `<div class="budget-category-card" data-expanded="${spending > 0 ? 'true' : 'false'}" data-category="${category.replace(/"/g, '&quot;')}">
             <div class="budget-category-header">
               <span class="budget-category-header-inner">
                 <span class="budget-category-toggle">▾</span>
@@ -2372,11 +2372,59 @@ For each scenario, net investments, real estate, and net worth are projected yea
           if (nextGroup !== grouping) html += '</div></div>';
         }
         el.innerHTML = html;
+        const now = new Date();
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        const endOfYear = new Date(now.getFullYear(), 11, 31);
+        const daysInYear = Math.round((endOfYear - startOfYear) / 86400000) + 1;
+        const dayOfYear = Math.round((now - startOfYear) / 86400000) + 1;
+        const todayProgress = Math.min(1, Math.max(0, dayOfYear / daysInYear));
+        const budgetLinesPlugin = {
+          id: 'budgetLines',
+          afterDatasetsDraw(chart) {
+            const opts = chart.options.plugins?.budgetLines;
+            const ctx = chart.ctx;
+            const xScale = chart.scales.x;
+            if (!xScale) return;
+            const top = chart.chartArea.top;
+            const bottom = chart.chartArea.bottom;
+            const left = chart.chartArea.left;
+            const right = chart.chartArea.right;
+            if (opts?.todayValue != null) {
+              const x = xScale.getPixelForValue(opts.todayValue);
+              if (x >= left - 1 && x <= right + 1) {
+                ctx.save();
+                ctx.strokeStyle = '#7c3aed';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x, top);
+                ctx.lineTo(x, bottom);
+                ctx.stroke();
+                ctx.restore();
+              }
+            }
+            if (opts?.budgetValue != null && opts?.spending != null && opts.spending > opts.budgetValue) {
+              const x = xScale.getPixelForValue(opts.budgetValue);
+              if (x >= left - 1 && x <= right + 1) {
+                ctx.save();
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(x, top);
+                ctx.lineTo(x, bottom);
+                ctx.stroke();
+                ctx.restore();
+              }
+            }
+          }
+        };
         for (const { grouping, category } of BUDGET_CATEGORIES) {
           const txs = this.byCategory[category] || [];
           const spending = this.getSpending(txs);
           const budget = this.getBudget(category);
           const maxVal = Math.max(budget, spending, 1);
+          const todayLineValue = budget * todayProgress;
+          const pct = budget > 0 ? spending / budget : 0;
+          const barColor = pct <= 0.8 ? '#22c55e' : (pct <= 1 ? '#eab308' : '#ef4444');
           const id = 'budget-chart-' + category.replace(/[^a-zA-Z0-9]/g, '-');
           const inputId = 'budget-input-' + category.replace(/[^a-zA-Z0-9]/g, '-');
           const canvas = document.getElementById(id);
@@ -2384,13 +2432,17 @@ For each scenario, net investments, real estate, and net worth are projected yea
             const ctx = canvas.getContext('2d');
             const inst = new Chart(ctx, {
               type: 'bar',
-              data: { labels: [category], datasets: [{ data: [spending], backgroundColor: spending > budget ? '#ef4444' : '#0ea5e9' }] },
+              plugins: [budgetLinesPlugin],
+              data: { labels: [category], datasets: [{ data: [spending], backgroundColor: barColor }] },
               options: {
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
                 layout: { padding: { left: 2, right: 8, top: 2, bottom: 2 } },
-                plugins: { legend: { display: false } },
+                plugins: {
+                  legend: { display: false },
+                  budgetLines: { todayValue: todayLineValue, budgetValue: budget, spending }
+                },
                 scales: {
                   x: {
                     min: 0,
@@ -2417,8 +2469,14 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 const b = this.getBudget(category);
                 const inst = this.chartInstances[category];
                 if (inst) {
-                  inst.data.datasets[0].backgroundColor = spend > b ? '#ef4444' : '#0ea5e9';
+                  const p = b > 0 ? spend / b : 0;
+                  inst.data.datasets[0].backgroundColor = p <= 0.8 ? '#22c55e' : (p <= 1 ? '#eab308' : '#ef4444');
                   inst.options.scales.x.max = Math.max(b, spend, 1);
+                  if (inst.options.plugins?.budgetLines) {
+                    inst.options.plugins.budgetLines.todayValue = b * todayProgress;
+                    inst.options.plugins.budgetLines.budgetValue = b;
+                    inst.options.plugins.budgetLines.spending = spend;
+                  }
                   inst.update();
                 }
                 inputEl.value = Math.round(b).toLocaleString();
