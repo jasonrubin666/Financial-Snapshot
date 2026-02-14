@@ -1,0 +1,3 @@
+False if Spent,Category,Merchant,Type,Amount,StartMonth,EndMonth
+TRUE,Internet,Spectrum ,monthly,86.24,2,12
+TRUE,Property taxes,Los Angeles Tax Assessor,one-time,68605.43,2,

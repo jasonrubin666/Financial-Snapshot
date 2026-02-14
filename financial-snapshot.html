@@ -350,6 +350,7 @@
       letter-spacing: 0.03em;
     }
     .breakdown-table td { color: var(--text); }
+    .breakdown-table tr.committed-row td { color: #888; }
     .breakdown-table tr td:nth-child(n+2),
     .breakdown-table tr th:nth-child(n+2) { text-align: right; }
     .page-nav {
@@ -621,30 +622,6 @@
   </header>
   <div id="page-investments" class="page-content" data-visible="true">
   <div id="chart-sections">
-    <!-- Net Investments chart (commented out - using Balance chart from Balances.csv instead)
-    <section id="chart-net-investments" class="chart-section" data-chart-id="net-investments" data-visible="true">
-      <div class="chart-wrapper chart-full-width">
-        <div class="chart-header">
-          <h2>Net Investments</h2>
-          <div class="chart-header-controls">
-            <select id="netInvestments-viewSelect" class="chart-select">
-              <option value="1month" selected>1 month</option>
-              <option value="90days">90 days</option>
-              <option value="year">This year</option>
-            </select>
-            <button type="button" id="netInvestments-saveCsv" class="chart-select" title="Save extended CSV (writes to file in Chrome/Edge, else downloads)">Save CSV</button>
-          </div>
-        </div>
-        <div class="chart-container">
-          <canvas id="netInvestments-canvas"></canvas>
-        </div>
-        <details>
-          <summary>Data</summary>
-          <div id="netinv-data-breakdown" class="breakdown-content" style="max-height: 200px; overflow: auto;"></div>
-        </details>
-      </div>
-    </section>
-    -->
     <section id="chart-balance" class="chart-section" data-chart-id="balance" data-visible="true">
       <div class="chart-wrapper chart-full-width">
         <div class="chart-header">
@@ -765,7 +742,6 @@ For each scenario, net investments, real estate, and net worth are projected yea
   <script>
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.addEventListener('load', () => window.scrollTo(0, 0));
-    const csvPath = 'CSV Working prototype - Sheet1.csv';
     async function findBalancesCsvPath() {
       const basePath = window.location.pathname.replace(/\/[^/]*$/, '') || '/';
       const dirUrl = basePath + (basePath.endsWith('/') ? '' : '/');
@@ -812,6 +788,25 @@ For each scenario, net investments, real estate, and net worth are projected yea
         while ((m = linkRe.exec(html)) !== null) {
           const href = decodeURIComponent(m[1]).replace(/^\.\//, '');
           if (href.toLowerCase().startsWith('budget_limits') && /\.csv$/i.test(href)) candidates.push(href);
+        }
+        candidates.sort();
+        return candidates.length > 0 ? candidates[candidates.length - 1] : null;
+      } catch (_) { return null; }
+    }
+    async function findBudgetCommittedCsvPath() {
+      const basePath = window.location.pathname.replace(/\/[^/]*$/, '') || '/';
+      const dirUrl = basePath + (basePath.endsWith('/') ? '' : '/');
+      try {
+        const r = await fetch(dirUrl);
+        const html = await r.text();
+        const linkRe = /<a\s+href="([^"]+)"/gi;
+        const candidates = [];
+        let m;
+        const matchCommitted = /budget_committed[\s\S]*\.csv$/i;
+        while ((m = linkRe.exec(html)) !== null) {
+          const href = decodeURIComponent(m[1]).replace(/^\.\//, '');
+          const baseName = href.split('/').pop();
+          if (matchCommitted.test(baseName)) candidates.push(href);
         }
         candidates.sort();
         return candidates.length > 0 ? candidates[candidates.length - 1] : null;
@@ -955,7 +950,6 @@ For each scenario, net investments, real estate, and net worth are projected yea
 
     // Chart registry: add charts here to show/hide or reorder
     const chartRegistry = {
-      'net-investments': document.getElementById('chart-net-investments'),
       'balance': document.getElementById('chart-balance'),
       'key-figures': document.getElementById('chart-key-figures'),
       'wealth-projection': document.getElementById('chart-wealth-projection'),
@@ -1312,17 +1306,16 @@ For each scenario, net investments, real estate, and net worth are projected yea
       },
 
       async init() {
-        const response = await fetch(csvPath);
-        const text = await response.text();
-        const lines = text.trim().split('\n');
-        const data = lines.slice(1).filter(line => line.trim());
-
-        this.rawData = data.map(line => {
-          const cols = line.split(',');
-          const dateStr = cols[0];
-          const rawRow = [cols[0] || '', cols[1] || '', cols[2] || '', cols[3] || '', cols[4] || ''];
-          return { dateStr, dateObj: parseDate(dateStr), value: parseFloat(cols[4]) || 0, rawRow };
-        });
+        const invFilters = { realEstate: true, automobiles: true, nonMerrill: false };
+        const byDate = new Map();
+        for (const r of balanceChart.rawRows) {
+          if (balanceChart.isExcluded(r.account, invFilters)) continue;
+          byDate.set(r.dateStr, (byDate.get(r.dateStr) || 0) + r.value);
+        }
+        this.rawData = Array.from(byDate.entries())
+          .map(([dateStr, value]) => ({ dateStr, dateObj: parseDateIso(dateStr), value, rawRow: [dateStr, '', '', '', String(value)] }))
+          .filter(r => !isNaN(r.dateObj.getTime()))
+          .sort((a, b) => a.dateObj - b.dateObj);
         this.extendRawDataToToday();
 
         const view = document.getElementById('netInvestments-viewSelect').value;
@@ -1531,6 +1524,41 @@ For each scenario, net investments, real estate, and net worth are projected yea
           .map(([dateStr, value]) => ({ dateStr, dateObj: parseDateIso(dateStr), value }))
           .filter(r => !isNaN(r.dateObj.getTime()))
           .sort((a, b) => a.dateObj - b.dateObj);
+      },
+
+      isRealEstateAccount(account) {
+        if (!account) return false;
+        const a = account;
+        return a.includes('Skylark') || a.includes('BLKSTN - Real Estate') || a.includes('Mortgage');
+      },
+
+      getRealEstateDailyTotals() {
+        const byDate = new Map();
+        for (const r of this.rawRows) {
+          if (!this.isRealEstateAccount(r.account)) continue;
+          const key = r.dateStr;
+          byDate.set(key, (byDate.get(key) || 0) + r.value);
+        }
+        return Array.from(byDate.entries())
+          .map(([dateStr, value]) => ({ dateStr, dateObj: parseDateIso(dateStr), value }))
+          .filter(r => !isNaN(r.dateObj.getTime()))
+          .sort((a, b) => a.dateObj - b.dateObj);
+      },
+
+      getLatestForProjection() {
+        const invFilters = { realEstate: true, automobiles: true, nonMerrill: false };
+        const byDateInv = new Map();
+        for (const r of this.rawRows) {
+          if (this.isExcluded(r.account, invFilters)) continue;
+          byDateInv.set(r.dateStr, (byDateInv.get(r.dateStr) || 0) + r.value);
+        }
+        const invEntries = Array.from(byDateInv.entries()).sort((a, b) => parseDateIso(a[0]) - parseDateIso(b[0]));
+        const reTotals = this.getRealEstateDailyTotals();
+        const latestDate = invEntries.length ? invEntries[invEntries.length - 1][0] : null;
+        const netInvestments = latestDate ? byDateInv.get(latestDate) || 0 : 0;
+        const reForDate = reTotals.find(r => r.dateStr === latestDate);
+        const realEstate = reForDate ? reForDate.value : 0;
+        return { netInvestments, realEstate };
       },
 
       filterData(view) {
@@ -1923,14 +1951,9 @@ For each scenario, net investments, real estate, and net worth are projected yea
       hide() { setChartVisible(this.id, false); },
 
       async init() {
-        const response = await fetch(csvPath);
-        const text = await response.text();
-        const lines = text.trim().split('\n');
-        const data = lines.slice(1).filter(line => line.trim());
-        const lastRow = data[data.length - 1];
-        const cols = lastRow ? lastRow.split(',') : [];
-        this.startingWealth = cols[4] ? parseFloat(cols[4]) : 0;
-        this.startingRealEstate = cols[2] ? parseFloat(cols[2]) : 0;
+        const { netInvestments, realEstate: reVal } = balanceChart.getLatestForProjection();
+        this.startingWealth = netInvestments;
+        this.startingRealEstate = reVal;
 
         const labels = [];
         for (let y = this.startYear; y < this.startYear + this.numYears; y++) labels.push(y % 100);
@@ -2185,14 +2208,9 @@ For each scenario, net investments, real estate, and net worth are projected yea
       hide() { setChartVisible(this.id, false); },
 
       async init() {
-        const response = await fetch(csvPath);
-        const text = await response.text();
-        const lines = text.trim().split('\n');
-        const data = lines.slice(1).filter(line => line.trim());
-        const lastRow = data[data.length - 1];
-        const cols = lastRow ? lastRow.split(',') : [];
-        this.startingWealth = cols[4] ? parseFloat(cols[4]) : 0;
-        this.startingRealEstate = cols[2] ? parseFloat(cols[2]) : 0;
+        const { netInvestments, realEstate: reVal } = balanceChart.getLatestForProjection();
+        this.startingWealth = netInvestments;
+        this.startingRealEstate = reVal;
 
         const stored = this.loadStored();
         if (stored) this.setInputValues(stored);
@@ -2257,6 +2275,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
       chartInstances: {},
       transactions: [],
       byCategory: {},
+      committedItems: [],
       storedBudgets: null,
       loadStoredBudgets() {
         try {
@@ -2285,12 +2304,14 @@ For each scenario, net investments, real estate, and net worth are projected yea
       updateTotals() {
         const el = document.getElementById('budget-totals-summary');
         if (!el) return;
-        let totalBudget = 0, totalSpending = 0;
+        let totalBudget = 0, totalSpending = 0, totalCommitted = 0;
         for (const { grouping, category } of BUDGET_CATEGORIES) {
           totalBudget += this.getBudget(category);
           totalSpending += this.getSpendingForTotal(this.byCategory[category] || []);
+          totalCommitted += this.getCommitted(category);
         }
         const spend = Math.max(0, totalSpending);
+        const committed = totalCommitted;
         const pctBudget = totalBudget > 0 ? (spend / totalBudget) * 100 : 0;
         const now = new Date();
         const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -2300,9 +2321,14 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const timeProgress = Math.min(1, Math.max(0, dayOfYear / daysInYear)) || 0.001;
         const timeVariancePct = pctBudget / (timeProgress * 100) * 100;
         const todayLineValue = totalBudget * timeProgress;
-        const maxVal = Math.max(totalBudget, spend, 1);
-        const pct = totalBudget > 0 ? spend / totalBudget : 0;
+        const totalWithCommitted = spend + committed;
+        const maxVal = Math.max(totalBudget, totalWithCommitted, 1);
+        const pct = totalBudget > 0 ? totalWithCommitted / totalBudget : 0;
         const barColor = pct <= 0.8 ? '#22c55e' : (pct <= 1 ? '#eab308' : '#ef4444');
+        const totalsCommittedCurMonth = BUDGET_CATEGORIES.reduce((s, { category }) => s + this.getCommittedCurrentMonth(category), 0);
+        const committedOpacity = totalsCommittedCurMonth > 0 ? 0.75 : 0.5;
+        const [tr, tg, tb] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
+        const totalsCommittedColor = 'rgba(' + tr + ',' + tg + ',' + tb + ',' + committedOpacity + ')';
         const totalsBudgetLinesPlugin = {
           id: 'totalsBudgetLines',
           afterDatasetsDraw(chart) {
@@ -2342,6 +2368,12 @@ For each scenario, net investments, real estate, and net worth are projected yea
             }
           }
         };
+        const totalsDatasets = committed > 0
+          ? [
+              { data: [spend], backgroundColor: barColor, barThickness: 48, stack: 'totals0' },
+              { data: [committed], backgroundColor: totalsCommittedColor, barThickness: 48, stack: 'totals0' }
+            ]
+          : [{ data: [spend], backgroundColor: barColor, barThickness: 48 }];
         const chartWrap = '<div class="budget-totals-chart-wrap"><canvas id="budget-totals-chart"></canvas></div>';
         const statsHtml = '<div class="budget-totals-row">' +
           '<div class="budget-totals-stats">' +
@@ -2359,7 +2391,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           this.totalsChart = new Chart(ctx, {
             type: 'bar',
             plugins: [totalsBudgetLinesPlugin],
-            data: { labels: ['Total'], datasets: [{ data: [spend], backgroundColor: barColor, barThickness: 48 }] },
+            data: { labels: ['Total'], datasets: totalsDatasets },
             options: {
               indexAxis: 'y',
               responsive: true,
@@ -2367,15 +2399,16 @@ For each scenario, net investments, real estate, and net worth are projected yea
               layout: { padding: { left: 4, right: 12, top: 4, bottom: 4 } },
               plugins: {
                 legend: { display: false },
-                totalsBudgetLines: { todayValue: todayLineValue, budgetValue: totalBudget, spending: spend }
+                totalsBudgetLines: { todayValue: todayLineValue, budgetValue: totalBudget, spending: totalWithCommitted }
               },
               scales: {
                 x: {
                   min: 0,
                   max: maxVal,
+                  stacked: committed > 0,
                   ticks: { callback: v => '$' + (v / 1000) + 'k', maxRotation: 0, font: { size: 16, weight: '600' } }
                 },
-                y: { display: false }
+                y: { stacked: committed > 0, display: false }
               }
             }
           });
@@ -2403,6 +2436,75 @@ For each scenario, net investments, real estate, and net worth are projected yea
           this.saveBudgets();
           return true;
         } catch (_) { return false; }
+      },
+      async loadBudgetsCommitted() {
+        const path = await findBudgetCommittedCsvPath();
+        if (!path) { this.committedItems = []; return; }
+        try {
+          const r = await fetch(path);
+          const text = await r.text();
+          const rows = parseCsvLines(text);
+          const items = [];
+          const year = new Date().getFullYear();
+          for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            if (row.length < 6) continue;
+            const active = (row[0] || '').trim().toLowerCase();
+            if (active !== 'true') continue;
+            const catRaw = (row[1] || '').trim();
+            const canonical = BUDGET_CATEGORIES.find(b => b.category.toLowerCase() === catRaw.toLowerCase())?.category;
+            if (!canonical) continue;
+            const merchant = (row[2] || '').trim();
+            const type = (row[3] || '').trim().toLowerCase();
+            const amount = parseFloat(row[4]);
+            const startMonth = parseInt(row[5], 10);
+            const endMonth = row.length >= 7 && (row[6] || '').trim() ? parseInt(row[6], 10) : startMonth;
+            if (isNaN(amount) || amount <= 0) continue;
+            if (type === 'one-time') {
+              if (startMonth >= 1 && startMonth <= 12) items.push({ category: canonical, merchant, type: 'one-time', amount, startMonth, endMonth: startMonth });
+            } else if (type === 'monthly') {
+              const sm = Math.max(1, Math.min(12, isNaN(startMonth) ? 1 : startMonth));
+              const em = Math.max(1, Math.min(12, isNaN(endMonth) ? sm : endMonth));
+              for (let m = Math.min(sm, em); m <= Math.max(sm, em); m++) {
+                items.push({ category: canonical, merchant, type: 'monthly', amount, startMonth: m, endMonth: m });
+              }
+            }
+          }
+          this.committedItems = items;
+        } catch (_) { this.committedItems = []; }
+      },
+      getCommitted(category) {
+        if (!Array.isArray(this.committedItems)) return 0;
+        return this.committedItems
+          .filter(i => i.category === category)
+          .reduce((s, i) => s + Math.abs(i.amount), 0);
+      },
+      getCommittedCurrentMonth(category) {
+        if (!Array.isArray(this.committedItems)) return 0;
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1;
+        return this.committedItems
+          .filter(i => i.category === category && i.startMonth === currentMonth)
+          .reduce((s, i) => s + Math.abs(i.amount), 0);
+      },
+      getCommittedRows(category) {
+        if (!Array.isArray(this.committedItems)) return [];
+        const year = new Date().getFullYear();
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        return this.committedItems
+          .filter(i => i.category === category)
+          .map(i => {
+            const d = new Date(year, i.startMonth - 1, 1);
+            return {
+              date: monthNames[i.startMonth - 1] + ' 1, ' + year,
+              dateObj: d,
+              merchant: i.merchant,
+              category: i.category,
+              tag: '',
+              amount: -Math.abs(i.amount),
+              committed: true
+            };
+          });
       },
       exportBudgetsCsv() {
         const lines = ['Category,Budget'];
@@ -2453,6 +2555,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
         this.loadStoredBudgets();
         const fromCsv = await this.loadBudgetsFromCsv();
         if (!fromCsv) this.loadStoredBudgets();
+        try { await this.loadBudgetsCommitted(); } catch (_) { this.committedItems = []; }
         this.render();
         this.updateTotals();
         this.loaded = true;
@@ -2493,6 +2596,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           for (const category of groupCategories[grouping]) {
             const txs = this.byCategory[category] || [];
             const spending = this.getSpending(txs);
+            const committed = this.getCommitted(category);
             const budget = this.getBudget(category);
             const id = 'budget-chart-' + category.replace(/[^a-zA-Z0-9]/g, '-');
             const inputId = 'budget-input-' + category.replace(/[^a-zA-Z0-9]/g, '-');
@@ -2501,7 +2605,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
               <div class="budget-category-header">
                 <span class="budget-category-header-inner">
                   <span class="budget-category-toggle">▾</span>
-                  <span class="budget-category-label" id="${labelId}">${category} — $${spending.toLocaleString(undefined, { maximumFractionDigits: 0 })} / $${budget.toLocaleString()}</span>
+                  <span class="budget-category-label" id="${labelId}">${category} — $${spending.toLocaleString(undefined, { maximumFractionDigits: 0 })}${committed > 0 ? ' + $' + Math.round(committed).toLocaleString() + ' committed' : ''} / $${budget.toLocaleString()}</span>
                 </span>
                 <input type="text" class="budget-input" id="${inputId}" data-category="${category.replace(/"/g, '&quot;')}" data-grouping="${grouping.replace(/"/g, '&quot;')}" value="${Math.round(budget).toLocaleString()}" inputmode="numeric">
               </div>
@@ -2562,20 +2666,32 @@ For each scenario, net investments, real estate, and net worth are projected yea
         for (const { grouping, category } of BUDGET_CATEGORIES) {
           const txs = this.byCategory[category] || [];
           const spending = this.getSpending(txs);
+          const committed = this.getCommitted(category);
+          const committedCurMonth = this.getCommittedCurrentMonth(category);
           const budget = this.getBudget(category);
-          const maxVal = Math.max(budget, spending, 1);
+          const totalWithCommitted = spending + committed;
+          const maxVal = Math.max(budget, totalWithCommitted, 1);
           const todayLineValue = budget * todayProgress;
-          const pct = budget > 0 ? spending / budget : 0;
-          const barColor = pct <= 0.8 ? '#22c55e' : (pct <= 1 ? '#eab308' : '#ef4444');
+          const pctForColor = budget > 0 ? totalWithCommitted / budget : 0;
+          const barColor = pctForColor <= 0.8 ? '#22c55e' : (pctForColor <= 1 ? '#eab308' : '#ef4444');
+          const committedOpacity = committedCurMonth > 0 ? 0.75 : 0.5;
+          const [r, g, b] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
+          const committedColor = 'rgba(' + r + ',' + g + ',' + b + ',' + committedOpacity + ')';
           const id = 'budget-chart-' + category.replace(/[^a-zA-Z0-9]/g, '-');
           const inputId = 'budget-input-' + category.replace(/[^a-zA-Z0-9]/g, '-');
           const canvas = document.getElementById(id);
           if (canvas) {
             const ctx = canvas.getContext('2d');
+            const datasets = committed > 0
+              ? [
+                  { data: [spending], backgroundColor: barColor, stack: 'stack0' },
+                  { data: [committed], backgroundColor: committedColor, stack: 'stack0' }
+                ]
+              : [{ data: [spending], backgroundColor: barColor }];
             const inst = new Chart(ctx, {
               type: 'bar',
               plugins: [budgetLinesPlugin],
-              data: { labels: [category], datasets: [{ data: [spending], backgroundColor: barColor }] },
+              data: { labels: [category], datasets },
               options: {
                 indexAxis: 'y',
                 responsive: true,
@@ -2583,15 +2699,16 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 layout: { padding: { left: 2, right: 8, top: 2, bottom: 2 } },
                 plugins: {
                   legend: { display: false },
-                  budgetLines: { todayValue: todayLineValue, budgetValue: budget, spending }
+                  budgetLines: { todayValue: todayLineValue, budgetValue: budget, spending: totalWithCommitted }
                 },
                 scales: {
                   x: {
                     min: 0,
                     max: maxVal,
+                    stacked: committed > 0,
                     ticks: { callback: v => '$' + (v / 1000) + 'k', maxRotation: 0, font: { size: 11 } }
                   },
-                  y: { display: false }
+                  y: { stacked: committed > 0, display: false }
                 }
               }
             });
@@ -2611,18 +2728,29 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 const b = this.getBudget(category);
                 const inst = this.chartInstances[category];
                 if (inst) {
-                  const p = b > 0 ? spend / b : 0;
-                  inst.data.datasets[0].backgroundColor = p <= 0.8 ? '#22c55e' : (p <= 1 ? '#eab308' : '#ef4444');
-                  inst.options.scales.x.max = Math.max(b, spend, 1);
+                  const comm = this.getCommitted(category);
+                  const totalWithComm = spend + comm;
+                  const p = b > 0 ? totalWithComm / b : 0;
+                  const barColor = p <= 0.8 ? '#22c55e' : (p <= 1 ? '#eab308' : '#ef4444');
+                  inst.data.datasets[0].data = [spend];
+                  inst.data.datasets[0].backgroundColor = barColor;
+                  if (inst.data.datasets[1]) {
+                    const commCurMonth = this.getCommittedCurrentMonth(category);
+                    const opacity = commCurMonth > 0 ? 0.75 : 0.5;
+                    const [r, g, b] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
+                    inst.data.datasets[1].data = [comm];
+                    inst.data.datasets[1].backgroundColor = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
+                  }
+                  inst.options.scales.x.max = Math.max(b, totalWithComm, 1);
                   if (inst.options.plugins?.budgetLines) {
                     inst.options.plugins.budgetLines.todayValue = b * todayProgress;
                     inst.options.plugins.budgetLines.budgetValue = b;
-                    inst.options.plugins.budgetLines.spending = spend;
+                    inst.options.plugins.budgetLines.spending = totalWithComm;
                   }
                   inst.update();
                 }
                 inputEl.value = Math.round(b).toLocaleString();
-                if (labelEl) labelEl.textContent = category + ' — $' + spend.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' / $' + b.toLocaleString();
+                if (labelEl) labelEl.textContent = category + ' — $' + spend.toLocaleString(undefined, { maximumFractionDigits: 0 }) + (comm > 0 ? ' + $' + Math.round(comm).toLocaleString() + ' committed' : '') + ' / $' + b.toLocaleString();
                 const grouping = inputEl.getAttribute('data-grouping');
                 if (grouping) {
                   const groupTotal = BUDGET_CATEGORIES.filter(bc => bc.grouping === grouping).reduce((s, bc) => s + this.getBudget(bc.category), 0);
@@ -2638,12 +2766,17 @@ For each scenario, net investments, real estate, and net worth are projected yea
           }
           const dataEl = document.getElementById('budget-data-' + id);
           if (dataEl) {
-            const sorted = [...txs].sort((a, b) => a.dateObj - b.dateObj);
             const fmt = d => d ? monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() : '';
             const amountFmt = n => n < 0 ? '$' + Math.abs(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : (n > 0 ? '$-' + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '$0.00');
-            const visibleTxs = category === 'Categorized but not Budgeted' ? sorted.filter(t => !t.hidden) : sorted;
+            const visibleTxs = category === 'Categorized but not Budgeted' ? txs.filter(t => !t.hidden) : txs;
+            const committedRows = this.getCommittedRows(category);
+            const allRows = [...visibleTxs, ...committedRows].sort((a, b) => a.dateObj - b.dateObj);
+            const rowHtml = r => {
+              const cls = r.committed ? ' class="committed-row"' : '';
+              return `<tr${cls}><td>${fmt(r.dateObj)}</td><td>${(r.merchant || '').replace(/</g, '&lt;')}</td><td>${(r.category || '').replace(/</g, '&lt;')}</td><td>${(r.tag || '').replace(/</g, '&lt;')}</td><td>${amountFmt(r.amount)}</td></tr>`;
+            };
             let dataHtml = '<table class="breakdown-table"><thead><tr><th>Date</th><th>Merchant</th><th>Category</th><th>Tag</th><th>Amount</th></tr></thead><tbody>' +
-              visibleTxs.map(t => `<tr><td>${fmt(t.dateObj)}</td><td>${(t.merchant || '').replace(/</g, '&lt;')}</td><td>${(t.category || '').replace(/</g, '&lt;')}</td><td>${(t.tag || '').replace(/</g, '&lt;')}</td><td>${amountFmt(t.amount)}</td></tr>`).join('') + '</tbody></table>';
+              allRows.map(rowHtml).join('') + '</tbody></table>';
             if (category === 'Categorized but not Budgeted' && (IGNORED_CATEGORIES.length || IGNORED_TAGS.length)) {
               if (IGNORED_CATEGORIES.length) {
                 dataHtml += '<p class="budget-ignored-note">Ignored Categories: ' + IGNORED_CATEGORIES.join(', ') + '</p>';
