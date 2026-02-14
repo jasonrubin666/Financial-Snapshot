@@ -1,11 +1,21 @@
 Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
+2026-02-14,Trifecta Nutrition,Restaurants,Bank of America Premium Rewards (...6538),"TRIFECTA NUTRITION, INC.",,-129.91,,Shared
+2026-02-13,Morgan Rubin,Kids Allowance,Jason and Agnes Checking (...8486),Online scheduled transfer to CHK 4626 Confirmation# XXXXX26660,,-40.00,,Shared
+2026-02-13,Bristol Farms,Groceries,Bank Of America Alex's Visa (...9604),BRISTOL FARMS 15,,-128.86,,Shared
+2026-02-13,Parking,Parking,Bank of America Premium Rewards (...6538),P3 LAX SMARTPARKING,Parking for DICE in LV,-120.00,Morgan Rose,Shared
+2026-02-13,Parking,Parking,Bank of America Premium Rewards (...6538),LAZ PARKING M17154,,-15.00,,Shared
+2026-02-13,AMC Theatres,Entertainment,Bank of America Premium Rewards (...6538),AMC 0450 GROVE 14,,-7.49,,Shared
 2026-02-13,Wetzel's Pretzels,Restaurants,Centurion® Card (...1009),WETZEL'S PRETZELS - S-136 GROV,,-27.03,,Shared
 2026-02-13,Vulcania,Restaurants,Centurion® Card (...1009),VULCANIA RESTAURANT,,-134.00,,Shared
 2026-02-13,"MOEMENT, INC.",Business Services,Centurion® Card (...1009),"MOEMENT, INC.",,-31.05,,Shared
-2026-02-13,Morgan Rubin,Kids Allowance,Jason and Agnes Checking (...8486),TRANSFER TO ACCT #4626 ON 02/13 VIA WEB,,-40.00,,Shared
 2026-02-13,Petco,Pet Food and Treats,Bank Of America Alex's Visa (...9604),PETCO VITAL CARE 4200,,-27.61,,Shared
 2026-02-13,The Waldorf Astoria,Restaurants,Bank of America Premium Rewards (...6538),WALDORF ASTORIA LV ZEN KI,Breakfast w/ Chris Jurney,-81.28,,Shared
 2026-02-13,Aria Patisserie,Restaurants,Bank of America Premium Rewards (...6538),ARIA - PATISSERIE,,-9.48,Morgan Rose,Shared
+2026-02-12,Leora Cafe,Restaurants,Bank Of America Alex's Visa (...9604),LEORA* LEORA - 9346 CI CHOWNOW.COM/OCA ,,-67.39,,Shared
+2026-02-12,California Science Center,Entertainment,Bank Of America Alex's Visa (...9604),CA Science Center Los Angeles CA ,,-61.90,,Shared
+2026-02-12,Ucla Store,Shopping,Bank of America Premium Rewards (...6538),UCLA STORE LOS ANGELES CA ,,-10.91,,Shared
+2026-02-12,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *222CWE5NU2 650-5434800 DE ,,-50.00,Morgan Rose,Shared
+2026-02-12,Curb Taxi,Taxi & Ride Shares,Bank of America Premium Rewards (...6538),CURB LV TAXI NELLIS ASTORIA NY ,,-36.84,,Shared
 2026-02-12,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*WD6U88R13,,-23.99,,Shared
 2026-02-12,Pampered Tails,Pet Food and Treats,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
 2026-02-12,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:TAX 326107 ID:6semk7j3cb8 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-3117.08,,Shared
@@ -13,12 +23,9 @@ Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
 2026-02-12,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:NET 326108 ID:6semk7j3cb7 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-6874.02,,Shared
 2026-02-12,Transfer,Transfer,Jason and Agnes Checking (...8486),Agent Assisted transfer from BRK 7062 Confirmation# XXXXX02970,,25000.00,,Shared
 2026-02-12,American Express,Credit Card Payment,Jason and Agnes Checking (...8486),AMERICAN EXPRESS DES:ACH PMT ID:M4020 INDN:Jason Rubin CO ID:XXXXX33497 WEB,,-16824.37,,Shared
-2026-02-12,Leora Cafe,Restaurants,Bank Of America Alex's Visa (...9604),LEORA LEORA - 9346 CI,,-67.39,,Shared
 2026-02-12,Leora Cafe,Restaurants,Bank Of America Alex's Visa (...9604),LEORA CAFE,,-22.96,,Shared
 2026-02-12,California Science Center,Entertainment,Bank Of America Alex's Visa (...9604),CALIFORNIA SCIENCE CENTER,,-20.00,,Shared
 2026-02-12,California Science Center,Entertainment,Bank Of America Alex's Visa (...9604),CA SC CTR FOUNDATION,,-13.00,,Shared
-2026-02-12,Ucla Store,Shopping,Bank of America Premium Rewards (...6538),UCLA STORE,,-10.91,,Shared
-2026-02-12,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK 222CWE5NU2,,-50.00,Morgan Rose,Shared
 2026-02-12,Salt & Ivy,Restaurants,Bank of America Premium Rewards (...6538),ARIA-SALT IVY CAFE PAT, Breakfast w/ Jase Raymond,-44.43,Morgan Rose,Shared
 2026-02-12,Uber Eats,Restaurants,Centurion® Card (...1009),UBER EATS,,-121.74,,Shared
 2026-02-12,Mammoth Mountain,Travel,Centurion® Card (...1009),MAMMOTH RESERV INNTOPIA,,-2665.00,,Shared
@@ -26,8 +33,10 @@ Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
 2026-02-12,Turkish Airlines,Airfare & Transportation,Centurion® Card (...1009),TURKISH AIRLINES,,-19708.66,,Shared
 2026-02-12,Aria Resort,Travel,Delta SkyMiles® Reserve Card (...2004),ARIA - ADV SALES,,-150.00,Morgan Rose,Shared
 2026-02-12,Aria Resort,Travel,Delta SkyMiles® Reserve Card (...2004),ARIA - ADV SALES,,-1.01,Morgan Rose,Shared
-2026-02-12,California Science Center,Entertainment,Bank Of America Alex's Visa (...9604),CA Science Center,,-61.90,,Shared
 2026-02-12,Curb Mobility,Taxi & Ride Shares,Bank of America Premium Rewards (...6538),CURB MOBILITY,,-36.84,,Shared
+2026-02-11,Cafe Knotted,Restaurants,Bank Of America Alex's Visa (...9604),TST*CAFE KNOTTED - CENTU Los Angeles CA ,,-29.30,,Shared
+2026-02-11,Sephora,Personal Care,Bank Of America Alex's Visa (...9604),SEPHORA CENTURY CITY LOS ANGELES CA ,,-50.49,,Shared
+2026-02-11,Bristol Farms,Groceries,Bank Of America Alex's Visa (...9604),BRISTOL FARMS 15 LOS ANGELES CA ,,-68.08,,Shared
 2026-02-11,Uber Eats,Restaurants,Centurion® Card (...1009),UBER EATS help.uber.com CA,,-78.12,,Shared
 2026-02-11,Saks Fifth Avenue,Clothing,Centurion® Card (...1009),SAKS FIFTH AVENUE BEVERLY HILLS CA,,-850.56,,Shared
 2026-02-11,Fresh To You,Groceries,Centurion® Card (...1009),FARM FRESH TO YOU WEST SACRAMEN CA,,-58.50,,Shared
@@ -40,8 +49,6 @@ Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
 2026-02-11,Bank of America,Credit Card Payment,Jason and Agnes Checking (...8486),Online Banking payment to CRD 6538 Confirmation# XXXXX64521,,-25000.00,,Shared
 2026-02-11,Transfer,Transfer,Jason and Agnes Checking (...8486),Agent Assisted transfer from BRK 7062 Confirmation# XXXXX28606,,50000.00,,Shared
 2026-02-11,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *V47L5F9NU2 650-5434800 DE ,,-50.00,Morgan Rose,Shared
-2026-02-11,Sephora,Personal Care,Bank Of America Alex's Visa (...9604),SEPHORA CENTURY CITY,,-50.49,,Shared
-2026-02-11,Cafe Knotted,Restaurants,Bank Of America Alex's Visa (...9604),CAFE KNOTTED - CENTU,,-29.30,,Shared
 2026-02-11,Bristol Farms,Groceries,Bank Of America Alex's Visa (...9604),BRISTOL FARMS 15,,-68.08,,Shared
 2026-02-10,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*SH5TF38R3,"1 x Surviving the Wild: Star the Elephant - $13.99
 
@@ -198,7 +205,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-7517220-2774628
 2026-02-02,Morgan Rubin,Kids Allowance,Jason and Agnes Checking (...8486),Online scheduled transfer to CHK 4626 Confirmation# XXXXX95073,,-40.00,,Shared
 2026-02-02,Bank of America,Mortgage,Jason and Agnes Checking (...8486),Interest Payment 296449 00024449 JASON RU,,-9342.47,,Shared
 2026-02-01,Interest Income,Interest,FSA,Interest on Cash Balance,,1.25,,Shared
-2026-02-01,AC Pools,Misc Maintenance,Bank of America Premium Rewards (...6538),"AC POOLS, INC. 267-3775363 CA ",,-700.00,,Shared
+2026-02-01,AC Pools,Pool Maintenance,Bank of America Premium Rewards (...6538),"AC POOLS, INC. 267-3775363 CA ",,-700.00,,Shared
 2026-02-01,Chase,Rewards,Chase Amazon Card (...3726),STATEMENT CREDIT,,198.39,,Shared
 2026-02-01,HomeShield Pest Control,Misc Maintenance,Centurion® Card (...1009),PY *HOMESHIELD PEST ANAHEIM CA,,-84.00,,Shared
 2026-02-01,Playclothes,Clothing,Centurion® Card (...1009),PLAYCLOTHES PLAYCLOTBURBANK CA,,-330.40,,Shared
@@ -281,14 +288,14 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-7794262-3275433
 2026-01-27,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*Q12VW6PH3,,-90.00,,Shared
 2026-01-27,StubHub,Entertainment,Bank of America Premium Rewards (...6538),STUBHUB INC 866-788-2482 CA ,,-751.35,,Shared
 2026-01-27,Parking,Parking,Bank of America Premium Rewards (...6538),LAZ PARKING M17154 LOS ANGELES CA ,,-10.00,,Shared
-2026-01-27,Southern California Gas,Power & Water,Jason and Agnes Checking (...8486),SoCalGas DES:PAID SCGC ID:XXXXX17992 INDN:XXXXX1474XXXXX4106 CO ID:XXXXX40705 WEB,,-2803.97,,Shared
+2026-01-27,Southern California Gas,Natural Gas,Jason and Agnes Checking (...8486),SoCalGas DES:PAID SCGC ID:XXXXX17992 INDN:XXXXX1474XXXXX4106 CO ID:XXXXX40705 WEB,,-2803.97,,Shared
 2026-01-26,Mahogany Smoked Meat,Groceries,Bank of America Premium Rewards (...6538),TST* MAHOGANY SMOKED MEATBISHOP CA ,,-116.00,,Shared
 2026-01-26,Pizza Factory Lone Pine,Restaurants,Bank of America Premium Rewards (...6538),PIZZA FACTORY - LONE PINELONE PINE CA ,,-20.19,,Shared
 2026-01-26,Choicelunch,Restaurants,Bank of America Premium Rewards (...6538),CHOICELUNCH 855-465-8624 CA ,,-50.00,,Shared
 2026-01-26,Uber Eats,Restaurants,Centurion® Card (...1009),UBER THEGREATGREE HTTPS://HELP.UBER.COCA,,-181.88,,Shared
-2026-01-26,76 Fuel,Natural Gas,Bank Of America Alex's Visa (...9604),76 - 109 S MAIN ST BIG PINE CA ,,-48.85,,Shared
+2026-01-26,76 Fuel,Gas,Bank Of America Alex's Visa (...9604),76 - 109 S MAIN ST BIG PINE CA ,,-48.85,,Shared
 2026-01-26,Erick Schat’s Bakery,Restaurants,Bank of America Premium Rewards (...6538),ERICK SCHAT'S BAKERY BISHOP CA ,,-29.90,,Shared
-2026-01-26,76 Fuel,Natural Gas,Bank of America Premium Rewards (...6538),76 - NORCO MAMMOTH LAKESCA ,,-116.70,,Shared
+2026-01-26,76 Fuel,Gas,Bank of America Premium Rewards (...6538),76 - NORCO MAMMOTH LAKESCA ,,-116.70,,Shared
 2026-01-26,Erick Schat’s Bakery,Restaurants,Centurion® Card (...1009),ERICK SCHAT'S BAKERYBISHOP CA,,-46.81,,Shared
 2026-01-26,Preferred Rewards Monthly Fee Waiver,Financial Services,Jason and Agnes Checking (...8486),Preferred Rewards-Monthly Fee Waiver of $25,,0.00,,Shared
 2026-01-26,Morgan Rubin,Kids Allowance,Jason and Agnes Checking (...8486),Online scheduled transfer to CHK 4626 Confirmation# XXXXX12923,,-40.00,,Shared
@@ -321,12 +328,12 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-7794262-3275433
 2026-01-22,Vons,Groceries,Bank Of America Alex's Visa (...9604),VONS #2400 MAMMOTH LAKESCA ,,-306.75,,Shared
 2026-01-22,Erick Schat’s Bakery,Restaurants,Bank Of America Alex's Visa (...9604),ERICK SCHAT'S BAKERY BISHOP CA ,,-26.85,,Shared
 2026-01-22,Barnes & Noble,Shopping,Bank Of America Alex's Visa (...9604),BARNES & NOBLE #2994 PALMDALE CA ,,-166.04,,Shared
-2026-01-22,Speedway,Natural Gas,Bank Of America Alex's Visa (...9604),68160 4962 SPEEDWAY MARINA DEL RECA ,,-44.02,,Shared
+2026-01-22,Speedway,Gas,Bank Of America Alex's Visa (...9604),68160 4962 SPEEDWAY MARINA DEL RECA ,,-44.02,,Shared
 2026-01-22,Mahogany Smoked Meat,Groceries,Bank of America Premium Rewards (...6538),TST* MAHOGANY SMOKED MEATBISHOP CA ,,-159.33,,Shared
 2026-01-22,Starbucks,Restaurants,Bank of America Premium Rewards (...6538),STARBUCKS STORE 64697 MOJAVE CA ,,-19.30,,Shared
 2026-01-22,Ski Butlers California,Entertainment,Centurion® Card (...1009),SKI BUTLERS DENVER CO,,-659.18,,Shared
-2026-01-22,Chevron,Natural Gas,Bank Of America Alex's Visa (...9604),CHEVRON 0208244 OLANCHA CA ,,-9.68,,Shared
-2026-01-22,Chevron,Natural Gas,Bank Of America Alex's Visa (...9604),CHEVRON 0208244 OLANCHA CA ,,-2.07,,Shared
+2026-01-22,Chevron,Gas,Bank Of America Alex's Visa (...9604),CHEVRON 0208244 OLANCHA CA ,,-9.68,,Shared
+2026-01-22,Chevron,Gas,Bank Of America Alex's Visa (...9604),CHEVRON 0208244 OLANCHA CA ,,-2.07,,Shared
 2026-01-22,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *YM7A2D5NU2 650-5434800 DE ,,-50.00,Morgan Rose,Shared
 2026-01-22,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *NF3PED9NU2 650-5434800 DE ,,-20.00,Morgan Rose,Shared
 2026-01-22,Uber Eats,Restaurants,Centurion® Card (...1009),UBER EATS help.uber.com CA,,-73.16,,Shared
@@ -344,7 +351,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-3504310-5372245
 2026-01-21,OV Aesthetics,Personal Care,Bank Of America Alex's Visa (...9604),OV AESTHETICS WWW.OVAESTHETCA ,,-472.00,,Shared
 2026-01-21,YouTube,Subsciptions,Bank Of America Alex's Visa (...9604),Google YouTubePremium 650-2530000 CA ,,-22.99,,Shared
 2026-01-21,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *D4MTVBZMU2 650-5434800 DE ,,-50.00,Morgan Rose,Shared
-2026-01-21,Chevron,Natural Gas,Bank of America Premium Rewards (...6538),CHEVRON 0090218 WOODLAND HILLCA ,,-75.97,,Shared
+2026-01-21,Chevron,Gas,Bank of America Premium Rewards (...6538),CHEVRON 0090218 WOODLAND HILLCA ,,-75.97,,Shared
 2026-01-21,Cursor,Business Services,Bank of America Premium Rewards (...6538),"CURSOR, AI POWERED IDE CURSOR.COM NY ",,-20.00,Morgan Rose,Shared
 2026-01-21,Sports Ltd. ,Shopping,Centurion® Card (...1009),LS SPORTS LTD WOODLAND HILLS CA,,-60.36,,Shared
 2026-01-20,Bristol Farms,Groceries,Bank Of America Alex's Visa (...9604),BRISTOL FARMS 10 WEST HOLLYWOOCA ,,-179.98,,Shared
@@ -392,7 +399,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-3541621-2882629
 2026-01-19,Facebook,Business Services,Bank of America Premium Rewards (...6538),Facebook Inc. Wilmington DE ,,-11.99,Morgan Rose,Shared
 2026-01-19,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *YCFS2BRMU2 650-5434800 DE ,,-36.00,Morgan Rose,Shared
 2026-01-19,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *REN6VBDNU2 650-5434800 DE ,,-36.00,Morgan Rose,Shared
-2026-01-19,76 Fuel,Natural Gas,Bank of America Premium Rewards (...6538),76 - COLKERS UNION 76 BEVERLY HILLSCA ,,-62.82,,Shared
+2026-01-19,76 Fuel,Gas,Bank of America Premium Rewards (...6538),76 - COLKERS UNION 76 BEVERLY HILLSCA ,,-62.82,,Shared
 2026-01-19,Bank of America,Rewards,Bank of America Premium Rewards (...6538),STATEMENT CREDIT ,,314.49,,Shared
 2026-01-18,My Little Posh,Clothing,Centurion® Card (...1009),SP MY LITTLE POSH LOS ANGELES CA,,-207.43,,Shared
 2026-01-18,Eataly,Groceries,Centurion® Card (...1009),EATALY LA CATAPULT LOS ANGELES CA,,-30.13,,Shared
@@ -675,7 +682,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=112-2811707-2933048
 2026-01-02,Tony Bautista,Rental Maintenance,1536 Skylark LLC (...2984),Zelle payment to TONY BAUTISTA Conf# az2noi5pi,,-750.00,1536 Rental,Shared
 2026-01-02,Leaff Waffles,Restaurants,Centurion® Card (...1009),LEAFF WAFFLES INC. LOSANGELES CA,,-22.31,,Shared
 2026-01-01,Interest Income,Interest,FSA,Interest on Cash Balance,,0.03,,Shared
-2026-01-01,AC Pools,Misc Maintenance,Bank of America Premium Rewards (...6538),"AC POOLS, INC. 267-3775363 CA ",,-769.69,,Shared
+2026-01-01,AC Pools,Pool Maintenance,Bank of America Premium Rewards (...6538),"AC POOLS, INC. 267-3775363 CA ",,-769.69,,Shared
 2026-01-01,Meta,Paychecks,Jason and Agnes Checking (...8486),"META DES:PAYROLL ID:XXXXX8448991LZX INDN:RUBIN,JASON P CO ID:XXXXX11101 PPD",,1439.31,,Shared
 2026-01-01,Seed Ranch,Groceries,Bank of America Premium Rewards (...6538),SP SEEDRANCHFLAVOR SEEDRANCHFLAVCO ,,-39.11,,Shared
 2026-01-01,Gowod,Subsciptions,Bank of America Premium Rewards (...6538),SHOP.GOWOD 0629924085 ,,-117.50,,Shared
@@ -725,7 +732,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-4675009-1432263
 2025-12-29,Nordstrom,Shopping,Centurion® Card (...1009),AplPay NORDSTROM DIRhttp://shop.nordstroWA,,-7.99,,Shared
 2025-12-29,Parking,Parking,Centurion® Card (...1009),LAZ PKG M17211CLOVERLOS ANGELES CA,,-30.00,,Shared
 2025-12-29,Uber Eats,Restaurants,Delta SkyMiles® Reserve Card (...2004),UBER EATS help.uber.com CA,,-127.61,,Shared
-2025-12-29,Southern California Gas,Power & Water,Jason and Agnes Checking (...8486),SoCalGas DES:PAID SCGC ID:XXXXX17992 INDN:XXXXX1474XXXXX7857 CO ID:XXXXX40705 WEB,,-2086.73,,Shared
+2025-12-29,Southern California Gas,Natural Gas,Jason and Agnes Checking (...8486),SoCalGas DES:PAID SCGC ID:XXXXX17992 INDN:XXXXX1474XXXXX7857 CO ID:XXXXX40705 WEB,,-2086.73,,Shared
 2025-12-29,Morgan Rubin,Kids Allowance,Jason and Agnes Checking (...8486),Online scheduled transfer to CHK 4626 Confirmation# XXXXX56649,,-40.00,,Shared
 2025-12-29,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:TAX 469676 ID:6semk71im94 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-2731.48,,Shared
 2025-12-29,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:REM 465513 ID:6semk71im95 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-290.00,,Shared
@@ -734,7 +741,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-4675009-1432263
 2025-12-28,Nordstrom,Shopping,Centurion® Card (...1009),AplPay NORDSTROM DIRhttp://shop.nordstroWA,,-52.68,,Shared
 2025-12-28,Tactipup,Pet Food and Treats,Bank of America Premium Rewards (...6538),SP TACTIPUP TACTIPUP.COM FL ,,-104.97,,Shared
 2025-12-28,Topaz Labs,Subsciptions,Bank Of America Alex's Visa (...9604),TOPAZ LABS SOFTWARE TOPAZLABS.COMTX ,,-138.00,,Shared
-2025-12-28,Zooies,Natural Gas,Bank Of America Alex's Visa (...9604),RAPID GAS DBA ZOOIES LOS ANGELES CA ,,-45.41,,Shared
+2025-12-28,Zooies,Restaurants,Bank Of America Alex's Visa (...9604),RAPID GAS DBA ZOOIES LOS ANGELES CA ,,-45.41,,Shared
 2025-12-28,Amazon,Personal Care,Chase Amazon Card (...3726),AMAZON MKTPL*FD5O72AL3,"1 x UpNature Organic Castor Oil and Frankincense Eye Roller – 100% Organic Castor Frankincense Oil for Face - Puffy Eyes Beauty Roll On - $8.98
 
 https://www.amazon.com/gp/your-account/order-details?orderID=113-0234199-3881009",-9.86,Retail Sync,Shared
@@ -748,7 +755,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-0234199-3881009
 2025-12-27,Parking,Parking,Bank of America Premium Rewards (...6538),SQ *UNITED VALET PARKING West HollywooCA ,,-14.00,,Shared
 2025-12-27,Pinches Tacos,Restaurants,Bank of America Premium Rewards (...6538),PINCHES TACOS SUNSET 323-6500614 CA ,,-12.16,,Shared
 2025-12-27,Parking,Parking,Bank of America Premium Rewards (...6538),LAZ PARKING M17880-SKI LOS ANGELES CA ,,-25.00,,Shared
-2025-12-27,ExxonMobil,Natural Gas,Bank of America Premium Rewards (...6538),EXXON B AND F WORLD IN LOS ANGELES CA ,,-74.76,,Shared
+2025-12-27,ExxonMobil,Gas,Bank of America Premium Rewards (...6538),EXXON B AND F WORLD IN LOS ANGELES CA ,,-74.76,,Shared
 2025-12-27,Apple,Subsciptions,Bank of America Premium Rewards (...6538),APPLE.COM/BILL 866-712-7753 CA ,,-5.99,,Shared
 2025-12-27,Stephen Rubin,Rental Income,1536 Skylark LLC (...2984),BKOFAMERICA MOBILE 12/27 XXXXX50447 DEPOSIT *MOBILE CA,,10500.00,1536 Rental,Shared
 2025-12-27,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*P51E67JE3,,-175.59,,Shared
@@ -890,7 +897,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=113-8926432-5196212
 
 https://www.amazon.com/gp/your-account/order-details?orderID=113-6160179-1801019",-30.86,Retail Sync,Shared
 2025-12-16,Petco,Pet Food and Treats,Bank of America Premium Rewards (...6538),PETCO 1505 WEST HOLLYWOOCA ,,-112.25,,Shared
-2025-12-16,Zooies,Natural Gas,Bank Of America Alex's Visa (...9604),RAPID GAS DBA ZOOIES LOS ANGELES CA ,,-44.17,,Shared
+2025-12-16,Zooies,Restaurants,Bank Of America Alex's Visa (...9604),RAPID GAS DBA ZOOIES LOS ANGELES CA ,,-44.17,,Shared
 2025-12-16,Kindle,Shopping,Chase Amazon Card (...3726),Kindle Svcs*K95L24B73,,-4.99,,Shared
 2025-12-16,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*M52AO2XV3,"1 x Beistle Soft-Touch Bunny Ears Lavender & White - $12.36
 
@@ -2447,7 +2454,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-09-07,American Express,Rewards,Centurion® Card (...1009),AMEX CLEAR PLUS CREDIT,,209.00,,Shared
 2025-09-07,Clear,Travel,Centurion® Card (...1009),CLEAR *CLEARME.COM NEW YORK NY,,-209.00,,Shared
 2025-09-06,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*VK6TF8YV3,,-315.81,,Shared
-2025-09-06,Trifecta Nutrition,Shopping,Bank of America Premium Rewards (...6538),"TRIFECTA NUTRITION, INC. 530-564-8388 CA ",,-205.85,,Shared
+2025-09-06,Trifecta Nutrition,Restaurants,Bank of America Premium Rewards (...6538),"TRIFECTA NUTRITION, INC. 530-564-8388 CA ",,-205.85,,Shared
 2025-09-06,Spirit Halloween,Shopping,Bank of America Premium Rewards (...6538),SPIRIT HALLOWEEN 60496 609-703-8292 CA ,,-63.00,,Shared
 2025-09-06,Murat's,Clothing,Bank of America Premium Rewards (...6538),MURAT'S BEVERLY HILLSCA ,,-25.00,,Shared
 2025-09-06,Parking,Parking,Bank of America Premium Rewards (...6538),CITY OF BEVERLY HILLS PARBEVERLY HILLSCA ,,-9.00,,Shared
@@ -2525,7 +2532,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-08-31,Tony Bautista,Rental Maintenance,Jason and Agnes Checking (...8486),Online Banking transfer from CHK 2984 Confirmation# XXXXX14945,,3000.00,,Shared
 2025-08-31,StubHub,Entertainment,Bank of America Premium Rewards (...6538),STUBHUB INC 866-788-2482 CA ,,-5238.70,,Shared
 2025-08-30,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*KG5141SV3,,-13.16,,Shared
-2025-08-30,Trifecta Nutrition,Shopping,Bank of America Premium Rewards (...6538),"TRIFECTA NUTRITION, INC. 530-564-8388 CA ",,-205.85,,Shared
+2025-08-30,Trifecta Nutrition,Restaurants,Bank of America Premium Rewards (...6538),"TRIFECTA NUTRITION, INC. 530-564-8388 CA ",,-205.85,,Shared
 2025-08-30,Uber Eats,Restaurants,Centurion® Card (...1009),UBER EATS help.uber.com CA,,-54.75,,Shared
 2025-08-29,Gelson's Markets,Groceries,Bank Of America Alex's Visa (...9604),GELSON'S MARKETS #4 LOS ANGELES CA ,,-94.84,,Shared
 2025-08-29,Beverly Hills News,Shopping,Bank Of America Alex's Visa (...9604),BEVERLY HILLS NEWS STAND BEVERLY HILLSCA ,,-13.15,,Shared

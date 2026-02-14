@@ -414,7 +414,7 @@
     }
     .budget-grouping-toggle {
       display: inline-block;
-      font-size: 1rem;
+      font-size: 1.2rem;
       transition: transform 0.2s;
       color: var(--header-text);
     }
@@ -445,7 +445,7 @@
       margin-bottom: 0.5rem;
     }
     .budget-category-chart {
-      height: 36px;
+      height: 52px;
       margin-bottom: 0.35rem;
       position: relative;
     }
@@ -458,11 +458,18 @@
       font-size: 0.8rem;
       margin-top: 0.35rem;
     }
+    .budget-category-card details {
+      margin: 0;
+    }
     .budget-category-card details summary {
-      padding: 0.2rem 0;
+      padding: 0.15rem 0;
     }
     .budget-category-card details[open] summary {
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.2rem;
+    }
+    .budget-category-card .breakdown-content {
+      padding: 0;
+      margin: 0;
     }
     .budget-totals-summary {
       padding: 1.25rem 1.5rem;
@@ -531,7 +538,7 @@
     }
     .budget-category-toggle {
       display: inline-block;
-      font-size: 1rem;
+      font-size: 1.2rem;
       transition: transform 0.2s;
       color: var(--text-muted);
       flex-shrink: 0;
@@ -723,6 +730,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
   </div>
 
   <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.addEventListener('load', () => window.scrollTo(0, 0));
     const csvPath = 'CSV Working prototype - Sheet1.csv';
     async function findBalancesCsvPath() {
       const basePath = window.location.pathname.replace(/\/[^/]*$/, '') || '/';
@@ -2240,12 +2249,12 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const el = document.getElementById('budget-totals-summary');
         if (!el) return;
         let totalBudget = 0, totalSpending = 0;
-        for (const { category } of BUDGET_CATEGORIES) {
+        for (const { grouping, category } of BUDGET_CATEGORIES) {
           totalBudget += this.getBudget(category);
-          totalSpending += this.getSpending(this.byCategory[category] || []);
+          totalSpending += this.getSpendingForTotal(this.byCategory[category] || []);
         }
         el.innerHTML = '<div class="budget-total-item"><span class="budget-total-label">Total Budget</span><span class="budget-total-value">$' + Math.round(totalBudget).toLocaleString() + '</span></div>' +
-          '<div class="budget-total-item"><span class="budget-total-label">Total Spending</span><span class="budget-total-value">$' + Math.round(totalSpending).toLocaleString() + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label">Total Spending</span><span class="budget-total-value">$' + Math.round(Math.max(0, totalSpending)).toLocaleString() + '</span></div>' +
           '<button type="button" id="budget-save-csv" class="budget-save-csv-btn">Save .csv</button>';
         document.getElementById('budget-save-csv')?.addEventListener('click', () => this.exportBudgetsCsv());
       },
@@ -2318,7 +2327,11 @@ For each scenario, net investments, real estate, and net worth are projected yea
         this.loaded = true;
       },
       getSpending(txs) {
-        return txs.reduce((sum, t) => sum + (t.amount < 0 ? Math.abs(t.amount) : 0), 0);
+        const net = txs.reduce((sum, t) => sum + (t.amount < 0 ? Math.abs(t.amount) : -t.amount), 0);
+        return Math.max(0, net);
+      },
+      getSpendingForTotal(txs) {
+        return txs.reduce((sum, t) => sum + (t.amount < 0 ? Math.abs(t.amount) : -t.amount), 0);
       },
       render() {
         const el = document.getElementById('budget-content');
@@ -2359,7 +2372,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           if (nextGroup !== grouping) html += '</div></div>';
         }
         el.innerHTML = html;
-        for (const { category } of BUDGET_CATEGORIES) {
+        for (const { grouping, category } of BUDGET_CATEGORIES) {
           const txs = this.byCategory[category] || [];
           const spending = this.getSpending(txs);
           const budget = this.getBudget(category);
@@ -2376,9 +2389,14 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: { padding: { left: 2, right: 8, top: 2, bottom: 2 } },
                 plugins: { legend: { display: false } },
                 scales: {
-                  x: { min: 0, max: maxVal, ticks: { callback: v => '$' + (v / 1000) + 'k' } },
+                  x: {
+                    min: 0,
+                    max: maxVal,
+                    ticks: { callback: v => '$' + (v / 1000) + 'k', maxRotation: 0, font: { size: 11 } }
+                  },
                   y: { display: false }
                 }
               }
@@ -2415,7 +2433,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           if (dataEl) {
             const sorted = [...txs].sort((a, b) => a.dateObj - b.dateObj);
             const fmt = d => d ? monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() : '';
-            const amountFmt = n => '$' + (n < 0 ? Math.abs(n) : n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const amountFmt = n => n < 0 ? '$' + Math.abs(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : (n > 0 ? '$-' + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '$0.00');
             let dataHtml = '<table class="breakdown-table"><thead><tr><th>Date</th><th>Merchant</th><th>Category</th><th>Amount</th></tr></thead><tbody>' +
               sorted.map(t => `<tr><td>${fmt(t.dateObj)}</td><td>${(t.merchant || '').replace(/</g, '&lt;')}</td><td>${(t.category || '').replace(/</g, '&lt;')}</td><td>${amountFmt(t.amount)}</td></tr>`).join('') + '</tbody></table>';
             if (category === 'Categorized but not Budgeted' && IGNORED_CATEGORIES.length) {
