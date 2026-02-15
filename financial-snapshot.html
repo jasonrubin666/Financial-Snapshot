@@ -2568,11 +2568,16 @@ For each scenario, net investments, real estate, and net worth are projected yea
         if (totalsCommittedCurOrPast > 0) totalsDatasets.push({ data: [totalsCommittedCurOrPast], backgroundColor: totalsCommittedCurOrPastColor, barThickness: 48, stack: 'totals0' });
         if (totalsCommittedFuture > 0) totalsDatasets.push({ data: [totalsCommittedFuture], backgroundColor: totalsCommittedFutureColor, barThickness: 48, stack: 'totals0' });
         const chartWrap = '<div class="budget-totals-chart-wrap"><canvas id="budget-totals-chart"></canvas></div>';
-        const errorBanner = this.committedLoadError ? '<div class="budget-committed-error">error in budget_committed.csv</div>' : '';
+        const errorBanner = this.committedLoadError
+          ? '<div class="budget-committed-error">error in budget_committed.csv' +
+            (Array.isArray(this.committedLoadErrors) && this.committedLoadErrors.length > 0
+              ? ': ' + this.committedLoadErrors.join('; ')
+              : '') + '</div>'
+          : '';
         const statsHtml = errorBanner + '<div class="budget-totals-row">' +
           '<div class="budget-totals-stats">' +
           '<div class="budget-total-item"><span class="budget-total-label">Total Spending</span><span class="budget-total-value">$' + Math.round(spend).toLocaleString() + '</span></div>' +
-          '<div class="budget-total-item"><span class="budget-total-label">Total Budget</span><span class="budget-total-value">$' + Math.round(totalBudget).toLocaleString() + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label">Total Budget</span><span class="budget-total-value" id="budget-total-budget-value">$' + Math.round(totalBudget).toLocaleString() + '</span></div>' +
           '<div class="budget-total-item"><span class="budget-total-label">% Budget</span><span class="budget-total-value">' + pctBudget.toFixed(1) + '%</span></div>' +
           '<div class="budget-total-item"><span class="budget-total-label">Time % Variance</span><span class="budget-total-value">' + (timeVariancePct || 0).toFixed(1) + '%</span></div>' +
           '</div>' +
@@ -2633,6 +2638,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
       },
       async loadBudgetsCommitted() {
         this.committedLoadError = false;
+        this.committedLoadErrors = [];
         const path = await findBudgetCommittedCsvPath();
         if (!path) { this.committedItems = []; return; }
         try {
@@ -2642,34 +2648,56 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const items = [];
           for (let i = 1; i < rows.length; i++) {
             const row = rows[i];
+            const rowNum = i + 1;
             if (row.length < 6) {
-              if ((row[0] || '').trim().toLowerCase() === 'true') this.committedLoadError = true;
+              if ((row[0] || '').trim().toLowerCase() === 'true') {
+                this.committedLoadError = true;
+                this.committedLoadErrors.push('Row ' + rowNum + ': too few columns (need 6: Active, Category, Merchant, Type, Amount, StartMonth)');
+              }
               continue;
             }
             const active = (row[0] || '').trim().toLowerCase();
             if (active !== 'true') continue;
             const catRaw = (row[1] || '').trim();
             const canonical = BUDGET_CATEGORIES.find(b => b.category.toLowerCase() === catRaw.toLowerCase())?.category;
-            if (!canonical) { this.committedLoadError = true; continue; }
+            if (!canonical) {
+              this.committedLoadError = true;
+              this.committedLoadErrors.push('Row ' + rowNum + ': unknown category "' + (catRaw || '(empty)') + '"');
+              continue;
+            }
             const merchant = (row[2] || '').trim();
             const type = (row[3] || '').trim().toLowerCase();
             const amount = parseFloat(row[4]);
             const startMonth = parseInt(row[5], 10);
             const endMonth = row.length >= 7 && (row[6] || '').trim() ? parseInt(row[6], 10) : startMonth;
-            if (isNaN(amount) || amount <= 0) { this.committedLoadError = true; continue; }
+            if (isNaN(amount) || amount <= 0) {
+              this.committedLoadError = true;
+              this.committedLoadErrors.push('Row ' + rowNum + ' (' + (merchant || '?') + '): invalid amount "' + (row[4] || '') + '"');
+              continue;
+            }
             if (type === 'one-time') {
               if (startMonth >= 1 && startMonth <= 12) items.push({ category: canonical, merchant, type: 'one-time', amount, startMonth, endMonth: startMonth });
-              else this.committedLoadError = true;
+              else {
+                this.committedLoadError = true;
+                this.committedLoadErrors.push('Row ' + rowNum + ' (' + (merchant || '?') + '): one-time needs StartMonth 1-12, got ' + startMonth);
+              }
             } else if (type === 'monthly') {
               const sm = Math.max(1, Math.min(12, isNaN(startMonth) ? 1 : startMonth));
               const em = Math.max(1, Math.min(12, isNaN(endMonth) ? sm : endMonth));
               for (let m = Math.min(sm, em); m <= Math.max(sm, em); m++) {
                 items.push({ category: canonical, merchant, type: 'monthly', amount, startMonth: m, endMonth: m });
               }
-            } else { this.committedLoadError = true; }
+            } else {
+              this.committedLoadError = true;
+              this.committedLoadErrors.push('Row ' + rowNum + ' (' + (merchant || '?') + '): Type must be "monthly" or "one-time", got "' + (type || '(empty)') + '"');
+            }
           }
           this.committedItems = items;
-        } catch (_) { this.committedItems = []; this.committedLoadError = true; }
+        } catch (err) {
+          this.committedItems = [];
+          this.committedLoadError = true;
+          this.committedLoadErrors = ['Failed to load file: ' + (err && err.message ? err.message : 'unknown error')];
+        }
       },
       getCommitted(category) {
         if (!Array.isArray(this.committedItems)) return 0;
@@ -2929,53 +2957,6 @@ For each scenario, net investments, real estate, and net worth are projected yea
             this.instances.push(inst);
             this.chartInstances[category] = inst;
           }
-          const inputEl = document.getElementById(inputId);
-          const labelEl = document.getElementById('budget-label-' + category.replace(/[^a-zA-Z0-9]/g, '-'));
-          if (inputEl) {
-            const onBudgetChange = () => {
-              const raw = inputEl.value.replace(/,/g, '');
-              const num = parseFloat(raw);
-              if (!isNaN(num) && num >= 0) {
-                this.setBudget(category, num);
-                const txs2 = this.getTxsForCategory(category);
-                const spend = this.getSpending(txs2);
-                const b = this.getBudget(category);
-                const comm = this.getCommitted(category);
-                const inst = this.chartInstances[category];
-                if (inst) {
-                  const totalWithComm = spend + comm;
-                  const p = b > 0 ? totalWithComm / b : 0;
-                  const barColor = p <= 0.8 ? '#22c55e' : (p <= 1 ? '#eab308' : '#ef4444');
-                  const [r, g, b] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
-                  const commCurOrPast = this.getCommittedCurrentOrPast(category);
-                  const commFuture = this.getCommittedFuture(category);
-                  const newDatasets = [{ data: [spend], backgroundColor: barColor, stack: 'stack0' }];
-                  if (commCurOrPast > 0) newDatasets.push({ data: [commCurOrPast], backgroundColor: 'rgba(' + r + ',' + g + ',' + b + ',0.66)', stack: 'stack0' });
-                  if (commFuture > 0) newDatasets.push({ data: [commFuture], backgroundColor: 'rgba(' + r + ',' + g + ',' + b + ',0.33)', stack: 'stack0' });
-                  inst.data.datasets = newDatasets;
-                  inst.options.scales.x.max = Math.max(b, totalWithComm, 1);
-                  if (inst.options.plugins?.budgetLines) {
-                    inst.options.plugins.budgetLines.todayValue = b * todayProgress;
-                    inst.options.plugins.budgetLines.budgetValue = b;
-                    inst.options.plugins.budgetLines.spending = totalWithComm;
-                  }
-                  inst.update();
-                }
-                inputEl.value = Math.round(b).toLocaleString();
-                if (labelEl) labelEl.textContent = category + ' — $' + Math.round(spend).toLocaleString() + (comm > 0 ? ' + $' + Math.round(comm).toLocaleString() : '') + ' = $' + Math.round(spend + comm).toLocaleString() + ' / $' + Math.round(b).toLocaleString();
-                const groupings = [...new Set(BUDGET_CATEGORIES.map(bc => bc.grouping))];
-                for (const g of groupings) {
-                  const groupTotal = BUDGET_CATEGORIES.filter(bc => bc.grouping === g).reduce((s, bc) => s + this.getBudget(bc.category), 0);
-                  const groupId = 'group-' + g.replace(/[^a-zA-Z0-9]/g, '-');
-                  const groupTotalEl = document.getElementById('budget-group-total-' + groupId);
-                  if (groupTotalEl) groupTotalEl.textContent = '$' + Math.round(groupTotal).toLocaleString();
-                }
-                this.updateTotals();
-              }
-            };
-            inputEl.addEventListener('change', onBudgetChange);
-            inputEl.addEventListener('blur', onBudgetChange);
-          }
           const dataEl = document.getElementById('budget-data-' + id);
           if (dataEl) {
             const fmt = d => d ? monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() : '';
@@ -3010,6 +2991,62 @@ For each scenario, net investments, real estate, and net worth are projected yea
           if (catHeader && !e.target.closest('.budget-input')) {
             const card = catHeader.closest('.budget-category-card');
             if (card) card.setAttribute('data-expanded', card.getAttribute('data-expanded') === 'true' ? 'false' : 'true');
+          }
+        });
+        const applyBudgetChange = (inputEl) => {
+          if (!inputEl || !inputEl.classList.contains('budget-input')) return;
+          const category = inputEl.getAttribute('data-category');
+          if (!category) return;
+          const raw = inputEl.value.replace(/,/g, '');
+          const num = parseFloat(raw);
+          if (isNaN(num) || num < 0) return;
+          this.setBudget(category, num);
+          const txs2 = this.getTxsForCategory(category);
+          const spend = this.getSpending(txs2);
+          const b = this.getBudget(category);
+          const comm = this.getCommitted(category);
+          const inst = this.chartInstances[category];
+          if (inst) {
+            const totalWithComm = spend + comm;
+            const p = b > 0 ? totalWithComm / b : 0;
+            const barColor = p <= 0.8 ? '#22c55e' : (p <= 1 ? '#eab308' : '#ef4444');
+            const [r, g, bVal] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
+            const commCurOrPast = this.getCommittedCurrentOrPast(category);
+            const commFuture = this.getCommittedFuture(category);
+            const newDatasets = [{ data: [spend], backgroundColor: barColor, stack: 'stack0' }];
+            if (commCurOrPast > 0) newDatasets.push({ data: [commCurOrPast], backgroundColor: 'rgba(' + r + ',' + g + ',' + bVal + ',0.66)', stack: 'stack0' });
+            if (commFuture > 0) newDatasets.push({ data: [commFuture], backgroundColor: 'rgba(' + r + ',' + g + ',' + bVal + ',0.33)', stack: 'stack0' });
+            inst.data.datasets = newDatasets;
+            inst.options.scales.x.max = Math.max(b, totalWithComm, 1);
+            if (inst.options.plugins?.budgetLines) {
+              inst.options.plugins.budgetLines.todayValue = b * todayProgress;
+              inst.options.plugins.budgetLines.budgetValue = b;
+              inst.options.plugins.budgetLines.spending = totalWithComm;
+            }
+            inst.update();
+          }
+          inputEl.value = Math.round(b).toLocaleString();
+          const labelEl = document.getElementById('budget-label-' + category.replace(/[^a-zA-Z0-9]/g, '-'));
+          if (labelEl) labelEl.textContent = category + ' — $' + Math.round(spend).toLocaleString() + (comm > 0 ? ' + $' + Math.round(comm).toLocaleString() : '') + ' = $' + Math.round(spend + comm).toLocaleString() + ' / $' + Math.round(b).toLocaleString();
+          for (const g of [...new Set(BUDGET_CATEGORIES.map(bc => bc.grouping))]) {
+            const groupTotal = BUDGET_CATEGORIES.filter(bc => bc.grouping === g).reduce((s, bc) => s + this.getBudget(bc.category), 0);
+            const groupId = 'group-' + g.replace(/[^a-zA-Z0-9]/g, '-');
+            const groupTotalEl = document.getElementById('budget-group-total-' + groupId);
+            if (groupTotalEl) groupTotalEl.textContent = '$' + Math.round(groupTotal).toLocaleString();
+          }
+          this.updateTotals();
+          const totalBudgetEl = document.getElementById('budget-total-budget-value');
+          if (totalBudgetEl) {
+            const newTotal = BUDGET_CATEGORIES.reduce((s, bc) => s + this.getBudget(bc.category), 0);
+            totalBudgetEl.textContent = '$' + Math.round(newTotal).toLocaleString();
+          }
+        };
+        el.addEventListener('change', (e) => { if (e.target.classList.contains('budget-input')) applyBudgetChange(e.target); });
+        el.addEventListener('blur', (e) => { if (e.target.classList.contains('budget-input')) applyBudgetChange(e.target); }, true);
+        el.addEventListener('keydown', (e) => {
+          if (e.target.classList.contains('budget-input') && e.key === 'Enter') {
+            e.preventDefault();
+            applyBudgetChange(e.target);
           }
         });
       }
