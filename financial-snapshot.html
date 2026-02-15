@@ -663,7 +663,10 @@
       <div class="chart-wrapper chart-full-width">
         <div class="chart-header">
           <h2>Basic Wealth projection</h2>
-          <button type="button" id="wealth-reset" class="chart-select">Reset</button>
+          <div class="chart-header-controls">
+            <button type="button" class="inputs-save-csv-btn chart-select">Save .csv</button>
+            <button type="button" id="wealth-reset" class="chart-select">Reset</button>
+          </div>
         </div>
         <div class="projection-inputs">
           <div class="projection-inputs-row row1">
@@ -706,6 +709,7 @@ Inflation: Each year's inflation is random (normal around your assumed rate, wit
 
 For each scenario, net investments, real estate, and net worth are projected year by year. The chart shows the 10th, 25th, 50th, 75th, and 90th percentiles at each year, plus 5 sample paths. Downsize house and COL changes are applied in the year you specify.</span></span></h2>
           <div class="chart-header-controls">
+            <button type="button" class="inputs-save-csv-btn chart-select">Save .csv</button>
             <button type="button" id="mc-rerun" class="chart-select">Rerun</button>
             <button type="button" id="mc-reset" class="chart-select">Reset</button>
           </div>
@@ -716,6 +720,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
             <label>Return volatility <input type="text" class="input-mc" id="mc-returnVolatility" value="17">%</label>
             <label>Home appreciation vol. <input type="text" class="input-mc" id="mc-homeApprecVolatility" value="5">%</label>
             <label>Inflation vol. <input type="text" class="input-mc" id="mc-inflationVolatility" value="1.5">%</label>
+            <label>Budget vol. <input type="text" class="input-mc" id="mc-budgetVolatility" value="20">%</label>
             <label>Infl.–return corr. <input type="text" class="input-mc" id="mc-inflationReturnCorr" value="-0.3"></label>
           </div>
         </div>
@@ -812,6 +817,37 @@ For each scenario, net investments, real estate, and net worth are projected yea
         return candidates.length > 0 ? candidates[candidates.length - 1] : null;
       } catch (_) { return null; }
     }
+    function matchesFinancialSnapshotInputs(baseName) {
+      const normalized = baseName.toLowerCase().replace(/_/g, '-');
+      return normalized.startsWith('financial-snapshot-inputs') && /\.csv$/i.test(baseName);
+    }
+    async function findFinancialSnapshotInputsCsvPath() {
+      const basePath = window.location.pathname.replace(/\/[^/]*$/, '') || '/';
+      const dirUrl = basePath + (basePath.endsWith('/') ? '' : '/');
+      try {
+        const r = await fetch(dirUrl);
+        const html = await r.text();
+        const linkRe = /<a\s+href="([^"]+)"/gi;
+        const candidates = [];
+        let m;
+        while ((m = linkRe.exec(html)) !== null) {
+          const href = decodeURIComponent(m[1]).replace(/^\.\//, '');
+          const baseName = href.split('/').pop() || '';
+          if (matchesFinancialSnapshotInputs(baseName)) candidates.push(href);
+        }
+        candidates.sort();
+        if (candidates.length > 0) return candidates[candidates.length - 1];
+      } catch (_) {}
+      const fallbacks = ['financial-snapshot-inputs.csv', 'financial_snapshot_inputs.csv'];
+      for (const name of fallbacks) {
+        try {
+          const path = basePath ? basePath + (basePath.endsWith('/') ? '' : '/') + name : name;
+          const resp = await fetch(path, { method: 'HEAD' });
+          if (resp.ok) return path;
+        } catch (_) {}
+      }
+      return null;
+    }
     function parseCsvRow(line) {
       const result = [];
       let current = '';
@@ -842,6 +878,71 @@ For each scenario, net investments, real estate, and net worth are projected yea
       }
       if (row.trim()) rows.push(parseCsvRow(row));
       return rows;
+    }
+    let financialSnapshotInputsCache = null;
+    async function loadFinancialSnapshotInputs() {
+      if (financialSnapshotInputsCache !== null) return financialSnapshotInputsCache;
+      const path = await findFinancialSnapshotInputsCsvPath();
+      if (!path) { financialSnapshotInputsCache = {}; return financialSnapshotInputsCache; }
+      try {
+        const r = await fetch(path);
+        const text = await r.text();
+        const rows = parseCsvLines(text);
+        const raw = {};
+        for (let i = 1; i < rows.length; i++) {
+          const row = rows[i];
+          if (row.length >= 2) {
+            const k = (row[0] || '').trim();
+            const v = (row[1] || '').trim();
+            if (k) raw[k] = v;
+          }
+        }
+        const wealth = {};
+        const wealthKeys = ['preTaxReturn', 'taxRate', 'costOfLiving', 'inflation', 'homeAppreciation', 'downsizeHouseYear', 'downsizeHouseAmount', 'downsizeCOLYear', 'downsizeCOLAmount'];
+        wealthKeys.forEach(k => { if (raw[k] !== undefined) wealth[k] = String(raw[k]); });
+        const monteCarlo = {};
+        const mcMap = { mc_simulations: 'simulations', mc_returnVolatility: 'returnVolatility', mc_homeApprecVolatility: 'homeApprecVolatility', mc_inflationVolatility: 'inflationVolatility', mc_budgetVolatility: 'budgetVolatility', mc_inflationReturnCorr: 'inflationReturnCorr' };
+        Object.entries(mcMap).forEach(([csvKey, internalKey]) => { if (raw[csvKey] !== undefined) monteCarlo[internalKey] = String(raw[csvKey]); });
+        const balance = {};
+        ['balance_exclude_realestate', 'balance_exclude_automobiles', 'balance_exclude_nonmerrill'].forEach(k => {
+          if (raw[k] !== undefined) balance[k] = /^(true|1|yes)$/i.test(String(raw[k]).trim());
+        });
+        financialSnapshotInputsCache = { wealth, monteCarlo, balance };
+        return financialSnapshotInputsCache;
+      } catch (_) { financialSnapshotInputsCache = {}; return financialSnapshotInputsCache; }
+    }
+    function exportFinancialSnapshotInputsCsv() {
+      const esc = (s) => (/[",\r\n]/.test(s) ? '"' + String(s).replace(/"/g, '""') + '"' : String(s));
+      const el = id => document.getElementById(id);
+      const wealth = wealthProjectionChart.getInputValues();
+      const rows = [
+        ['key', 'value'],
+        ['preTaxReturn', wealth.preTaxReturn ?? ''],
+        ['taxRate', wealth.taxRate ?? ''],
+        ['costOfLiving', wealth.costOfLiving ?? ''],
+        ['inflation', wealth.inflation ?? ''],
+        ['homeAppreciation', wealth.homeAppreciation ?? ''],
+        ['downsizeHouseYear', wealth.downsizeHouseYear ?? ''],
+        ['downsizeHouseAmount', wealth.downsizeHouseAmount ?? ''],
+        ['downsizeCOLYear', wealth.downsizeCOLYear ?? ''],
+        ['downsizeCOLAmount', wealth.downsizeCOLAmount ?? ''],
+        ['mc_simulations', el('mc-simulations')?.value ?? ''],
+        ['mc_returnVolatility', el('mc-returnVolatility')?.value ?? ''],
+        ['mc_homeApprecVolatility', el('mc-homeApprecVolatility')?.value ?? ''],
+        ['mc_inflationVolatility', el('mc-inflationVolatility')?.value ?? ''],
+        ['mc_budgetVolatility', el('mc-budgetVolatility')?.value ?? ''],
+        ['mc_inflationReturnCorr', el('mc-inflationReturnCorr')?.value ?? ''],
+        ['balance_exclude_realestate', (el('balance-exclude-realestate')?.checked ?? true) ? 'true' : 'false'],
+        ['balance_exclude_automobiles', (el('balance-exclude-automobiles')?.checked ?? true) ? 'true' : 'false'],
+        ['balance_exclude_nonmerrill', (el('balance-exclude-nonmerrill')?.checked ?? false) ? 'true' : 'false']
+      ];
+      const csv = rows.map(r => r.map(esc).join(',')).join('\r\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'financial-snapshot-inputs.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
     }
     const BUDGET_CATEGORIES = [
       { grouping: 'Income', category: 'Rewards' },
@@ -1441,7 +1542,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
               ticks: {
                 color: '#555',
                 font: { size: 11 },
-                callback: (value) => value != null ? '$' + (value / 1000000).toFixed(1) + 'm' : ''
+                callback: (value) => value != null ? '$' + Math.round(value / 1000000) + 'm' : ''
               }
             }
           }
@@ -1483,7 +1584,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const lower = a.toLowerCase();
           if (lower.includes('porsche') || lower.includes('ferrari') || lower.includes('range rover')) return true;
         }
-        if (filters.nonMerrill && !a.includes('Merrill')) return true;
+        if (filters.nonMerrill && !a.includes('Merrill')) {
+          if (a.includes('Bank of America Mortgage')) return false;
+          return true;
+        }
         return false;
       },
 
@@ -1772,7 +1876,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 max: dollarMax,
                 title: { display: true, text: 'Balance ($M)', color: '#555', font: { size: 11 } },
                 grid: { drawOnChartArea: false },
-                ticks: { color: '#555', font: { size: 11 }, callback: (value) => value != null ? '$' + (value / 1000000).toFixed(1) + 'm' : '' }
+                ticks: { color: '#555', font: { size: 11 }, callback: (value) => value != null ? '$' + Math.round(value / 1000000) + 'm' : '' }
               }
             }
           }
@@ -1988,15 +2092,20 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 min: 0, max: 100000000,
                 title: { display: true, text: 'Projected wealth ($)', color: '#555', font: { size: 11 } },
                 grid: { color: 'rgba(0,0,0,0.06)' },
-                ticks: { color: '#555', font: { size: 11 }, stepSize: 10000000, callback: value => '$' + (value / 1000000) + 'M' }
+                ticks: { color: '#555', font: { size: 11 }, stepSize: 10000000, callback: value => '$' + Math.round(value / 1000000) + 'M' }
               }
             }
           }
         });
 
-        const stored = this.loadStored();
-        if (stored) this.setInputValues(stored);
-        else this.setInputValues(wealthProjectionDefaults);
+        const inputs = await loadFinancialSnapshotInputs();
+        const hasWealth = inputs && inputs.wealth && Object.keys(inputs.wealth).length > 0;
+        if (hasWealth) this.setInputValues({ ...wealthProjectionDefaults, ...inputs.wealth });
+        else {
+          const stored = this.loadStored();
+          if (stored) this.setInputValues(stored);
+          else this.setInputValues(wealthProjectionDefaults);
+        }
         this.update();
 
         ['wealth-preTaxReturn', 'wealth-taxRate', 'wealth-costOfLiving', 'wealth-inflation', 'wealth-homeAppreciation', 'wealth-downsizeHouseYear', 'wealth-downsizeHouseAmount', 'wealth-downsizeCOLYear', 'wealth-downsizeCOLAmount'].forEach(id => {
@@ -2010,7 +2119,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
       }
     };
 
-    const monteCarloDefaults = { simulations: '10000', returnVolatility: '17', homeApprecVolatility: '5', inflationVolatility: '1.5', inflationReturnCorr: '-0.3' };
+    const monteCarloDefaults = { simulations: '10000', returnVolatility: '17', homeApprecVolatility: '5', inflationVolatility: '1.5', budgetVolatility: '20', inflationReturnCorr: '-0.3' };
     const MC_STORAGE_KEY = 'financial-snapshot-montecarlo-inputs';
 
     // Monte Carlo chart
@@ -2030,7 +2139,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
       },
 
       saveToStorage() {
-        const vals = { simulations: document.getElementById('mc-simulations')?.value ?? '10000', returnVolatility: document.getElementById('mc-returnVolatility')?.value ?? '17', homeApprecVolatility: document.getElementById('mc-homeApprecVolatility')?.value ?? '5', inflationVolatility: document.getElementById('mc-inflationVolatility')?.value ?? '1.5', inflationReturnCorr: document.getElementById('mc-inflationReturnCorr')?.value ?? '-0.3' };
+        const vals = { simulations: document.getElementById('mc-simulations')?.value ?? '10000', returnVolatility: document.getElementById('mc-returnVolatility')?.value ?? '17', homeApprecVolatility: document.getElementById('mc-homeApprecVolatility')?.value ?? '5', inflationVolatility: document.getElementById('mc-inflationVolatility')?.value ?? '1.5', budgetVolatility: document.getElementById('mc-budgetVolatility')?.value ?? '20', inflationReturnCorr: document.getElementById('mc-inflationReturnCorr')?.value ?? '-0.3' };
         try { localStorage.setItem(MC_STORAGE_KEY, JSON.stringify(vals)); } catch (_) {}
       },
 
@@ -2041,6 +2150,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
         if (el('mc-returnVolatility')) el('mc-returnVolatility').value = merged.returnVolatility ?? monteCarloDefaults.returnVolatility;
         if (el('mc-homeApprecVolatility')) el('mc-homeApprecVolatility').value = merged.homeApprecVolatility ?? monteCarloDefaults.homeApprecVolatility;
         if (el('mc-inflationVolatility')) el('mc-inflationVolatility').value = merged.inflationVolatility ?? monteCarloDefaults.inflationVolatility;
+        if (el('mc-budgetVolatility')) el('mc-budgetVolatility').value = merged.budgetVolatility ?? monteCarloDefaults.budgetVolatility;
         if (el('mc-inflationReturnCorr')) el('mc-inflationReturnCorr').value = merged.inflationReturnCorr ?? monteCarloDefaults.inflationReturnCorr;
       },
 
@@ -2056,9 +2166,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const vol = parseFloat(document.getElementById('mc-returnVolatility')?.value) || 17;
         const homeVol = parseFloat(document.getElementById('mc-homeApprecVolatility')?.value) || 5;
         const inflationVol = parseFloat(document.getElementById('mc-inflationVolatility')?.value) || 1.5;
+        const budgetVol = parseFloat(document.getElementById('mc-budgetVolatility')?.value) || 20;
         const corr = parseFloat(document.getElementById('mc-inflationReturnCorr')?.value);
         const inflationReturnCorr = !isNaN(corr) ? Math.max(-1, Math.min(1, corr)) : -0.3;
-        return { ...wp, simulations: Math.min(5000, Math.max(100, sims)), returnVolatility: vol, homeApprecVolatility: homeVol, inflationVolatility: inflationVol, inflationReturnCorr };
+        return { ...wp, simulations: Math.min(5000, Math.max(100, sims)), returnVolatility: vol, homeApprecVolatility: homeVol, inflationVolatility: inflationVol, budgetVolatility: budgetVol, inflationReturnCorr };
       },
 
       computeRealEstatePath(startingRealEstate, downsizeHouseYear, downsizeHouseAmount, getAppreciation) {
@@ -2073,31 +2184,33 @@ For each scenario, net investments, real estate, and net worth are projected yea
         return values;
       },
 
-      computePath(startingWealth, costOfLiving, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount, getReturnAndInflation) {
+      computePath(startingWealth, costOfLiving, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount, getReturnAndInflation, getBudgetMultiplier) {
         const values = [startingWealth];
         const colPath = [0];
         let effectiveCOL = costOfLiving;
         for (let t = 1; t < this.numYears; t++) {
           const year = this.startYear + t;
           if (year === downsizeCOLYear) effectiveCOL = Math.max(0, effectiveCOL + downsizeCOLAmount);
-          colPath.push(effectiveCOL);
+          const actualCOL = getBudgetMultiplier ? effectiveCOL * getBudgetMultiplier(t) : effectiveCOL;
+          colPath.push(actualCOL);
           const { return: r, inflation: infl } = getReturnAndInflation(t);
           let growth = values[t - 1] * (1 + r);
           if (year === downsizeHouseYear) growth += downsizeHouseAmount;
-          values.push(Math.max(0, growth - effectiveCOL));
+          values.push(Math.max(0, growth - actualCOL));
           effectiveCOL = effectiveCOL * (1 + Math.max(0.01, infl));
         }
         return { values, colPath };
       },
 
       runSimulations() {
-        const { netReturnPct, costOfLiving, inflation, homeAppreciation, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount, simulations, returnVolatility, homeApprecVolatility, inflationVolatility, inflationReturnCorr } = this.getInputs();
+        const { netReturnPct, costOfLiving, inflation, homeAppreciation, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount, simulations, returnVolatility, homeApprecVolatility, inflationVolatility, budgetVolatility, inflationReturnCorr } = this.getInputs();
         const netReturnDec = netReturnPct / 100;
         const volDec = returnVolatility / 100;
         const homeApprecDec = homeAppreciation / 100;
         const homeVolDec = homeApprecVolatility / 100;
         const inflationDec = inflation / 100;
         const inflationVolDec = inflationVolatility / 100;
+        const budgetVolDec = (budgetVolatility || 0) / 100;
         const rho = Math.max(-0.99, Math.min(0.99, inflationReturnCorr));
         const rhoAdj = Math.sqrt(1 - rho * rho);
 
@@ -2116,14 +2229,18 @@ For each scenario, net investments, real estate, and net worth are projected yea
           };
           const inflCache = [];
           const retCache = [];
+          const budgetMultipliers = [];
           for (let t = 1; t < this.numYears; t++) {
             const draw = getReturnAndInflation();
             inflCache.push(draw.inflation);
             retCache.push(draw.return);
+            budgetMultipliers.push(1 + Math.random() * budgetVolDec);
           }
+          const getBudgetMultiplier = budgetVolDec > 0 ? (t) => budgetMultipliers[t - 1] : null;
           const { values: netInv, colPath } = this.computePath(
             this.startingWealth, costOfLiving, downsizeHouseYear, downsizeHouseAmount, downsizeCOLYear, downsizeCOLAmount,
-            (t) => ({ return: retCache[t - 1], inflation: inflCache[t - 1] })
+            (t) => ({ return: retCache[t - 1], inflation: inflCache[t - 1] }),
+            getBudgetMultiplier
           );
           colPaths.push(colPath);
           const realEstate = this.computeRealEstatePath(
@@ -2212,9 +2329,14 @@ For each scenario, net investments, real estate, and net worth are projected yea
         this.startingWealth = netInvestments;
         this.startingRealEstate = reVal;
 
-        const stored = this.loadStored();
-        if (stored) this.setInputValues(stored);
-        else this.setInputValues(monteCarloDefaults);
+        const inputs = await loadFinancialSnapshotInputs();
+        const hasMc = inputs && inputs.monteCarlo && Object.keys(inputs.monteCarlo).length > 0;
+        if (hasMc) this.setInputValues({ ...monteCarloDefaults, ...inputs.monteCarlo });
+        else {
+          const stored = this.loadStored();
+          if (stored) this.setInputValues(stored);
+          else this.setInputValues(monteCarloDefaults);
+        }
 
         const labels = [];
         for (let y = this.startYear; y < this.startYear + this.numYears; y++) labels.push(y % 100);
@@ -2247,7 +2369,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 min: 0, max: 120000000,
                 title: { display: true, text: 'Net worth ($)', color: '#555', font: { size: 11 } },
                 grid: { color: 'rgba(0,0,0,0.06)' },
-                ticks: { color: '#555', font: { size: 11 }, stepSize: 10000000, callback: value => '$' + (value / 1000000) + 'M' }
+                ticks: { color: '#555', font: { size: 11 }, stepSize: 10000000, callback: value => '$' + Math.round(value / 1000000) + 'M' }
               }
             }
           }
@@ -2255,7 +2377,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
 
         this.renderBreakdown(r);
 
-        ['mc-simulations', 'mc-returnVolatility', 'mc-homeApprecVolatility', 'mc-inflationVolatility', 'mc-inflationReturnCorr'].forEach(id => {
+        ['mc-simulations', 'mc-returnVolatility', 'mc-homeApprecVolatility', 'mc-inflationVolatility', 'mc-budgetVolatility', 'mc-inflationReturnCorr'].forEach(id => {
           const el = document.getElementById(id);
           if (el) { el.addEventListener('input', () => { this.update(); this.saveToStorage(); }); el.addEventListener('change', () => { this.update(); this.saveToStorage(); }); }
         });
@@ -2406,7 +2528,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
                   min: 0,
                   max: maxVal,
                   stacked: committed > 0,
-                  ticks: { callback: v => '$' + (v / 1000) + 'k', maxRotation: 0, font: { size: 16, weight: '600' } }
+                  ticks: { callback: v => '$' + Math.round(v / 1000) + 'k', maxRotation: 0, font: { size: 16, weight: '600' } }
                 },
                 y: { stacked: committed > 0, display: false }
               }
@@ -2576,7 +2698,9 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const groupCategories = {};
         for (const { grouping, category } of BUDGET_CATEGORIES) {
           const txs = this.byCategory[category] || [];
-          if (this.getSpending(txs) > 0) groupsWithSpend.add(grouping);
+          const spend = this.getSpending(txs);
+          const comm = this.getCommitted(category);
+          if (spend > 0 || comm > 0) groupsWithSpend.add(grouping);
           groupBudgets[grouping] = (groupBudgets[grouping] || 0) + this.getBudget(category);
           if (!groupCategories[grouping]) groupCategories[grouping] = [];
           groupCategories[grouping].push(category);
@@ -2601,11 +2725,11 @@ For each scenario, net investments, real estate, and net worth are projected yea
             const id = 'budget-chart-' + category.replace(/[^a-zA-Z0-9]/g, '-');
             const inputId = 'budget-input-' + category.replace(/[^a-zA-Z0-9]/g, '-');
             const labelId = 'budget-label-' + category.replace(/[^a-zA-Z0-9]/g, '-');
-            html += `<div class="budget-category-card" data-expanded="${spending > 0 ? 'true' : 'false'}" data-category="${category.replace(/"/g, '&quot;')}">
+            html += `<div class="budget-category-card" data-expanded="${(spending > 0 || committed > 0) ? 'true' : 'false'}" data-category="${category.replace(/"/g, '&quot;')}">
               <div class="budget-category-header">
                 <span class="budget-category-header-inner">
                   <span class="budget-category-toggle">▾</span>
-                  <span class="budget-category-label" id="${labelId}">${category} — $${spending.toLocaleString(undefined, { maximumFractionDigits: 0 })}${committed > 0 ? ' + $' + Math.round(committed).toLocaleString() + ' committed' : ''} / $${budget.toLocaleString()}</span>
+                  <span class="budget-category-label" id="${labelId}">${category} — $${Math.round(spending).toLocaleString()}${committed > 0 ? ' + $' + Math.round(committed).toLocaleString() + ' committed' : ''} / $${Math.round(budget).toLocaleString()}</span>
                 </span>
                 <input type="text" class="budget-input" id="${inputId}" data-category="${category.replace(/"/g, '&quot;')}" data-grouping="${grouping.replace(/"/g, '&quot;')}" value="${Math.round(budget).toLocaleString()}" inputmode="numeric">
               </div>
@@ -2706,7 +2830,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
                     min: 0,
                     max: maxVal,
                     stacked: committed > 0,
-                    ticks: { callback: v => '$' + (v / 1000) + 'k', maxRotation: 0, font: { size: 11 } }
+                    ticks: { callback: v => '$' + Math.round(v / 1000) + 'k', maxRotation: 0, font: { size: 11 } }
                   },
                   y: { stacked: committed > 0, display: false }
                 }
@@ -2750,7 +2874,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
                   inst.update();
                 }
                 inputEl.value = Math.round(b).toLocaleString();
-                if (labelEl) labelEl.textContent = category + ' — $' + spend.toLocaleString(undefined, { maximumFractionDigits: 0 }) + (comm > 0 ? ' + $' + Math.round(comm).toLocaleString() + ' committed' : '') + ' / $' + b.toLocaleString();
+                if (labelEl) labelEl.textContent = category + ' — $' + Math.round(spend).toLocaleString() + (comm > 0 ? ' + $' + Math.round(comm).toLocaleString() + ' committed' : '') + ' / $' + Math.round(b).toLocaleString();
                 const grouping = inputEl.getAttribute('data-grouping');
                 if (grouping) {
                   const groupTotal = BUDGET_CATEGORIES.filter(bc => bc.grouping === grouping).reduce((s, bc) => s + this.getBudget(bc.category), 0);
@@ -2767,7 +2891,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const dataEl = document.getElementById('budget-data-' + id);
           if (dataEl) {
             const fmt = d => d ? monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() : '';
-            const amountFmt = n => n < 0 ? '$' + Math.abs(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : (n > 0 ? '$-' + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '$0.00');
+            const amountFmt = n => n < 0 ? '$' + Math.round(Math.abs(n)).toLocaleString() : (n > 0 ? '$-' + Math.round(n).toLocaleString() : '$0');
             const visibleTxs = category === 'Categorized but not Budgeted' ? txs.filter(t => !t.hidden) : txs;
             const committedRows = this.getCommittedRows(category);
             const allRows = [...visibleTxs, ...committedRows].sort((a, b) => a.dateObj - b.dateObj);
@@ -2816,11 +2940,20 @@ For each scenario, net investments, real estate, and net worth are projected yea
 
     // Initialize all charts (reorder sections in HTML to change display order)
     (async () => {
+      const inputs = await loadFinancialSnapshotInputs();
+      const bal = inputs && inputs.balance && Object.keys(inputs.balance).length > 0 ? inputs.balance : null;
+      if (bal) {
+        const el = id => document.getElementById(id);
+        if (bal.balance_exclude_realestate !== undefined && el('balance-exclude-realestate')) el('balance-exclude-realestate').checked = !!bal.balance_exclude_realestate;
+        if (bal.balance_exclude_automobiles !== undefined && el('balance-exclude-automobiles')) el('balance-exclude-automobiles').checked = !!bal.balance_exclude_automobiles;
+        if (bal.balance_exclude_nonmerrill !== undefined && el('balance-exclude-nonmerrill')) el('balance-exclude-nonmerrill').checked = !!bal.balance_exclude_nonmerrill;
+      }
       // await netInvestmentsChart.init();  // commented out - using balanceChart (Balances.csv) instead
       await balanceChart.init();
       fetchKeyFigures();
       await wealthProjectionChart.init();
       await monteCarloChart.init();
+      document.querySelectorAll('.inputs-save-csv-btn').forEach(btn => btn.addEventListener('click', exportFinancialSnapshotInputsCsv));
     })().catch(err => {
       document.body.innerHTML = '<h1>Error loading data</h1><p>' + err.message + '</p><p>Make sure to run a local server from this folder (e.g. <code>python -m http.server 8000</code>) and open the page via localhost.</p>';
     });
