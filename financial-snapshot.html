@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="Fin Snapshot">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <title>Financial Snapshot</title>
+  <title>Rubin Financial Snapshot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
@@ -631,8 +631,7 @@
 <body>
   <div class="page-container">
   <header class="page-header">
-    <h1>Financial Snapshot</h1>
-    <p class="page-subtitle">Net investments, key indicators & wealth projections</p>
+    <h1>Rubin Financial Snapshot</h1>
     <nav class="page-nav">
       <button type="button" class="page-tab" data-active="true" data-page="investments">Investments</button>
       <button type="button" class="page-tab" data-active="false" data-page="budget">Budget</button>
@@ -759,12 +758,18 @@ For each scenario, net investments, real estate, and net worth are projected yea
       <div id="budget-content"></div>
     </div>
   </div>
-  <p class="note">Run a local server from this folder to load the CSV. Example: <code>python -m http.server 8000</code> then open <code>http://localhost:8000/financial-snapshot.html</code></p>
   </div>
 
   <script>
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.addEventListener('load', () => window.scrollTo(0, 0));
+    function debounce(fn, ms) {
+      let t;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(null, args), ms);
+      };
+    }
     async function findBalancesCsvPath() {
       const basePath = window.location.pathname.replace(/\/[^/]*$/, '') || '/';
       const dirUrl = basePath + (basePath.endsWith('/') ? '' : '/');
@@ -940,6 +945,18 @@ For each scenario, net investments, real estate, and net worth are projected yea
         return financialSnapshotInputsCache;
       } catch (_) { financialSnapshotInputsCache = {}; return financialSnapshotInputsCache; }
     }
+    async function saveCsvFile(filename, content) {
+      if (window.electronAPI?.saveCsv) {
+        const result = await window.electronAPI.saveCsv(filename, content);
+        return;
+      }
+      const blob = new Blob([content], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
     function exportFinancialSnapshotInputsCsv() {
       const esc = (s) => (/[",\r\n]/.test(s) ? '"' + String(s).replace(/"/g, '""') + '"' : String(s));
       const el = id => document.getElementById(id);
@@ -966,12 +983,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
         ['balance_exclude_nonmerrill', (el('balance-exclude-nonmerrill')?.checked ?? false) ? 'true' : 'false']
       ];
       const csv = rows.map(r => r.map(esc).join(',')).join('\r\n');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'financial-snapshot-inputs.csv';
-      a.click();
-      URL.revokeObjectURL(a.href);
+      saveCsvFile('financial-snapshot-inputs.csv', csv);
     }
     const BUDGET_CATEGORIES = [
       { grouping: 'Income', category: 'Rewards' },
@@ -2137,10 +2149,15 @@ For each scenario, net investments, real estate, and net worth are projected yea
         }
         this.update();
 
+        const wealthApply = () => { this.updateNetReturnDisplay(); this.update(); this.saveToStorage(); };
+        const wealthApplyDebounced = debounce(wealthApply, 5000);
         ['wealth-preTaxReturn', 'wealth-taxRate', 'wealth-costOfLiving', 'wealth-inflation', 'wealth-homeAppreciation', 'wealth-downsizeHouseYear', 'wealth-downsizeHouseAmount', 'wealth-downsizeCOLYear', 'wealth-downsizeCOLAmount'].forEach(id => {
           const el = document.getElementById(id);
-          el.addEventListener('input', () => { this.updateNetReturnDisplay(); this.update(); this.saveToStorage(); });
-          el.addEventListener('change', () => { this.updateNetReturnDisplay(); this.update(); this.saveToStorage(); });
+          if (el) {
+            el.addEventListener('input', () => wealthApplyDebounced());
+            el.addEventListener('change', wealthApply);
+            el.addEventListener('keydown', (e) => { if (e.key === 'Enter') el.blur(); });
+          }
         });
         document.getElementById('wealth-reset').addEventListener('click', () => this.reset());
         this.updateNetReturnDisplay();
@@ -2319,7 +2336,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
         for (let t = 1; t < this.numYears; t++) {
           const year = this.startYear + t;
           const effectiveCOL = medianCOL[t];
-          const postTaxEarnings = Math.max(0, medianNetInv[t] - medianNetInv[t - 1] + effectiveCOL);
+          const prevWealth = medianNetInv[t - 1];
+          const postTaxEarnings = prevWealth <= 0 ? 0 : Math.max(0, medianNetInv[t] - prevWealth + effectiveCOL);
           rows.push({ year, netInvestment: medianNetInv[t], postTaxEarnings, costOfLiving: effectiveCOL });
         }
         return rows;
@@ -2406,16 +2424,28 @@ For each scenario, net investments, real estate, and net worth are projected yea
 
         this.renderBreakdown(r);
 
+        const mcApply = () => { this.update(); this.saveToStorage(); };
+        const mcApplyDebounced = debounce(mcApply, 5000);
         ['mc-simulations', 'mc-returnVolatility', 'mc-homeApprecVolatility', 'mc-inflationVolatility', 'mc-budgetVolatility', 'mc-inflationReturnCorr'].forEach(id => {
           const el = document.getElementById(id);
-          if (el) { el.addEventListener('input', () => { this.update(); this.saveToStorage(); }); el.addEventListener('change', () => { this.update(); this.saveToStorage(); }); }
+          if (el) {
+            el.addEventListener('input', () => mcApplyDebounced());
+            el.addEventListener('change', mcApply);
+            el.addEventListener('keydown', (e) => { if (e.key === 'Enter') el.blur(); });
+          }
         });
         document.getElementById('mc-rerun')?.addEventListener('click', () => this.update());
         document.getElementById('mc-reset')?.addEventListener('click', () => this.reset());
 
+        const wealthToMcApply = () => this.update();
+        const wealthToMcApplyDebounced = debounce(wealthToMcApply, 5000);
         ['wealth-preTaxReturn', 'wealth-taxRate', 'wealth-costOfLiving', 'wealth-inflation', 'wealth-homeAppreciation', 'wealth-downsizeHouseYear', 'wealth-downsizeHouseAmount', 'wealth-downsizeCOLYear', 'wealth-downsizeCOLAmount'].forEach(id => {
           const el = document.getElementById(id);
-          if (el) { el.addEventListener('input', () => this.update()); el.addEventListener('change', () => this.update()); }
+          if (el) {
+            el.addEventListener('input', () => wealthToMcApplyDebounced());
+            el.addEventListener('change', wealthToMcApply);
+            el.addEventListener('keydown', (e) => { if (e.key === 'Enter') el.blur(); });
+          }
         });
       }
     };
@@ -2476,10 +2506,11 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const maxVal = Math.max(totalBudget, totalWithCommitted, 1);
         const pct = totalBudget > 0 ? totalWithCommitted / totalBudget : 0;
         const barColor = pct <= 0.8 ? '#22c55e' : (pct <= 1 ? '#eab308' : '#ef4444');
-        const totalsCommittedCurMonth = BUDGET_CATEGORIES.reduce((s, { category }) => s + this.getCommittedCurrentMonth(category), 0);
-        const committedOpacity = totalsCommittedCurMonth > 0 ? 0.75 : 0.5;
+        const totalsCommittedCurOrPast = BUDGET_CATEGORIES.reduce((s, { category }) => s + this.getCommittedCurrentOrPast(category), 0);
+        const totalsCommittedFuture = BUDGET_CATEGORIES.reduce((s, { category }) => s + this.getCommittedFuture(category), 0);
         const [tr, tg, tb] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
-        const totalsCommittedColor = 'rgba(' + tr + ',' + tg + ',' + tb + ',' + committedOpacity + ')';
+        const totalsCommittedCurOrPastColor = 'rgba(' + tr + ',' + tg + ',' + tb + ',0.66)';
+        const totalsCommittedFutureColor = 'rgba(' + tr + ',' + tg + ',' + tb + ',0.33)';
         const totalsBudgetLinesPlugin = {
           id: 'totalsBudgetLines',
           afterDatasetsDraw(chart) {
@@ -2519,12 +2550,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
             }
           }
         };
-        const totalsDatasets = committed > 0
-          ? [
-              { data: [spend], backgroundColor: barColor, barThickness: 48, stack: 'totals0' },
-              { data: [committed], backgroundColor: totalsCommittedColor, barThickness: 48, stack: 'totals0' }
-            ]
-          : [{ data: [spend], backgroundColor: barColor, barThickness: 48 }];
+        const totalsDatasets = [];
+        totalsDatasets.push({ data: [spend], backgroundColor: barColor, barThickness: 48, stack: 'totals0' });
+        if (totalsCommittedCurOrPast > 0) totalsDatasets.push({ data: [totalsCommittedCurOrPast], backgroundColor: totalsCommittedCurOrPastColor, barThickness: 48, stack: 'totals0' });
+        if (totalsCommittedFuture > 0) totalsDatasets.push({ data: [totalsCommittedFuture], backgroundColor: totalsCommittedFutureColor, barThickness: 48, stack: 'totals0' });
         const chartWrap = '<div class="budget-totals-chart-wrap"><canvas id="budget-totals-chart"></canvas></div>';
         const statsHtml = '<div class="budget-totals-row">' +
           '<div class="budget-totals-stats">' +
@@ -2638,6 +2667,22 @@ For each scenario, net investments, real estate, and net worth are projected yea
           .filter(i => i.category === category && i.startMonth === currentMonth)
           .reduce((s, i) => s + Math.abs(i.amount), 0);
       },
+      getCommittedCurrentOrPast(category) {
+        if (!Array.isArray(this.committedItems)) return 0;
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1;
+        return this.committedItems
+          .filter(i => i.category === category && i.startMonth <= currentMonth)
+          .reduce((s, i) => s + Math.abs(i.amount), 0);
+      },
+      getCommittedFuture(category) {
+        if (!Array.isArray(this.committedItems)) return 0;
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1;
+        return this.committedItems
+          .filter(i => i.category === category && i.startMonth > currentMonth)
+          .reduce((s, i) => s + Math.abs(i.amount), 0);
+      },
       getCommittedRows(category) {
         if (!Array.isArray(this.committedItems)) return [];
         const year = new Date().getFullYear();
@@ -2664,12 +2709,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const esc = (s) => (/[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s);
           lines.push(esc(category) + ',' + Math.round(b));
         }
-        const blob = new Blob([lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'budget_limits.csv';
-        a.click();
-        URL.revokeObjectURL(a.href);
+        saveCsvFile('budget_limits.csv', lines.join('\r\n'));
       },
       async init() {
         if (this.loaded) return;
@@ -2757,7 +2797,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
               <div class="budget-category-header">
                 <span class="budget-category-header-inner">
                   <span class="budget-category-toggle">▾</span>
-                  <span class="budget-category-label" id="${labelId}">${category} — $${Math.round(spending).toLocaleString()}${committed > 0 ? ' + $' + Math.round(committed).toLocaleString() + ' committed' : ''} / $${Math.round(budget).toLocaleString()}</span>
+                  <span class="budget-category-label" id="${labelId}">${category} — $${Math.round(spending).toLocaleString()}${committed > 0 ? ' + $' + Math.round(committed).toLocaleString() : ''} = $${Math.round(spending + committed).toLocaleString()} / $${Math.round(budget).toLocaleString()}</span>
                 </span>
                 <input type="text" class="budget-input" id="${inputId}" data-category="${category.replace(/"/g, '&quot;')}" data-grouping="${grouping.replace(/"/g, '&quot;')}" value="${Math.round(budget).toLocaleString()}" inputmode="numeric">
               </div>
@@ -2819,27 +2859,27 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const txs = this.byCategory[category] || [];
           const spending = this.getSpending(txs);
           const committed = this.getCommitted(category);
-          const committedCurMonth = this.getCommittedCurrentMonth(category);
+          const committedCurOrPast = this.getCommittedCurrentOrPast(category);
+          const committedFuture = this.getCommittedFuture(category);
           const budget = this.getBudget(category);
           const totalWithCommitted = spending + committed;
           const maxVal = Math.max(budget, totalWithCommitted, 1);
           const todayLineValue = budget * todayProgress;
           const pctForColor = budget > 0 ? totalWithCommitted / budget : 0;
           const barColor = pctForColor <= 0.8 ? '#22c55e' : (pctForColor <= 1 ? '#eab308' : '#ef4444');
-          const committedOpacity = committedCurMonth > 0 ? 0.75 : 0.5;
           const [r, g, b] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
-          const committedColor = 'rgba(' + r + ',' + g + ',' + b + ',' + committedOpacity + ')';
+          const committedCurOrPastColor = 'rgba(' + r + ',' + g + ',' + b + ',0.66)';
+          const committedFutureColor = 'rgba(' + r + ',' + g + ',' + b + ',0.33)';
           const id = 'budget-chart-' + category.replace(/[^a-zA-Z0-9]/g, '-');
           const inputId = 'budget-input-' + category.replace(/[^a-zA-Z0-9]/g, '-');
           const canvas = document.getElementById(id);
           if (canvas) {
             const ctx = canvas.getContext('2d');
-            const datasets = committed > 0
-              ? [
-                  { data: [spending], backgroundColor: barColor, stack: 'stack0' },
-                  { data: [committed], backgroundColor: committedColor, stack: 'stack0' }
-                ]
-              : [{ data: [spending], backgroundColor: barColor }];
+            const datasets = [];
+            datasets.push({ data: [spending], backgroundColor: barColor, stack: 'stack0' });
+            if (committedCurOrPast > 0) datasets.push({ data: [committedCurOrPast], backgroundColor: committedCurOrPastColor, stack: 'stack0' });
+            if (committedFuture > 0) datasets.push({ data: [committedFuture], backgroundColor: committedFutureColor, stack: 'stack0' });
+            const hasStacked = committed > 0;
             const inst = new Chart(ctx, {
               type: 'bar',
               plugins: [budgetLinesPlugin],
@@ -2857,10 +2897,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
                   x: {
                     min: 0,
                     max: maxVal,
-                    stacked: committed > 0,
+                    stacked: hasStacked,
                     ticks: { callback: v => '$' + Math.round(v / 1000) + 'k', maxRotation: 0, font: { size: 11 } }
                   },
-                  y: { stacked: committed > 0, display: false }
+                  y: { stacked: hasStacked, display: false }
                 }
               }
             });
@@ -2884,15 +2924,13 @@ For each scenario, net investments, real estate, and net worth are projected yea
                   const totalWithComm = spend + comm;
                   const p = b > 0 ? totalWithComm / b : 0;
                   const barColor = p <= 0.8 ? '#22c55e' : (p <= 1 ? '#eab308' : '#ef4444');
-                  inst.data.datasets[0].data = [spend];
-                  inst.data.datasets[0].backgroundColor = barColor;
-                  if (inst.data.datasets[1]) {
-                    const commCurMonth = this.getCommittedCurrentMonth(category);
-                    const opacity = commCurMonth > 0 ? 0.75 : 0.5;
-                    const [r, g, b] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
-                    inst.data.datasets[1].data = [comm];
-                    inst.data.datasets[1].backgroundColor = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
-                  }
+                  const [r, g, b] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
+                  const commCurOrPast = this.getCommittedCurrentOrPast(category);
+                  const commFuture = this.getCommittedFuture(category);
+                  const newDatasets = [{ data: [spend], backgroundColor: barColor, stack: 'stack0' }];
+                  if (commCurOrPast > 0) newDatasets.push({ data: [commCurOrPast], backgroundColor: 'rgba(' + r + ',' + g + ',' + b + ',0.66)', stack: 'stack0' });
+                  if (commFuture > 0) newDatasets.push({ data: [commFuture], backgroundColor: 'rgba(' + r + ',' + g + ',' + b + ',0.33)', stack: 'stack0' });
+                  inst.data.datasets = newDatasets;
                   inst.options.scales.x.max = Math.max(b, totalWithComm, 1);
                   if (inst.options.plugins?.budgetLines) {
                     inst.options.plugins.budgetLines.todayValue = b * todayProgress;
@@ -2902,7 +2940,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
                   inst.update();
                 }
                 inputEl.value = Math.round(b).toLocaleString();
-                if (labelEl) labelEl.textContent = category + ' — $' + Math.round(spend).toLocaleString() + (comm > 0 ? ' + $' + Math.round(comm).toLocaleString() + ' committed' : '') + ' / $' + Math.round(b).toLocaleString();
+                if (labelEl) labelEl.textContent = category + ' — $' + Math.round(spend).toLocaleString() + (comm > 0 ? ' + $' + Math.round(comm).toLocaleString() : '') + ' = $' + Math.round(spend + comm).toLocaleString() + ' / $' + Math.round(b).toLocaleString();
                 const groupings = [...new Set(BUDGET_CATEGORIES.map(bc => bc.grouping))];
                 for (const g of groupings) {
                   const groupTotal = BUDGET_CATEGORIES.filter(bc => bc.grouping === g).reduce((s, bc) => s + this.getBudget(bc.category), 0);
@@ -3005,8 +3043,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           '</div>'
         ).join('');
       document.body.innerHTML = '<div class="error-page">' +
-        '<h1>Financial Snapshot</h1>' +
-        '<p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Net investments, key indicators & wealth projections</p>' +
+        '<h1>Rubin Financial Snapshot</h1>' +
         '<div class="error-box">' + boxHtml + '</div>' +
         '</div>';
       document.querySelectorAll('.error-page .copy-btn').forEach(btn => {
