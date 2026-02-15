@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Start Server">
+  <link rel="manifest" href="start-server-manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>Start Server - Financial Snapshot</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; min-height: 100vh; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1rem; color: #1a1d21; line-height: 1.5; }
+    .error-page { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 520px; }
+    .error-page h1 { margin: 0 0 0.25rem; font-size: 1.75rem; text-align: center; }
+    .error-page .subtitle { color: #6b7280; font-size: 0.9rem; margin: 0 0 2rem; text-align: center; }
+    .error-box { width: 100%; padding: 1.75rem; background: #f7f8fa; border: 2px solid #e5e7eb; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.05); }
+    .error-box h2 { margin: 0 0 1rem; font-size: 1.1rem; text-align: center; }
+    .error-box p { margin: 0 0 0.5rem; color: #4b5563; font-size: 0.9375rem; line-height: 1.6; }
+    .error-box .step { margin-top: 1.25rem; }
+    .error-box .step:first-of-type { margin-top: 0; }
+    .error-command-row { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; padding: 0.6rem 0.85rem; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; font-size: 0.875rem; }
+    .error-command-row code { flex: 1; overflow-x: auto; white-space: nowrap; }
+    .copy-btn { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; color: #6b7280; cursor: pointer; transition: color 0.15s, border-color 0.15s, background 0.15s; }
+    .copy-btn:hover { color: #0f766e; border-color: #0f766e; background: rgba(15, 118, 110, 0.08); }
+    .copy-btn.copied { color: #16a34a; border-color: #16a34a; }
+    .copy-btn svg { width: 16px; height: 16px; }
+    .open-link { display: block; margin-top: 1.5rem; padding: 0.6rem 1.25rem; background: #0f766e; color: white; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 0.9375rem; text-align: center; transition: background 0.15s; }
+    .open-link:hover { background: #0d5f58; color: white; }
+  </style>
+</head>
+<body>
+  <div class="error-page">
+    <h1>Financial Snapshot</h1>
+    <p class="subtitle">Net investments, key indicators & wealth projections</p>
+    <div class="error-box">
+      <h2>Start the local server</h2>
+      <p class="step">Open a terminal and navigate to the appropriate folder with</p>
+      <div class="error-command-row">
+        <code id="cd-cmd">cd "/path/to/folder"</code>
+        <button type="button" class="copy-btn" title="Copy" id="copy-cd">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+      <p class="step">Run this command to start the server</p>
+      <div class="error-command-row">
+        <code>python3 -m http.server 8000</code>
+        <button type="button" class="copy-btn" title="Copy" data-cmd="python3 -m http.server 8000">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+      <a href="http://localhost:8000/financial-snapshot.html" class="open-link">Open Financial Snapshot</a>
+    </div>
+  </div>
+  <script>
+    (function() {
+      let cdCmd = 'cd "/path/to/folder"';
+      if (window.location.protocol === 'file:') {
+        try {
+          const path = decodeURIComponent(window.location.pathname || '');
+          const dir = path.replace(/\/[^/]*$/, '');
+          if (dir) cdCmd = 'cd "' + dir.replace(/"/g, '\\"') + '"';
+        } catch (_) {}
+      }
+      const codeEl = document.getElementById('cd-cmd');
+      if (codeEl) codeEl.textContent = cdCmd;
+      const copyIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+      const checkIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+      function doCopy(btn, text) {
+        navigator.clipboard.writeText(text).then(() => {
+          btn.classList.add('copied');
+          btn.innerHTML = checkIcon;
+          setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = copyIcon; }, 2000);
+        }).catch(() => {});
+      }
+      document.getElementById('copy-cd').addEventListener('click', () => doCopy(document.getElementById('copy-cd'), cdCmd));
+      document.querySelectorAll('.copy-btn[data-cmd]').forEach(btn => {
+        btn.addEventListener('click', () => doCopy(btn, btn.getAttribute('data-cmd')));
+      });
+    })();
+  </script>
+</body>
+</html>

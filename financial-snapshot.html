@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Fin Snapshot">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <title>Financial Snapshot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -608,6 +614,18 @@
       .projection-inputs { padding: 0.4rem 0.75rem; }
       .key-figures-wrapper { padding: 1rem 1rem; gap: 0.75rem; }
     }
+    .error-page { min-height: 100vh; background: #ffffff; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+    .error-page h1 { margin: 0 0 0.25rem; font-size: 1.75rem; color: var(--text); }
+    .error-page .error-box { max-width: 480px; width: 100%; margin: 2rem 0; padding: 1.75rem; background: var(--bg-card); border: 2px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg); }
+    .error-page .error-box h2 { margin: 0 0 0.75rem; font-size: 1.1rem; color: var(--text); }
+    .error-page .error-box p { margin: 0 0 1rem; color: var(--text-muted); font-size: 0.9375rem; line-height: 1.6; }
+    .error-page .error-box p:last-of-type { margin-bottom: 0; }
+    .error-page .error-command-row { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; padding: 0.6rem 0.85rem; background: var(--bg); border-radius: var(--radius-sm); font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; font-size: 0.875rem; }
+    .error-page .error-command-row code { flex: 1; overflow-x: auto; white-space: nowrap; }
+    .error-page .copy-btn { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-muted); cursor: pointer; transition: color 0.15s, border-color 0.15s, background 0.15s; }
+    .error-page .copy-btn:hover { color: var(--accent); border-color: var(--accent); background: rgba(15, 118, 110, 0.08); }
+    .error-page .copy-btn.copied { color: #16a34a; border-color: #16a34a; }
+    .error-page .copy-btn svg { width: 16px; height: 16px; }
   </style>
 </head>
 <body>
@@ -781,6 +799,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
         return candidates.length > 0 ? candidates[candidates.length - 1] : 'Transactions.csv';
       } catch (_) { return 'Transactions.csv'; }
     }
+    function matchesBudgetLimits(baseName) {
+      const normalized = baseName.toLowerCase().replace(/_/g, '-');
+      return normalized.startsWith('budget-limits') && /\.csv$/i.test(baseName);
+    }
     async function findBudgetLimitsCsvPath() {
       const basePath = window.location.pathname.replace(/\/[^/]*$/, '') || '/';
       const dirUrl = basePath + (basePath.endsWith('/') ? '' : '/');
@@ -792,11 +814,18 @@ For each scenario, net investments, real estate, and net worth are projected yea
         let m;
         while ((m = linkRe.exec(html)) !== null) {
           const href = decodeURIComponent(m[1]).replace(/^\.\//, '');
-          if (href.toLowerCase().startsWith('budget_limits') && /\.csv$/i.test(href)) candidates.push(href);
+          const baseName = href.split('/').pop() || '';
+          if ((baseName.toLowerCase().startsWith('budget_limits') || matchesBudgetLimits(baseName)) && /\.csv$/i.test(baseName)) candidates.push(href);
         }
         candidates.sort();
-        return candidates.length > 0 ? candidates[candidates.length - 1] : null;
-      } catch (_) { return null; }
+        if (candidates.length > 0) return candidates[candidates.length - 1];
+      } catch (_) {}
+      try {
+        const path = basePath ? basePath + (basePath.endsWith('/') ? '' : '/') + 'budget_limits.csv' : 'budget_limits.csv';
+        const resp = await fetch(path, { method: 'HEAD' });
+        if (resp.ok) return path;
+      } catch (_) {}
+      return null;
     }
     async function findBudgetCommittedCsvPath() {
       const basePath = window.location.pathname.replace(/\/[^/]*$/, '') || '/';
@@ -2543,7 +2572,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const path = await findBudgetLimitsCsvPath();
         if (!path) return false;
         try {
-          const r = await fetch(path);
+          const r = await fetch(path, { cache: 'no-store' });
           const text = await r.text();
           const rows = parseCsvLines(text);
           if (!this.storedBudgets) this.storedBudgets = {};
@@ -2551,7 +2580,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
             const row = rows[i];
             if (row.length < 2) continue;
             const cat = (row[0] || '').trim();
-            const val = parseFloat(row[1]);
+            const val = parseFloat((row[1] || '').toString().replace(/,/g, ''));
             const canonical = resolveBudgetCategory(cat);
             if (canonical && !isNaN(val) && val >= 0) this.storedBudgets[canonical] = val;
           }
@@ -2674,7 +2703,6 @@ For each scenario, net investments, real estate, and net worth are projected yea
           if (!this.byCategory[t.category]) this.byCategory[t.category] = [];
           this.byCategory[t.category].push(t);
         }
-        this.loadStoredBudgets();
         const fromCsv = await this.loadBudgetsFromCsv();
         if (!fromCsv) this.loadStoredBudgets();
         try { await this.loadBudgetsCommitted(); } catch (_) { this.committedItems = []; }
@@ -2850,9 +2878,9 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 const txs2 = this.byCategory[category] || [];
                 const spend = this.getSpending(txs2);
                 const b = this.getBudget(category);
+                const comm = this.getCommitted(category);
                 const inst = this.chartInstances[category];
                 if (inst) {
-                  const comm = this.getCommitted(category);
                   const totalWithComm = spend + comm;
                   const p = b > 0 ? totalWithComm / b : 0;
                   const barColor = p <= 0.8 ? '#22c55e' : (p <= 1 ? '#eab308' : '#ef4444');
@@ -2875,10 +2903,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 }
                 inputEl.value = Math.round(b).toLocaleString();
                 if (labelEl) labelEl.textContent = category + ' — $' + Math.round(spend).toLocaleString() + (comm > 0 ? ' + $' + Math.round(comm).toLocaleString() + ' committed' : '') + ' / $' + Math.round(b).toLocaleString();
-                const grouping = inputEl.getAttribute('data-grouping');
-                if (grouping) {
-                  const groupTotal = BUDGET_CATEGORIES.filter(bc => bc.grouping === grouping).reduce((s, bc) => s + this.getBudget(bc.category), 0);
-                  const groupId = 'group-' + grouping.replace(/[^a-zA-Z0-9]/g, '-');
+                const groupings = [...new Set(BUDGET_CATEGORIES.map(bc => bc.grouping))];
+                for (const g of groupings) {
+                  const groupTotal = BUDGET_CATEGORIES.filter(bc => bc.grouping === g).reduce((s, bc) => s + this.getBudget(bc.category), 0);
+                  const groupId = 'group-' + g.replace(/[^a-zA-Z0-9]/g, '-');
                   const groupTotalEl = document.getElementById('budget-group-total-' + groupId);
                   if (groupTotalEl) groupTotalEl.textContent = '$' + Math.round(groupTotal).toLocaleString();
                 }
@@ -2955,7 +2983,43 @@ For each scenario, net investments, real estate, and net worth are projected yea
       await monteCarloChart.init();
       document.querySelectorAll('.inputs-save-csv-btn').forEach(btn => btn.addEventListener('click', exportFinancialSnapshotInputsCsv));
     })().catch(err => {
-      document.body.innerHTML = '<h1>Error loading data</h1><p>' + err.message + '</p><p>Make sure to run a local server from this folder (e.g. <code>python -m http.server 8000</code>) and open the page via localhost.</p>';
+      const copyIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+      const checkIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+      const commands = [
+        { label: 'Start a local server:', cmd: 'python -m http.server 8000' },
+        { label: 'Or if you use python3:', cmd: 'python3 -m http.server 8000' }
+      ];
+      const basePath = window.location.pathname.replace(/\/[^/]*$/, '') || '';
+      const pageName = window.location.pathname.split('/').pop() || 'financial-snapshot.html';
+      const urlCmd = 'http://localhost:8000' + (basePath ? basePath + '/' : '/') + pageName;
+      commands.push({ label: 'Then open in your browser:', cmd: urlCmd });
+      const boxHtml = '<h2>Unable to load data</h2>' +
+        '<p>' + (err?.message || 'A network or server error occurred.') + '</p>' +
+        '<p><strong>Tip:</strong> If you saw your browser\'s connection error instead of this page, open <code>start-server.html</code> from this folder (double-click it) to get instructions.</p>' +
+        '<p>Run one of these commands in your terminal from the folder containing this file:</p>' +
+        commands.map(({ label, cmd }) =>
+          '<p style="margin-bottom: 0.25rem; font-size: 0.8125rem; font-weight: 500;">' + label + '</p>' +
+          '<div class="error-command-row">' +
+          '<code>' + cmd.replace(/</g, '&lt;') + '</code>' +
+          '<button type="button" class="copy-btn" title="Copy" data-cmd="' + cmd.replace(/"/g, '&quot;') + '">' + copyIcon + '</button>' +
+          '</div>'
+        ).join('');
+      document.body.innerHTML = '<div class="error-page">' +
+        '<h1>Financial Snapshot</h1>' +
+        '<p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Net investments, key indicators & wealth projections</p>' +
+        '<div class="error-box">' + boxHtml + '</div>' +
+        '</div>';
+      document.querySelectorAll('.error-page .copy-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const cmd = btn.getAttribute('data-cmd');
+          try {
+            await navigator.clipboard.writeText(cmd);
+            btn.classList.add('copied');
+            btn.innerHTML = checkIcon;
+            setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = copyIcon; }, 2000);
+          } catch (_) {}
+        });
+      });
     });
   </script>
 </body>

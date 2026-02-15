@@ -1,4 +1,7 @@
 Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
+2026-02-15,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com,,-15.64,,Shared
+2026-02-14,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com,,-33.31,,Shared
+2026-02-14,Yukistylist,Personal Care,Centurion® Card (...1009),YUKISTYLIST,,-350.00,,Shared
 2026-02-14,Delta Airlines,Travel,Delta SkyMiles® Reserve Card (...2004),DELTA AIR LINES,,-15843.59,,Shared
 2026-02-14,Delta Airlines,Travel,Delta SkyMiles® Reserve Card (...2004),DELTA AIR LINES,,-4614.53,,Shared
 2026-02-14,Trifecta Nutrition,Restaurants,Bank of America Premium Rewards (...6538),"TRIFECTA NUTRITION, INC.",,-129.91,,Shared
@@ -20,7 +23,9 @@ Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
 2026-02-12,Ucla Store,Shopping,Bank of America Premium Rewards (...6538),UCLA STORE LOS ANGELES CA ,,-10.91,,Shared
 2026-02-12,Facebook,Business Services,Bank of America Premium Rewards (...6538),FACEBK *222CWE5NU2 650-5434800 DE ,,-50.00,Morgan Rose,Shared
 2026-02-12,Curb Taxi,Taxi & Ride Shares,Bank of America Premium Rewards (...6538),CURB LV TAXI NELLIS ASTORIA NY ,DICE LV to Hotel,-36.84,Morgan Rose,Shared
-2026-02-12,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*WD6U88R13,,-23.99,,Shared
+2026-02-12,Amazon,Groceries,Chase Amazon Card (...3726),AMAZON MKTPL*WD6U88R13,"1 x No Cow High Protein Bars, Birthday Cake, 21g Plant Based Vegan Protein, Keto Friendly, Low Sugar, Low Carb, Low Calorie, Gluten Free, Naturally Sweetened, Dairy Free, Non GMO, Kosher, 4 Pack - $23.99
+
+https://www.amazon.com/gp/your-account/order-details?orderID=112-0901900-6263436",-23.99,Retail Sync,Shared
 2026-02-12,Pampered Tails,Pet Wash,Centurion® Card (...1009),PAMPERED TAILS WESTCAMARILLO CA,,-243.22,,Shared
 2026-02-12,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:TAX 326107 ID:6semk7j3cb8 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-3117.08,,Shared
 2026-02-12,Rubin Household Payroll,Employee Wages,Jason and Agnes Checking (...8486),GUSTO DES:REM 343212 ID:6semk7j3cb9 INDN:Rubin Household CO ID:XXXXX64001 CCD,,-290.00,,Shared
@@ -36,7 +41,7 @@ Date,Merchant,Category,Account,Original Statement,Notes,Amount,Tags,Owner
 2026-02-12,Aria Resort,Travel,Delta SkyMiles® Reserve Card (...2004),ARIA - ADV SALES,,-150.00,Morgan Rose,Shared
 2026-02-12,Aria Resort,Travel,Delta SkyMiles® Reserve Card (...2004),ARIA - ADV SALES,,-1.01,Morgan Rose,Shared
 2026-02-12,Curb Mobility,Taxi & Ride Shares,Bank of America Premium Rewards (...6538),CURB MOBILITY,DICE LV from Hotel,-36.84,Morgan Rose,Shared
-2026-02-11,Amex Saks,Rewards,Centurion® Card (...1009),AMEX Saks Credit,,250.00,,Shared
+2026-02-11,American Express,Rewards,Centurion® Card (...1009),AMEX Saks Credit,,250.00,,Shared
 2026-02-11,Cafe Knotted,Restaurants,Bank Of America Alex's Visa (...9604),TST*CAFE KNOTTED - CENTU Los Angeles CA ,,-29.30,,Shared
 2026-02-11,Sephora,Personal Care,Bank Of America Alex's Visa (...9604),SEPHORA CENTURY CITY LOS ANGELES CA ,,-50.49,,Shared
 2026-02-11,Bristol Farms,Groceries,Bank Of America Alex's Visa (...9604),BRISTOL FARMS 15 LOS ANGELES CA ,,-68.08,,Shared
@@ -478,7 +483,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-3465838-4426635
 2026-01-13,Uber Eats,Restaurants,Centurion® Card (...1009),UBER EATS help.uber.com CA,,-256.56,,Shared
 2026-01-13,MyKidsSpending,Restaurants,Centurion® Card (...1009),MYKIDSSPENDING COM 4SOMERVILLE MA,,-512.50,,Shared
 2026-01-13,Petco,Pet Food and Treats,Bank Of America Alex's Visa (...9604),PETCO VITAL CARE 4200 858-453-7845 CA ,,-27.61,,Shared
-2026-01-13,The Cincinnati,Insurance,Delta SkyMiles® Reserve Card (...2004),THE CINCINNATI INSURFAIRFIELD OH,,5.00,,Shared
+2026-01-13,The Cincinatti Insurance,Insurance,Delta SkyMiles® Reserve Card (...2004),THE CINCINNATI INSURFAIRFIELD OH,,5.00,,Shared
 2026-01-12,Amazon,Home Improvement,Chase Amazon Card (...3726),AMAZON MKTPL*QQ3C11IH3,"1 x Glisten Garbage Disposer Cleaner and Freshener with Foaming Action, Helps Remove Buildup in Drains, Lemon Scent, Made in the USA, 16 Packets - $17.75
 
 https://www.amazon.com/gp/your-account/order-details?orderID=113-7347880-0434645",-19.13,Retail Sync,Shared
@@ -2684,7 +2689,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-08-20,Adobe,Subsciptions,Bank of America Premium Rewards (...6538),ADOBE 408-536-6000 CA ,,79.72,,Shared
 2025-08-20,Joe's Pizza,Restaurants,Bank Of America Alex's Visa (...9604),TST*JOES PIZZA - BEVERL Beverly HillsCA ,,-27.43,,Shared
 2025-08-20,Amazon,Shopping,Chase Amazon Card (...3726),AMAZON MKTPL*ZW4A02AU3,,-9.87,,Shared
-2025-08-20,Yuki,Personal Care,Bank Of America Alex's Visa (...9604),SQ *YUKISTYLIST LLC gosq.com CA ,,-420.00,,Shared
+2025-08-20,Yukistylist,Personal Care,Bank Of America Alex's Visa (...9604),SQ *YUKISTYLIST LLC gosq.com CA ,,-420.00,,Shared
 2025-08-20,La Provence Patisserie,Restaurants,Bank Of America Alex's Visa (...9604),LA PROVENCE PATISSERIE BEVERLY HILLSCA ,,-20.88,,Shared
 2025-08-20,Heytea,Restaurants,Bank Of America Alex's Visa (...9604),HEYTEA-LA Beverly Hill Los Angeles CA ,,-15.92,,Shared
 2025-08-20,Parking,Parking,Bank Of America Alex's Visa (...9604),CITY OF B H PARKING METERBEVERLY HILLSCA ,,-1.00,,Shared
@@ -5123,7 +5128,7 @@ https://www.amazon.com/gp/your-account/order-details?orderID=114-5250422-8786663
 2025-01-13,Rite Aid,Health & Medical,Bank of America Premium Rewards (...6538),RITE AID 05452 LOS ANGELES CA ,,-1.45,,Shared
 2025-01-13,Mountain Dog Chews,Pet Food and Treats,Bank of America Premium Rewards (...6538),MOUNTAIN DOG CHEWS 208-360-1371 ID ,,-342.00,,Shared
 2025-01-13,Parking,Parking,Bank of America Premium Rewards (...6538),LADOT METER PARKING LOS ANGELES CA ,,-1.00,,Shared
-2025-01-13,Geovera,Insurance,Bank of America Premium Rewards (...6538),GEOVERA ADV INS CO 800-774-1012 CA ,,-9101.00,,Shared
+2025-01-13,Geovera,Rental Expense,Bank of America Premium Rewards (...6538),GEOVERA ADV INS CO 800-774-1012 CA ,,-9101.00,1536 Rental,Shared
 2025-01-13,Entourage Barbershop,Personal Care,Bank of America Premium Rewards (...6538),SQ *ENTOURAGE BARBERSHOP West HollywooCA ,,-78.00,,Shared
 2025-01-12,Prime Video,Subsciptions,Chase Amazon Card (...3726),Prime Video Channels,,-2.99,,Shared
 2025-01-12,Amazon,Shopping,Chase Amazon Card (...3726),Amazon.com*Z58GX0HQ2,,-984.41,,Shared
