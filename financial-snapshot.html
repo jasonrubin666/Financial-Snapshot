@@ -2767,7 +2767,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           }
         };
         const totalsDatasets = [];
-        totalsDatasets.push({ data: [Math.abs(spend)], backgroundColor: barColor, barThickness: 48, stack: 'totals0' });
+        totalsDatasets.push({ data: [Math.max(0, -spend)], backgroundColor: barColor, barThickness: 48, stack: 'totals0' });
         if (totalsCommittedCurOrPast < 0) totalsDatasets.push({ data: [Math.abs(totalsCommittedCurOrPast)], backgroundColor: totalsCommittedCurOrPastColor, barThickness: 48, stack: 'totals0' });
         if (totalsCommittedFuture < 0) totalsDatasets.push({ data: [Math.abs(totalsCommittedFuture)], backgroundColor: totalsCommittedFutureColor, barThickness: 48, stack: 'totals0' });
         const chartWrap = '<div class="budget-totals-chart-wrap"><canvas id="budget-totals-chart"></canvas></div>';
@@ -3035,16 +3035,16 @@ For each scenario, net investments, real estate, and net worth are projected yea
         return category === 'Categorized but not Budgeted' ? txs.filter(t => !t.hidden) : txs;
       },
       getSpending(txs) {
-        return txs.reduce((sum, t) => sum + (t.amount < 0 ? t.amount : 0), 0);
+        return txs.reduce((sum, t) => sum + t.amount, 0);
       },
       getIncome(txs) {
-        return txs.reduce((sum, t) => sum + (t.amount > 0 ? t.amount : 0), 0);
+        return txs.reduce((sum, t) => sum + t.amount, 0);
       },
       getSpendingForTotal(txs) {
-        return txs.reduce((sum, t) => sum + (t.amount < 0 ? t.amount : 0), 0);
+        return txs.reduce((sum, t) => sum + t.amount, 0);
       },
       getIncomeForTotal(txs) {
-        return txs.reduce((sum, t) => sum + (t.amount > 0 ? t.amount : 0), 0);
+        return txs.reduce((sum, t) => sum + t.amount, 0);
       },
       render() {
         const el = document.getElementById('budget-content');
@@ -3060,9 +3060,9 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const income = this.getIncome(txs);
           const comm = this.getCommitted(category);
           if (isIncome) {
-            if (income > 0 || comm > 0) groupsWithSpend.add(grouping);
+            if (income !== 0 || comm !== 0) groupsWithSpend.add(grouping);
           } else {
-            if (spend < 0 || comm < 0) groupsWithSpend.add(grouping);
+            if (spend !== 0 || comm !== 0) groupsWithSpend.add(grouping);
           }
           groupBudgets[grouping] = (groupBudgets[grouping] || 0) + this.getBudget(category);
           if (!groupCategories[grouping]) groupCategories[grouping] = [];
@@ -3093,7 +3093,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
             const budget = this.getBudget(category);
             const val = isIncome ? income : spending;
             const totalVal = val + committed;
-            const hasActivity = isIncome ? (income > 0 || committed > 0) : (spending < 0 || committed < 0);
+            const hasActivity = (val !== 0 || committed !== 0);
             const fmtSigned = (n) => (n >= 0 ? '' : '-') + Math.round(Math.abs(n)).toLocaleString();
             const id = 'budget-chart-' + category.replace(/[^a-zA-Z0-9]/g, '-');
             const inputId = 'budget-input-' + category.replace(/[^a-zA-Z0-9]/g, '-');
@@ -3178,7 +3178,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const maxVal = Math.max(Math.abs(budget), Math.abs(totalWithCommitted), 1);
           const scaleMin = 0;
           const scaleMax = maxVal;
-          const barData1 = Math.abs(val);
+          const barData1 = isIncome ? Math.max(0, val) : Math.max(0, -val);
           const todayLineValue = Math.abs(budget) * todayProgress;
           const budgetLineValue = Math.abs(budget);
           const pctForColor = Math.abs(budget) > 0 ? Math.abs(totalWithCommitted) / Math.abs(budget) : 0;
@@ -3288,7 +3288,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
             const [r, g, bVal] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
             const commCurOrPast = this.getCommittedCurrentOrPast(category);
             const commFuture = this.getCommittedFuture(category);
-            const barData1 = Math.abs(val);
+            const barData1 = isIncome ? Math.max(0, val) : Math.max(0, -val);
             const newDatasets = [{ data: [barData1], backgroundColor: barColor, stack: 'stack0' }];
             if (commCurOrPast !== 0) newDatasets.push({ data: [Math.abs(commCurOrPast)], backgroundColor: 'rgba(' + r + ',' + g + ',' + bVal + ',0.66)', stack: 'stack0' });
             if (commFuture !== 0) newDatasets.push({ data: [Math.abs(commFuture)], backgroundColor: 'rgba(' + r + ',' + g + ',' + bVal + ',0.33)', stack: 'stack0' });
