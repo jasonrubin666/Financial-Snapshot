@@ -441,7 +441,10 @@
     .budget-grouping[data-expanded="false"] .budget-grouping-toggle { transform: rotate(-90deg); }
     .budget-grouping-categories {
       padding: 0.5rem;
-      background: var(--header-bg-muted);
+      background: rgb(100, 50, 50);
+    }
+    .budget-grouping[data-grouping="Income"] .budget-grouping-categories {
+      background: rgb(50, 100, 50);
     }
     .budget-grouping[data-expanded="false"] .budget-grouping-categories {
       display: none;
@@ -999,7 +1002,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
       saveCsvFile('financial-snapshot-inputs.csv', csv);
     }
     const BUDGET_CATEGORIES = [
-      { grouping: 'Income', category: 'Rewards' },
+      { grouping: 'Income', category: 'Rewards' }, { grouping: 'Income', category: 'Paychecks' }, { grouping: 'Income', category: 'Interest' }, { grouping: 'Income', category: 'Other Income' }, { grouping: 'Income', category: 'RSU Income' },
       { grouping: 'Gifts and Donations', category: 'Charity' }, { grouping: 'Gifts and Donations', category: 'Gifts' },
       { grouping: 'Auto and Transport', category: 'Gas' }, { grouping: 'Auto and Transport', category: 'Automotive Maintenance' }, { grouping: 'Auto and Transport', category: 'Auto Accident' }, { grouping: 'Auto and Transport', category: 'Parking' }, { grouping: 'Auto and Transport', category: 'Taxi and Ride Share' },
       { grouping: 'Home Maintenance', category: 'Property Taxes' }, { grouping: 'Home Maintenance', category: 'Insurance' }, { grouping: 'Home Maintenance', category: 'Home Improvement' }, { grouping: 'Home Maintenance', category: 'Misc Maintenance' }, { grouping: 'Home Maintenance', category: 'Pool Maintenance' }, { grouping: 'Home Maintenance', category: 'Gardening Maintenance' }, { grouping: 'Home Maintenance', category: 'Gallo Maintenance' },
@@ -1029,11 +1032,12 @@ For each scenario, net investments, real estate, and net worth are projected yea
       'misc maintenance': 'Misc Maintenance', 'misc maintanance': 'Misc Maintenance',
       'pool maintenance': 'Pool Maintenance', 'pool maintanance': 'Pool Maintenance',
       'gardening maintenance': 'Gardening Maintenance', 'gardening maintanance': 'Gardening Maintenance', 'gardening mantanance': 'Gardening Maintenance',
-      'gallo maintenance': 'Gallo Maintenance', 'gallo maintanance': 'Gallo Maintenance'
+      'gallo maintenance': 'Gallo Maintenance', 'gallo maintanance': 'Gallo Maintenance',
+      'rental maintanance': 'Rental Maintenance'
     };
     const IGNORED_CATEGORIES = [
-      'Transfer', 'Paychecks', 'Interest', 'Other Income', 'RSU Income', 'Rental Income', 'Rental Expense',
-      'Rental Maintenance', 'Rental Maintanance', 'Credit Card Payment', 'Balance Adjustment', 'Buy', 'Sell',
+      'Transfer', 'Rental Income', 'Rental Expense', 'Rental Maintenance',
+      'Credit Card Payment', 'Balance Adjustment', 'Buy', 'Sell',
       'Income Taxes', 'Agnes Ambrus', 'Mortgage'
     ];
     const IGNORED_TAGS = ['1536 Rental'];
@@ -2481,16 +2485,21 @@ For each scenario, net investments, real estate, and net worth are projected yea
       saveBudgets() {
         try { localStorage.setItem(BUDGET_STORAGE_KEY, JSON.stringify(this.storedBudgets || {})); } catch (_) {}
       },
+      isIncomeCategory(category) {
+        return BUDGET_CATEGORIES.some(b => b.grouping === 'Income' && b.category === category);
+      },
       getBudget(category) {
         if (!this.storedBudgets) this.loadStoredBudgets();
         const v = this.storedBudgets[category];
-        if (v != null && !isNaN(parseFloat(v)) && parseFloat(v) >= 0) return parseFloat(v);
-        return BUDGET_DEFAULT;
+        if (v == null || isNaN(parseFloat(v))) return this.isIncomeCategory(category) ? BUDGET_DEFAULT : -BUDGET_DEFAULT;
+        const num = parseFloat(v);
+        if (this.isIncomeCategory(category)) return num;
+        return num > 0 ? -num : num;
       },
       setBudget(category, value) {
         if (!this.storedBudgets) this.loadStoredBudgets();
         const n = parseFloat(value);
-        if (!isNaN(n) && n >= 0) {
+        if (!isNaN(n)) {
           this.storedBudgets[category] = n;
           this.saveBudgets();
         }
@@ -2498,15 +2507,24 @@ For each scenario, net investments, real estate, and net worth are projected yea
       updateTotals() {
         const el = document.getElementById('budget-totals-summary');
         if (!el) return;
-        let totalBudget = 0, totalSpending = 0, totalCommitted = 0;
+        let totalBudgetExpense = 0, totalSpending = 0, totalIncome = 0, totalBudgetIncome = 0, totalCommittedExpense = 0;
         for (const { grouping, category } of BUDGET_CATEGORIES) {
-          totalBudget += this.getBudget(category);
-          totalSpending += this.getSpendingForTotal(this.getTxsForCategory(category));
-          totalCommitted += this.getCommitted(category);
+          const isIncome = this.isIncomeCategory(category);
+          const txs = this.getTxsForCategory(category);
+          const b = this.getBudget(category);
+          const comm = this.getCommitted(category);
+          if (isIncome) {
+            totalIncome += this.getIncomeForTotal(txs);
+            totalBudgetIncome += b;
+          } else {
+            totalSpending += this.getSpendingForTotal(txs);
+            totalBudgetExpense += b;
+            totalCommittedExpense += comm;
+          }
         }
-        const spend = Math.max(0, totalSpending);
-        const committed = totalCommitted;
-        const pctBudget = totalBudget > 0 ? (spend / totalBudget) * 100 : 0;
+        const spend = totalSpending;
+        const committed = totalCommittedExpense;
+        const pctBudget = totalBudgetExpense < 0 ? (Math.abs(spend + committed) / Math.abs(totalBudgetExpense)) * 100 : 0;
         const now = new Date();
         const startOfYear = new Date(now.getFullYear(), 0, 1);
         const endOfYear = new Date(now.getFullYear(), 11, 31);
@@ -2514,13 +2532,19 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const dayOfYear = Math.round((now - startOfYear) / 86400000) + 1;
         const timeProgress = Math.min(1, Math.max(0, dayOfYear / daysInYear)) || 0.001;
         const timeVariancePct = pctBudget / (timeProgress * 100) * 100;
-        const todayLineValue = totalBudget * timeProgress;
+        const todayLineValue = Math.abs(totalBudgetExpense) * timeProgress;
         const totalWithCommitted = spend + committed;
-        const maxVal = Math.max(totalBudget, totalWithCommitted, 1);
-        const pct = totalBudget > 0 ? totalWithCommitted / totalBudget : 0;
+        const maxVal = Math.max(Math.abs(totalBudgetExpense), Math.abs(totalWithCommitted), 1);
+        const pct = Math.abs(totalBudgetExpense) > 0 ? Math.abs(totalWithCommitted) / Math.abs(totalBudgetExpense) : 0;
         const barColor = pct <= 0.8 ? '#22c55e' : (pct <= 1 ? '#eab308' : '#ef4444');
-        const totalsCommittedCurOrPast = BUDGET_CATEGORIES.reduce((s, { category }) => s + this.getCommittedCurrentOrPast(category), 0);
-        const totalsCommittedFuture = BUDGET_CATEGORIES.reduce((s, { category }) => s + this.getCommittedFuture(category), 0);
+        const totalsCommittedCurOrPast = BUDGET_CATEGORIES.reduce((s, { category }) => {
+          if (this.isIncomeCategory(category)) return s;
+          return s + this.getCommittedCurrentOrPast(category);
+        }, 0);
+        const totalsCommittedFuture = BUDGET_CATEGORIES.reduce((s, { category }) => {
+          if (this.isIncomeCategory(category)) return s;
+          return s + this.getCommittedFuture(category);
+        }, 0);
         const [tr, tg, tb] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
         const totalsCommittedCurOrPastColor = 'rgba(' + tr + ',' + tg + ',' + tb + ',0.66)';
         const totalsCommittedFutureColor = 'rgba(' + tr + ',' + tg + ',' + tb + ',0.33)';
@@ -2548,7 +2572,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 ctx.restore();
               }
             }
-            if (opts?.budgetValue != null && opts?.spending != null && opts.spending > opts.budgetValue) {
+            const totalsOverflow = opts?.budgetValue != null && opts?.spending != null && opts.spending > opts.budgetValue;
+            if (totalsOverflow) {
               const x = xScale.getPixelForValue(opts.budgetValue);
               if (x >= left - 1 && x <= right + 1) {
                 ctx.save();
@@ -2564,9 +2589,9 @@ For each scenario, net investments, real estate, and net worth are projected yea
           }
         };
         const totalsDatasets = [];
-        totalsDatasets.push({ data: [spend], backgroundColor: barColor, barThickness: 48, stack: 'totals0' });
-        if (totalsCommittedCurOrPast > 0) totalsDatasets.push({ data: [totalsCommittedCurOrPast], backgroundColor: totalsCommittedCurOrPastColor, barThickness: 48, stack: 'totals0' });
-        if (totalsCommittedFuture > 0) totalsDatasets.push({ data: [totalsCommittedFuture], backgroundColor: totalsCommittedFutureColor, barThickness: 48, stack: 'totals0' });
+        totalsDatasets.push({ data: [Math.abs(spend)], backgroundColor: barColor, barThickness: 48, stack: 'totals0' });
+        if (totalsCommittedCurOrPast < 0) totalsDatasets.push({ data: [Math.abs(totalsCommittedCurOrPast)], backgroundColor: totalsCommittedCurOrPastColor, barThickness: 48, stack: 'totals0' });
+        if (totalsCommittedFuture < 0) totalsDatasets.push({ data: [Math.abs(totalsCommittedFuture)], backgroundColor: totalsCommittedFutureColor, barThickness: 48, stack: 'totals0' });
         const chartWrap = '<div class="budget-totals-chart-wrap"><canvas id="budget-totals-chart"></canvas></div>';
         const errorBanner = this.committedLoadError
           ? '<div class="budget-committed-error">error in budget_committed.csv' +
@@ -2574,10 +2599,14 @@ For each scenario, net investments, real estate, and net worth are projected yea
               ? ': ' + this.committedLoadErrors.join('; ')
               : '') + '</div>'
           : '';
+        const netEarnings = totalIncome + spend + committed;
+        const fmtTotals = n => (n >= 0 ? '' : '-') + '$' + Math.round(Math.abs(n)).toLocaleString();
         const statsHtml = errorBanner + '<div class="budget-totals-row">' +
           '<div class="budget-totals-stats">' +
-          '<div class="budget-total-item"><span class="budget-total-label">Total Spending</span><span class="budget-total-value">$' + Math.round(spend).toLocaleString() + '</span></div>' +
-          '<div class="budget-total-item"><span class="budget-total-label">Total Budget</span><span class="budget-total-value" id="budget-total-budget-value">$' + Math.round(totalBudget).toLocaleString() + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label">Total Spending</span><span class="budget-total-value">' + fmtTotals(spend) + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label">Total Budget (Expense)</span><span class="budget-total-value" id="budget-total-budget-value">' + fmtTotals(totalBudgetExpense) + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label">Total Income</span><span class="budget-total-value">' + fmtTotals(totalIncome) + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label">Net Earnings</span><span class="budget-total-value" id="budget-net-earnings-value">' + fmtTotals(netEarnings) + '</span></div>' +
           '<div class="budget-total-item"><span class="budget-total-label">% Budget</span><span class="budget-total-value">' + pctBudget.toFixed(1) + '%</span></div>' +
           '<div class="budget-total-item"><span class="budget-total-label">Time % Variance</span><span class="budget-total-value">' + (timeVariancePct || 0).toFixed(1) + '%</span></div>' +
           '</div>' +
@@ -2598,16 +2627,16 @@ For each scenario, net investments, real estate, and net worth are projected yea
               layout: { padding: { left: 4, right: 12, top: 4, bottom: 4 } },
               plugins: {
                 legend: { display: false },
-                totalsBudgetLines: { todayValue: todayLineValue, budgetValue: totalBudget, spending: totalWithCommitted }
+                totalsBudgetLines: { todayValue: todayLineValue, budgetValue: Math.abs(totalBudgetExpense), spending: Math.abs(totalWithCommitted), isIncome: false }
               },
               scales: {
                 x: {
                   min: 0,
                   max: maxVal,
-                  stacked: committed > 0,
-                  ticks: { callback: v => '$' + Math.round(v / 1000) + 'k', maxRotation: 0, font: { size: 16, weight: '600' } }
+                  stacked: committed < 0,
+                  ticks: { callback: v => v === 0 ? '$0' : '-$' + Math.round(v / 1000) + 'k', maxRotation: 0, font: { size: 16, weight: '600' } }
                 },
-                y: { stacked: committed > 0, display: false }
+                y: { stacked: committed < 0, display: false }
               }
             }
           });
@@ -2630,7 +2659,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
             const cat = (row[0] || '').trim();
             const val = parseFloat((row[1] || '').toString().replace(/,/g, ''));
             const canonical = resolveBudgetCategory(cat);
-            if (canonical && !isNaN(val) && val >= 0) this.storedBudgets[canonical] = val;
+            if (canonical && !isNaN(val)) {
+              const isInc = BUDGET_CATEGORIES.some(b => b.grouping === 'Income' && b.category === canonical);
+              this.storedBudgets[canonical] = isInc ? val : (val > 0 ? -val : val);
+            }
           }
           this.saveBudgets();
           return true;
@@ -2670,9 +2702,9 @@ For each scenario, net investments, real estate, and net worth are projected yea
             const amount = parseFloat(row[4]);
             const startMonth = parseInt(row[5], 10);
             const endMonth = row.length >= 7 && (row[6] || '').trim() ? parseInt(row[6], 10) : startMonth;
-            if (isNaN(amount) || amount <= 0) {
+            if (isNaN(amount) || amount === 0) {
               this.committedLoadError = true;
-              this.committedLoadErrors.push('Row ' + rowNum + ' (' + (merchant || '?') + '): invalid amount "' + (row[4] || '') + '"');
+              this.committedLoadErrors.push('Row ' + rowNum + ' (' + (merchant || '?') + '): invalid amount "' + (row[4] || '') + '" (use negative for expenses, positive for income)');
               continue;
             }
             if (type === 'one-time') {
@@ -2703,7 +2735,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
         if (!Array.isArray(this.committedItems)) return 0;
         return this.committedItems
           .filter(i => i.category === category)
-          .reduce((s, i) => s + Math.abs(i.amount), 0);
+          .reduce((s, i) => s + i.amount, 0);
       },
       getCommittedCurrentMonth(category) {
         if (!Array.isArray(this.committedItems)) return 0;
@@ -2711,7 +2743,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const currentMonth = now.getMonth() + 1;
         return this.committedItems
           .filter(i => i.category === category && i.startMonth === currentMonth)
-          .reduce((s, i) => s + Math.abs(i.amount), 0);
+          .reduce((s, i) => s + i.amount, 0);
       },
       getCommittedCurrentOrPast(category) {
         if (!Array.isArray(this.committedItems)) return 0;
@@ -2719,7 +2751,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const currentMonth = now.getMonth() + 1;
         return this.committedItems
           .filter(i => i.category === category && i.startMonth <= currentMonth)
-          .reduce((s, i) => s + Math.abs(i.amount), 0);
+          .reduce((s, i) => s + i.amount, 0);
       },
       getCommittedFuture(category) {
         if (!Array.isArray(this.committedItems)) return 0;
@@ -2727,7 +2759,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const currentMonth = now.getMonth() + 1;
         return this.committedItems
           .filter(i => i.category === category && i.startMonth > currentMonth)
-          .reduce((s, i) => s + Math.abs(i.amount), 0);
+          .reduce((s, i) => s + i.amount, 0);
       },
       getCommittedRows(category) {
         if (!Array.isArray(this.committedItems)) return [];
@@ -2743,7 +2775,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
               merchant: i.merchant,
               category: i.category,
               tag: '',
-              amount: -Math.abs(i.amount),
+              amount: i.amount,
               committed: true
             };
           });
@@ -2801,11 +2833,16 @@ For each scenario, net investments, real estate, and net worth are projected yea
         return category === 'Categorized but not Budgeted' ? txs.filter(t => !t.hidden) : txs;
       },
       getSpending(txs) {
-        const net = txs.reduce((sum, t) => sum + (t.amount < 0 ? Math.abs(t.amount) : -t.amount), 0);
-        return Math.max(0, net);
+        return txs.reduce((sum, t) => sum + (t.amount < 0 ? t.amount : 0), 0);
+      },
+      getIncome(txs) {
+        return txs.reduce((sum, t) => sum + (t.amount > 0 ? t.amount : 0), 0);
       },
       getSpendingForTotal(txs) {
-        return txs.reduce((sum, t) => sum + (t.amount < 0 ? Math.abs(t.amount) : -t.amount), 0);
+        return txs.reduce((sum, t) => sum + (t.amount < 0 ? t.amount : 0), 0);
+      },
+      getIncomeForTotal(txs) {
+        return txs.reduce((sum, t) => sum + (t.amount > 0 ? t.amount : 0), 0);
       },
       render() {
         const el = document.getElementById('budget-content');
@@ -2816,14 +2853,24 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const groupCategories = {};
         for (const { grouping, category } of BUDGET_CATEGORIES) {
           const txs = this.getTxsForCategory(category);
+          const isIncome = this.isIncomeCategory(category);
           const spend = this.getSpending(txs);
+          const income = this.getIncome(txs);
           const comm = this.getCommitted(category);
-          if (spend > 0 || comm > 0) groupsWithSpend.add(grouping);
+          if (isIncome) {
+            if (income > 0 || comm > 0) groupsWithSpend.add(grouping);
+          } else {
+            if (spend < 0 || comm < 0) groupsWithSpend.add(grouping);
+          }
           groupBudgets[grouping] = (groupBudgets[grouping] || 0) + this.getBudget(category);
           if (!groupCategories[grouping]) groupCategories[grouping] = [];
           groupCategories[grouping].push(category);
         }
-        const sortedGroups = [...new Set(BUDGET_CATEGORIES.map(b => b.grouping))].sort((a, b) => (groupBudgets[b] || 0) - (groupBudgets[a] || 0));
+        const sortedGroups = [...new Set(BUDGET_CATEGORIES.map(b => b.grouping))].sort((a, b) => {
+          if (a === 'Income') return -1;
+          if (b === 'Income') return 1;
+          return Math.abs(groupBudgets[b] || 0) - Math.abs(groupBudgets[a] || 0);
+        });
         let html = '';
         for (const grouping of sortedGroups) {
           const groupExpanded = groupsWithSpend.has(grouping);
@@ -2832,24 +2879,33 @@ For each scenario, net investments, real estate, and net worth are projected yea
           html += `<div class="budget-grouping" data-expanded="${groupExpanded}" data-grouping="${grouping.replace(/"/g, '&quot;')}">
             <h3 class="budget-grouping-title">
               <span class="budget-grouping-title-inner"><span class="budget-grouping-toggle">▾</span>${grouping}</span>
-              <span class="budget-group-total" id="budget-group-total-${groupId}">$${Math.round(groupTotal).toLocaleString()}</span>
+              <span class="budget-group-total" id="budget-group-total-${groupId}">$${groupTotal >= 0 ? '' : '-'}${Math.round(Math.abs(groupTotal)).toLocaleString()}</span>
             </h3>
             <div class="budget-grouping-categories">`;
           for (const category of groupCategories[grouping]) {
             const txs = this.getTxsForCategory(category);
+            const isIncome = this.isIncomeCategory(category);
             const spending = this.getSpending(txs);
+            const income = this.getIncome(txs);
             const committed = this.getCommitted(category);
             const budget = this.getBudget(category);
+            const val = isIncome ? income : spending;
+            const totalVal = val + committed;
+            const hasActivity = isIncome ? (income > 0 || committed > 0) : (spending < 0 || committed < 0);
+            const fmtSigned = (n) => (n >= 0 ? '' : '-') + Math.round(Math.abs(n)).toLocaleString();
             const id = 'budget-chart-' + category.replace(/[^a-zA-Z0-9]/g, '-');
             const inputId = 'budget-input-' + category.replace(/[^a-zA-Z0-9]/g, '-');
             const labelId = 'budget-label-' + category.replace(/[^a-zA-Z0-9]/g, '-');
-            html += `<div class="budget-category-card" data-expanded="${(spending > 0 || committed > 0) ? 'true' : 'false'}" data-category="${category.replace(/"/g, '&quot;')}">
+            const labelStr = isIncome
+              ? `${category} — $${fmtSigned(val)}${committed !== 0 ? ' + $' + fmtSigned(committed) : ''} = $${fmtSigned(totalVal)} / $${fmtSigned(budget)}`
+              : `${category} — $${fmtSigned(val)}${committed !== 0 ? ' + $' + fmtSigned(committed) : ''} = $${fmtSigned(totalVal)} / $${fmtSigned(budget)}`;
+            html += `<div class="budget-category-card" data-expanded="${hasActivity ? 'true' : 'false'}" data-category="${category.replace(/"/g, '&quot;')}">
               <div class="budget-category-header">
                 <span class="budget-category-header-inner">
                   <span class="budget-category-toggle">▾</span>
-                  <span class="budget-category-label" id="${labelId}">${category} — $${Math.round(spending).toLocaleString()}${committed > 0 ? ' + $' + Math.round(committed).toLocaleString() : ''} = $${Math.round(spending + committed).toLocaleString()} / $${Math.round(budget).toLocaleString()}</span>
+                  <span class="budget-category-label" id="${labelId}">${labelStr}</span>
                 </span>
-                <input type="text" class="budget-input" id="${inputId}" data-category="${category.replace(/"/g, '&quot;')}" data-grouping="${grouping.replace(/"/g, '&quot;')}" value="${Math.round(budget).toLocaleString()}" inputmode="numeric">
+                <input type="text" class="budget-input" id="${inputId}" data-category="${category.replace(/"/g, '&quot;')}" data-grouping="${grouping.replace(/"/g, '&quot;')}" value="${budget >= 0 ? '' : '-'}${Math.round(Math.abs(budget)).toLocaleString()}" inputmode="numeric">
               </div>
               <div class="budget-category-body">
                 <div class="budget-category-chart"><canvas id="${id}"></canvas></div>
@@ -2890,7 +2946,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 ctx.restore();
               }
             }
-            if (opts?.budgetValue != null && opts?.spending != null && opts.spending > opts.budgetValue) {
+            const overflow = opts?.budgetValue != null && opts?.spending != null && opts.spending > opts.budgetValue;
+            if (overflow) {
               const x = xScale.getPixelForValue(opts.budgetValue);
               if (x >= left - 1 && x <= right + 1) {
                 ctx.save();
@@ -2907,15 +2964,23 @@ For each scenario, net investments, real estate, and net worth are projected yea
         };
         for (const { grouping, category } of BUDGET_CATEGORIES) {
           const txs = this.getTxsForCategory(category);
+          const isIncome = this.isIncomeCategory(category);
           const spending = this.getSpending(txs);
+          const income = this.getIncome(txs);
           const committed = this.getCommitted(category);
           const committedCurOrPast = this.getCommittedCurrentOrPast(category);
           const committedFuture = this.getCommittedFuture(category);
           const budget = this.getBudget(category);
-          const totalWithCommitted = spending + committed;
-          const maxVal = Math.max(budget, totalWithCommitted, 1);
-          const todayLineValue = budget * todayProgress;
-          const pctForColor = budget > 0 ? totalWithCommitted / budget : 0;
+          const val = isIncome ? income : spending;
+          const totalWithCommitted = val + committed;
+          const maxVal = Math.max(Math.abs(budget), Math.abs(totalWithCommitted), 1);
+          const scaleMin = 0;
+          const scaleMax = maxVal;
+          const barData1 = Math.abs(val);
+          const todayLineValue = Math.abs(budget) * todayProgress;
+          const budgetLineValue = Math.abs(budget);
+          const pctForColor = maxVal > 0 ? Math.abs(totalWithCommitted) / maxVal : 0;
+          const spendingForPlugin = Math.abs(totalWithCommitted);
           const barColor = pctForColor <= 0.8 ? '#22c55e' : (pctForColor <= 1 ? '#eab308' : '#ef4444');
           const [r, g, b] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
           const committedCurOrPastColor = 'rgba(' + r + ',' + g + ',' + b + ',0.66)';
@@ -2926,10 +2991,12 @@ For each scenario, net investments, real estate, and net worth are projected yea
           if (canvas) {
             const ctx = canvas.getContext('2d');
             const datasets = [];
-            datasets.push({ data: [spending], backgroundColor: barColor, stack: 'stack0' });
-            if (committedCurOrPast > 0) datasets.push({ data: [committedCurOrPast], backgroundColor: committedCurOrPastColor, stack: 'stack0' });
-            if (committedFuture > 0) datasets.push({ data: [committedFuture], backgroundColor: committedFutureColor, stack: 'stack0' });
-            const hasStacked = committed > 0;
+            const barData2 = Math.abs(committedCurOrPast);
+            const barData3 = Math.abs(committedFuture);
+            datasets.push({ data: [barData1], backgroundColor: barColor, stack: 'stack0' });
+            if (committedCurOrPast !== 0) datasets.push({ data: [barData2], backgroundColor: committedCurOrPastColor, stack: 'stack0' });
+            if (committedFuture !== 0) datasets.push({ data: [barData3], backgroundColor: committedFutureColor, stack: 'stack0' });
+            const hasStacked = committed !== 0;
             const inst = new Chart(ctx, {
               type: 'bar',
               plugins: [budgetLinesPlugin],
@@ -2941,14 +3008,14 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 layout: { padding: { left: 2, right: 8, top: 2, bottom: 2 } },
                 plugins: {
                   legend: { display: false },
-                  budgetLines: { todayValue: todayLineValue, budgetValue: budget, spending: totalWithCommitted }
+                  budgetLines: { todayValue: todayLineValue, budgetValue: budgetLineValue, spending: spendingForPlugin, isIncome }
                 },
                 scales: {
                   x: {
-                    min: 0,
-                    max: maxVal,
+                    min: scaleMin,
+                    max: scaleMax,
                     stacked: hasStacked,
-                    ticks: { callback: v => '$' + Math.round(v / 1000) + 'k', maxRotation: 0, font: { size: 11 } }
+                    ticks: { callback: v => v === 0 ? '$0' : (isIncome ? '' : '-') + '$' + Math.round(v / 1000) + 'k', maxRotation: 0, font: { size: 11 } }
                   },
                   y: { stacked: hasStacked, display: false }
                 }
@@ -2960,7 +3027,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const dataEl = document.getElementById('budget-data-' + id);
           if (dataEl) {
             const fmt = d => d ? monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() : '';
-            const amountFmt = n => n < 0 ? '$' + Math.round(Math.abs(n)).toLocaleString() : (n > 0 ? '$-' + Math.round(n).toLocaleString() : '$0');
+            const amountFmt = n => n === 0 ? '$0' : (n < 0 ? '-$' : '$') + Math.round(Math.abs(n)).toLocaleString();
             const committedRows = this.getCommittedRows(category);
             const allRows = [...txs, ...committedRows].sort((a, b) => a.dateObj - b.dateObj);
             const rowHtml = r => {
@@ -2999,47 +3066,54 @@ For each scenario, net investments, real estate, and net worth are projected yea
           if (!category) return;
           const raw = inputEl.value.replace(/,/g, '');
           const num = parseFloat(raw);
-          if (isNaN(num) || num < 0) return;
+          if (isNaN(num)) return;
           this.setBudget(category, num);
           const txs2 = this.getTxsForCategory(category);
+          const isIncome = this.isIncomeCategory(category);
           const spend = this.getSpending(txs2);
+          const income = this.getIncome(txs2);
           const b = this.getBudget(category);
           const comm = this.getCommitted(category);
+          const val = isIncome ? income : spend;
+          const totalWithComm = val + comm;
           const inst = this.chartInstances[category];
           if (inst) {
-            const totalWithComm = spend + comm;
-            const p = b > 0 ? totalWithComm / b : 0;
-            const barColor = p <= 0.8 ? '#22c55e' : (p <= 1 ? '#eab308' : '#ef4444');
+            const maxVal = Math.max(Math.abs(b), Math.abs(totalWithComm), 1);
+            const scaleMin = 0;
+            const scaleMax = maxVal;
+            const pctForColor = maxVal > 0 ? Math.abs(totalWithComm) / maxVal : 0;
+            const barColor = pctForColor <= 0.8 ? '#22c55e' : (pctForColor <= 1 ? '#eab308' : '#ef4444');
             const [r, g, bVal] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
             const commCurOrPast = this.getCommittedCurrentOrPast(category);
             const commFuture = this.getCommittedFuture(category);
-            const newDatasets = [{ data: [spend], backgroundColor: barColor, stack: 'stack0' }];
-            if (commCurOrPast > 0) newDatasets.push({ data: [commCurOrPast], backgroundColor: 'rgba(' + r + ',' + g + ',' + bVal + ',0.66)', stack: 'stack0' });
-            if (commFuture > 0) newDatasets.push({ data: [commFuture], backgroundColor: 'rgba(' + r + ',' + g + ',' + bVal + ',0.33)', stack: 'stack0' });
+            const barData1 = Math.abs(val);
+            const newDatasets = [{ data: [barData1], backgroundColor: barColor, stack: 'stack0' }];
+            if (commCurOrPast !== 0) newDatasets.push({ data: [Math.abs(commCurOrPast)], backgroundColor: 'rgba(' + r + ',' + g + ',' + bVal + ',0.66)', stack: 'stack0' });
+            if (commFuture !== 0) newDatasets.push({ data: [Math.abs(commFuture)], backgroundColor: 'rgba(' + r + ',' + g + ',' + bVal + ',0.33)', stack: 'stack0' });
             inst.data.datasets = newDatasets;
-            inst.options.scales.x.max = Math.max(b, totalWithComm, 1);
+            inst.options.scales.x.min = scaleMin;
+            inst.options.scales.x.max = scaleMax;
+            const todayLineVal = Math.abs(b) * todayProgress;
+            const budgetLineVal = Math.abs(b);
             if (inst.options.plugins?.budgetLines) {
-              inst.options.plugins.budgetLines.todayValue = b * todayProgress;
-              inst.options.plugins.budgetLines.budgetValue = b;
-              inst.options.plugins.budgetLines.spending = totalWithComm;
+              inst.options.plugins.budgetLines.todayValue = todayLineVal;
+              inst.options.plugins.budgetLines.budgetValue = budgetLineVal;
+              inst.options.plugins.budgetLines.spending = Math.abs(totalWithComm);
+              inst.options.plugins.budgetLines.isIncome = isIncome;
             }
             inst.update();
           }
-          inputEl.value = Math.round(b).toLocaleString();
+          const fmtSigned = (n) => (n >= 0 ? '' : '-') + Math.round(Math.abs(n)).toLocaleString();
+          inputEl.value = (b >= 0 ? '' : '-') + Math.round(Math.abs(b)).toLocaleString();
           const labelEl = document.getElementById('budget-label-' + category.replace(/[^a-zA-Z0-9]/g, '-'));
-          if (labelEl) labelEl.textContent = category + ' — $' + Math.round(spend).toLocaleString() + (comm > 0 ? ' + $' + Math.round(comm).toLocaleString() : '') + ' = $' + Math.round(spend + comm).toLocaleString() + ' / $' + Math.round(b).toLocaleString();
+          if (labelEl) labelEl.textContent = category + ' — $' + fmtSigned(val) + (comm !== 0 ? ' + $' + fmtSigned(comm) : '') + ' = $' + fmtSigned(totalWithComm) + ' / $' + fmtSigned(b);
           for (const g of [...new Set(BUDGET_CATEGORIES.map(bc => bc.grouping))]) {
             const groupTotal = BUDGET_CATEGORIES.filter(bc => bc.grouping === g).reduce((s, bc) => s + this.getBudget(bc.category), 0);
             const groupId = 'group-' + g.replace(/[^a-zA-Z0-9]/g, '-');
             const groupTotalEl = document.getElementById('budget-group-total-' + groupId);
-            if (groupTotalEl) groupTotalEl.textContent = '$' + Math.round(groupTotal).toLocaleString();
+            if (groupTotalEl) groupTotalEl.textContent = (groupTotal >= 0 ? '$' : '-$') + Math.round(Math.abs(groupTotal)).toLocaleString();
           }
           this.updateTotals();
-          const totalBudgetEl = document.getElementById('budget-total-budget-value');
-          if (totalBudgetEl) {
-            const newTotal = BUDGET_CATEGORIES.reduce((s, bc) => s + this.getBudget(bc.category), 0);
-            totalBudgetEl.textContent = '$' + Math.round(newTotal).toLocaleString();
-          }
         };
         el.addEventListener('change', (e) => { if (e.target.classList.contains('budget-input')) applyBudgetChange(e.target); });
         el.addEventListener('blur', (e) => { if (e.target.classList.contains('budget-input')) applyBudgetChange(e.target); }, true);

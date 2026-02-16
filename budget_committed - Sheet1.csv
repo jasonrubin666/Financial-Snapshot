@@ -1,25 +1,29 @@
 False if Spent,Category,Merchant,Type,Amount,StartMonth,EndMonth
-TRUE,Internet,Spectrum ,monthly,86.24,2,12
-TRUE,Property Taxes,Los Angeles Tax Assessor,one-time,68605.43,2,
-TRUE,Property Taxes,Los Angeles Tax Assessor,one-time,69977.5386,11,
-TRUE,Subscriptions,Netflix,monthly,24.99,2,12
-TRUE,Subscriptions,Adobe,monthly,29.99,2,12
-TRUE,Subscriptions,Youtube,monthly,22.99,2,12
-TRUE,Subscriptions,Google,monthly,15,2,12
-TRUE,Pool Maintenance,AC Pools,monthly,700,2,12
-TRUE,Restaurants,Trifecta,monthly,516,2,12
-TRUE,Pet Wash,Pampered Tails,monthly,500,2,12
-TRUE,Employee Wages,Rubin Household Payroll,monthly,20562.2,2,12
-TRUE,Employee Gifts,Rubin Household Payroll,one-time,30000,2,
-TRUE,Insurance,Cincinatti Insurance,one-time,37562,4,
-TRUE,Insurance,Cincinatti Insurance,one-time,37562,7,
-TRUE,Insurance,Cincinatti Insurance,one-time,37562,10,
-TRUE,Insurance,Cincinatti Insurance,one-time,11336,4,
-TRUE,Insurance,Cincinatti Insurance,one-time,11336,7,
-TRUE,Insurance,Cincinatti Insurance,one-time,11336,10,
-TRUE,Insurance,Cincinatti Insurance,one-time,65000,5,
-TRUE,Education,Marlborough,one-time,53250,4,
-TRUE,Education,Marlborough,one-time,5000,8,
-TRUE,Travel,Safari Experts,one-time,33000,8,
-TRUE,Travel,Luxury Properties Jackson Hole,one-time,143750,4,
-TRUE,Phone,Verizon,monthly,240.5,2,12
+TRUE,Internet,Spectrum ,monthly,-86.24,2,12
+TRUE,Property Taxes,Los Angeles Tax Assessor,one-time,-68605.43,2,
+TRUE,Property Taxes,Los Angeles Tax Assessor,one-time,-69977.5386,11,
+TRUE,Subscriptions,Netflix,monthly,-24.99,2,12
+TRUE,Subscriptions,Adobe,monthly,-29.99,2,12
+TRUE,Subscriptions,Youtube,monthly,-22.99,2,12
+TRUE,Subscriptions,Google,monthly,-15,2,12
+TRUE,Pool Maintenance,AC Pools,monthly,-700,2,12
+TRUE,Restaurants,Trifecta,monthly,-516,2,12
+TRUE,Pet Wash,Pampered Tails,monthly,-500,2,12
+TRUE,Employee Wages,Rubin Household Payroll,monthly,-20562.2,2,12
+TRUE,Employee Gifts,Rubin Household Payroll,one-time,-30000,2,
+TRUE,Insurance,Cincinatti Insurance,one-time,-37562,4,
+TRUE,Insurance,Cincinatti Insurance,one-time,-37562,7,
+TRUE,Insurance,Cincinatti Insurance,one-time,-37562,10,
+TRUE,Insurance,Cincinatti Insurance,one-time,-11336,4,
+TRUE,Insurance,Cincinatti Insurance,one-time,-11336,7,
+TRUE,Insurance,Cincinatti Insurance,one-time,-11336,10,
+TRUE,Insurance,Cincinatti Insurance,one-time,-65000,5,
+TRUE,Education,Marlborough,one-time,-53250,4,
+TRUE,Education,Marlborough,one-time,-5000,8,
+TRUE,Travel,Safari Experts,one-time,-33000,8,
+TRUE,Travel,Luxury Properties Jackson Hole,one-time,-143750,4,
+TRUE,Phone,Verizon,monthly,-240.5,2,12
+TRUE,Paychecks,Meta,one-time,256642.1,4,
+TRUE,Paychecks,Meta,one-time,180000,3,
+TRUE,RSU Income,Meta,one-time,1450000,2,
+TRUE,RSU Income,Meta,one-time,1037848.5,4,
