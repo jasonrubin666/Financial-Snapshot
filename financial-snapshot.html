@@ -530,6 +530,13 @@
       gap: 3rem;
       flex-wrap: wrap;
     }
+    .budget-totals-line2 {
+      flex-basis: 100%;
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+      margin-top: 0.25rem;
+    }
     .budget-totals-summary .budget-total-item {
       display: flex;
       flex-direction: column;
@@ -2507,7 +2514,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
       updateTotals() {
         const el = document.getElementById('budget-totals-summary');
         if (!el) return;
-        let totalBudgetExpense = 0, totalSpending = 0, totalIncome = 0, totalBudgetIncome = 0, totalCommittedExpense = 0;
+        let totalBudgetExpense = 0, totalSpending = 0, totalIncome = 0, totalBudgetIncome = 0, totalCommittedExpense = 0, totalCommittedIncome = 0;
         for (const { grouping, category } of BUDGET_CATEGORIES) {
           const isIncome = this.isIncomeCategory(category);
           const txs = this.getTxsForCategory(category);
@@ -2516,6 +2523,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           if (isIncome) {
             totalIncome += this.getIncomeForTotal(txs);
             totalBudgetIncome += b;
+            totalCommittedIncome += comm;
           } else {
             totalSpending += this.getSpendingForTotal(txs);
             totalBudgetExpense += b;
@@ -2531,7 +2539,6 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const daysInYear = Math.round((endOfYear - startOfYear) / 86400000) + 1;
         const dayOfYear = Math.round((now - startOfYear) / 86400000) + 1;
         const timeProgress = Math.min(1, Math.max(0, dayOfYear / daysInYear)) || 0.001;
-        const timeVariancePct = pctBudget / (timeProgress * 100) * 100;
         const todayLineValue = Math.abs(totalBudgetExpense) * timeProgress;
         const totalWithCommitted = spend + committed;
         const maxVal = Math.max(Math.abs(totalBudgetExpense), Math.abs(totalWithCommitted), 1);
@@ -2599,16 +2606,23 @@ For each scenario, net investments, real estate, and net worth are projected yea
               ? ': ' + this.committedLoadErrors.join('; ')
               : '') + '</div>'
           : '';
-        const netEarnings = totalIncome + spend + committed;
+        const totalSpend = spend + committed;
+        const totalIncomeSum = totalIncome + totalCommittedIncome;
+        const netEarnings = totalSpend + totalIncomeSum;
         const fmtTotals = n => (n >= 0 ? '' : '-') + '$' + Math.round(Math.abs(n)).toLocaleString();
         const statsHtml = errorBanner + '<div class="budget-totals-row">' +
           '<div class="budget-totals-stats">' +
-          '<div class="budget-total-item"><span class="budget-total-label">Total Spending</span><span class="budget-total-value">' + fmtTotals(spend) + '</span></div>' +
-          '<div class="budget-total-item"><span class="budget-total-label">Total Budget (Expense)</span><span class="budget-total-value" id="budget-total-budget-value">' + fmtTotals(totalBudgetExpense) + '</span></div>' +
-          '<div class="budget-total-item"><span class="budget-total-label">Total Income</span><span class="budget-total-value">' + fmtTotals(totalIncome) + '</span></div>' +
-          '<div class="budget-total-item"><span class="budget-total-label">Net Earnings</span><span class="budget-total-value" id="budget-net-earnings-value">' + fmtTotals(netEarnings) + '</span></div>' +
-          '<div class="budget-total-item"><span class="budget-total-label">% Budget</span><span class="budget-total-value">' + pctBudget.toFixed(1) + '%</span></div>' +
-          '<div class="budget-total-item"><span class="budget-total-label">Time % Variance</span><span class="budget-total-value">' + (timeVariancePct || 0).toFixed(1) + '%</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label" style="color:rgb(255,0,0)">Spending to Date</span><span class="budget-total-value" style="color:rgb(255,0,0)">' + fmtTotals(spend) + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label" style="color:rgb(128,0,0)">Committed Spend</span><span class="budget-total-value" style="color:rgb(128,0,0)">' + fmtTotals(committed) + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label" style="color:rgb(255,128,128)">Total Spend</span><span class="budget-total-value" style="color:rgb(255,128,128)">' + fmtTotals(totalSpend) + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label" style="color:rgb(0,255,0)">Income to Date</span><span class="budget-total-value" style="color:rgb(0,255,0)">' + fmtTotals(totalIncome) + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label" style="color:rgb(0,128,0)">Anticipated Income</span><span class="budget-total-value" style="color:rgb(0,128,0)">' + fmtTotals(totalCommittedIncome) + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label" style="color:rgb(128,255,128)">Total Income</span><span class="budget-total-value" style="color:rgb(128,255,128)">' + fmtTotals(totalIncomeSum) + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label" style="color:white">Net Earnings</span><span class="budget-total-value" style="color:white" id="budget-net-earnings-value">' + fmtTotals(netEarnings) + '</span></div>' +
+          '<div class="budget-totals-line2">' +
+          '<div class="budget-total-item"><span class="budget-total-label" style="color:white">Total Budget (Expense)</span><span class="budget-total-value" style="color:white" id="budget-total-budget-value">' + fmtTotals(totalBudgetExpense) + '</span></div>' +
+          '<div class="budget-total-item"><span class="budget-total-label" style="color:white">% Budget</span><span class="budget-total-value" style="color:white">' + pctBudget.toFixed(1) + '%</span></div>' +
+          '</div>' +
           '</div>' +
           '<button type="button" id="budget-save-csv" class="budget-save-csv-btn">Save .csv</button></div>';
         el.innerHTML = statsHtml + chartWrap;
