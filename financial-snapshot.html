@@ -12,7 +12,7 @@
   <title>Rubin Financial Snapshot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Anton+SC&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -328,14 +328,54 @@
     }
     .page-header {
       margin-bottom: 1.5rem;
-      text-align: center;
+      display: flex;
+      align-items: flex-end;
+      gap: 1.3rem;
     }
-    .page-header h1 {
-      margin: 0 0 0.2rem;
-      font-size: 1.75rem;
-      font-weight: 600;
+    .page-header-logo {
+      height: 176px;
+      width: auto;
+      display: block;
+      flex-shrink: 0;
+    }
+    .page-header-right {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .page-header-brand {
+      padding: 0.15rem 0 0.05rem 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 128px;
+    }
+    .page-header-brand-inner {
+      border-top: 4px solid rgb(0, 0, 0);
+      border-bottom: 3px solid rgb(0, 0, 0);
+      padding: 0.15rem 1rem 0.15rem 0;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .page-header-year {
+      margin: 0;
+      font-family: 'Anton SC', sans-serif;
+      font-size: 5rem;
+      font-weight: 500;
       color: var(--text);
-      letter-spacing: -0.02em;
+      flex-shrink: 0;
+      letter-spacing: 0.01em;
+    }
+    .page-header-title {
+      margin: 0;
+      font-family: 'Anton SC', sans-serif;
+      font-size: 5rem;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: 0.01em;
     }
     .page-subtitle {
       margin: 0;
@@ -383,32 +423,36 @@
     .breakdown-table tr.committed-row td { color: #888; }
     .breakdown-table tr td:nth-child(n+2),
     .breakdown-table tr th:nth-child(n+2) { text-align: right; }
+    .page-header-nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.02rem;
+      padding-left: 1rem;
+    }
+    .page-header-csv-update {
+      font-size: 0.8125rem;
+      color: rgba(0, 0, 0, 0.5);
+    }
     .page-nav {
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      justify-content: center;
+      gap: 1.25rem;
+      justify-content: flex-end;
     }
     .page-tab {
-      padding: 0.5rem 1.25rem;
-      font-size: 0.9375rem;
-      font-weight: 500;
+      font-size: 1.375rem;
+      font-weight: 700;
       font-family: inherit;
-      cursor: pointer;
-      background: var(--bg-card);
       color: var(--text-muted);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.15s;
     }
     .page-tab:hover {
       color: var(--text);
-      border-color: var(--text-light);
     }
     .page-tab[data-active="true"] {
-      background: var(--header-bg);
-      color: var(--header-text);
-      border-color: var(--header-bg);
+      color: var(--text);
     }
     .page-content {
       display: none;
@@ -719,11 +763,22 @@
 <body>
   <div class="page-container">
   <header class="page-header">
-    <h1>Rubin Financial Snapshot</h1>
-    <nav class="page-nav">
-      <button type="button" class="page-tab" data-active="true" data-page="investments">Investments</button>
-      <button type="button" class="page-tab" data-active="false" data-page="budget">Budget</button>
-    </nav>
+    <img src="Financial_Snapshot_Logo.png" alt="" class="page-header-logo">
+    <div class="page-header-right">
+      <div class="page-header-brand">
+        <div class="page-header-brand-inner">
+          <h1 class="page-header-title">Rubin Financial Snapshot</h1>
+          <span class="page-header-year" id="header-year"></span>
+        </div>
+      </div>
+      <div class="page-header-nav-row">
+        <span class="page-header-csv-update" id="header-csv-update">Last complete .csv update —</span>
+        <nav class="page-nav">
+          <a href="#" class="page-tab" data-active="true" data-page="investments">Investments</a>
+          <a href="#" class="page-tab" data-active="false" data-page="budget">Budget</a>
+        </nav>
+      </div>
+    </div>
   </header>
   <div id="page-investments" class="page-content" data-visible="true">
   <div id="chart-sections">
@@ -862,6 +917,10 @@ For each scenario, net investments, real estate, and net worth are projected yea
   <script>
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.addEventListener('load', () => window.scrollTo(0, 0));
+    (function() {
+      const el = document.getElementById('header-year');
+      if (el) el.textContent = "'" + new Date().getFullYear().toString().slice(-2);
+    })();
     function debounce(fn, ms) {
       let t;
       return (...args) => {
@@ -902,6 +961,30 @@ For each scenario, net investments, real estate, and net worth are projected yea
         candidates.sort();
         return candidates.length > 0 ? candidates[candidates.length - 1] : 'Transactions.csv';
       } catch (_) { return 'Transactions.csv'; }
+    }
+    async function getEarliestCsvUpdateDate() {
+      try {
+        const [balPath, txPath] = await Promise.all([findBalancesCsvPath(), findTransactionsCsvPath()]);
+        const [balResp, txResp] = await Promise.all([
+          fetch(balPath, { method: 'HEAD' }),
+          fetch(txPath, { method: 'HEAD' })
+        ]);
+        const parseLastModified = (resp) => {
+          const lm = resp.headers.get('Last-Modified');
+          return lm ? new Date(lm) : null;
+        };
+        const balDate = parseLastModified(balResp);
+        const txDate = parseLastModified(txResp);
+        const dates = [balDate, txDate].filter(d => d && !isNaN(d.getTime()));
+        if (dates.length === 0) return null;
+        return new Date(Math.min(...dates.map(d => d.getTime())));
+      } catch (_) {
+        return null;
+      }
+    }
+    function formatLongDate(d) {
+      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
     }
     function matchesBudgetLimits(baseName) {
       const normalized = baseName.toLowerCase().replace(/_/g, '-');
@@ -3251,7 +3334,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
     };
 
     document.querySelectorAll('.page-tab').forEach(btn => {
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
         const page = btn.getAttribute('data-page');
         document.querySelectorAll('.page-tab').forEach(b => b.setAttribute('data-active', b.getAttribute('data-page') === page ? 'true' : 'false'));
         document.getElementById('page-investments').setAttribute('data-visible', page === 'investments' ? 'true' : 'false');
@@ -3271,6 +3355,12 @@ For each scenario, net investments, real estate, and net worth are projected yea
         if (bal.balance_exclude_nonmerrill !== undefined && el('balance-exclude-nonmerrill')) el('balance-exclude-nonmerrill').checked = !!bal.balance_exclude_nonmerrill;
       }
       await balanceChart.init();
+      (async () => {
+        const el = document.getElementById('header-csv-update');
+        if (!el) return;
+        const d = await getEarliestCsvUpdateDate();
+        el.textContent = 'Last complete .csv update:    ' + (d ? formatLongDate(d) : '—');
+      })();
       fetchKeyFigures();
       await wealthProjectionChart.init();
       await monteCarloChart.init();
