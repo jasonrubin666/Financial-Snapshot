@@ -579,6 +579,110 @@
       font-weight: 600;
       font-size: 1rem;
     }
+    .breakdown-chart-body {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 1.5rem;
+      min-height: 400px;
+      padding: 1rem 0;
+    }
+    .breakdown-pie-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      padding: 0 0.5rem;
+    }
+    .breakdown-pie-square {
+      height: 100%;
+      width: auto;
+      aspect-ratio: 1;
+      position: relative;
+      max-height: 100%;
+    }
+    .breakdown-pie-square canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .breakdown-legend-wrap {
+      flex: 0 0 auto;
+      width: 420px;
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      min-width: 0;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+    }
+    .breakdown-legend-toggle {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      font-size: 1rem;
+      cursor: pointer;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+    .breakdown-legend-wrap.collapsed .breakdown-legend-toggle { transform: rotate(-90deg); }
+    .breakdown-legend-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .breakdown-legend {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      color: var(--text);
+      width: 100%;
+    }
+    .breakdown-legend-group-title {
+      font-weight: 700;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .breakdown-legend-group-title .breakdown-legend-value { margin-left: auto; }
+    .breakdown-legend-group-title:first-child { margin-top: 0; }
+    .breakdown-legend-category-row {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-left: 1rem;
+      width: calc(100% - 1rem);
+    }
+    .breakdown-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      width: 100%;
+    }
+    .breakdown-legend-item-name { flex: 1; min-width: 0; }
+    .breakdown-legend-value { flex-shrink: 0; color: var(--text-muted); font-size: 0.75rem; }
+    .breakdown-legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
     .budget-totals-chart-wrap {
       width: 100%;
       height: 88px;
@@ -776,6 +880,7 @@
         <nav class="page-nav">
           <a href="#" class="page-tab" data-active="true" data-page="investments">Investments</a>
           <a href="#" class="page-tab" data-active="false" data-page="budget">Budget</a>
+          <a href="#" class="page-tab" data-active="false" data-page="breakdown">Breakdown</a>
         </nav>
       </div>
     </div>
@@ -911,6 +1016,50 @@ For each scenario, net investments, real estate, and net worth are projected yea
       <div id="budget-totals-summary" class="budget-totals-summary"></div>
       <div id="budget-content"></div>
     </div>
+  </div>
+  <div id="page-breakdown" class="page-content" data-visible="false">
+    <section id="chart-budget-by-group" class="chart-section" data-visible="true">
+      <div class="chart-wrapper chart-full-width">
+        <div class="chart-header">
+          <h2>Budget by Group and Category</h2>
+        </div>
+        <div class="chart-body breakdown-chart-body">
+          <div class="breakdown-pie-wrap">
+            <div class="breakdown-pie-square">
+              <canvas id="breakdown-budget-pie-canvas"></canvas>
+            </div>
+          </div>
+          <div class="breakdown-legend-wrap" id="breakdown-budget-legend-wrap">
+            <div class="breakdown-legend-header">
+              <button type="button" class="breakdown-legend-toggle" id="breakdown-budget-legend-toggle" title="Toggle groups/categories">▾</button>
+              <span class="breakdown-legend-title" id="breakdown-budget-legend-title">Group and Category</span>
+            </div>
+            <div class="breakdown-legend" id="breakdown-budget-legend"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="chart-spending-by-group" class="chart-section" data-visible="true">
+      <div class="chart-wrapper chart-full-width">
+        <div class="chart-header">
+          <h2>Spending by Group and Category</h2>
+        </div>
+        <div class="chart-body breakdown-chart-body">
+          <div class="breakdown-pie-wrap">
+            <div class="breakdown-pie-square">
+              <canvas id="breakdown-spending-pie-canvas"></canvas>
+            </div>
+          </div>
+          <div class="breakdown-legend-wrap" id="breakdown-spending-legend-wrap">
+            <div class="breakdown-legend-header">
+              <button type="button" class="breakdown-legend-toggle" id="breakdown-spending-legend-toggle" title="Toggle groups/categories">▾</button>
+              <span class="breakdown-legend-title" id="breakdown-spending-legend-title">Group and Category</span>
+            </div>
+            <div class="breakdown-legend" id="breakdown-spending-legend"></div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
   </div>
 
@@ -3333,6 +3482,246 @@ For each scenario, net investments, real estate, and net worth are projected yea
       }
     };
 
+    const BREAKDOWN_GROUP_COLORS = {
+      'Home Maintenance': [255, 0, 0],
+      'Travel and Entertainment': [0, 255, 0],
+      'Travel & Entertainment': [0, 255, 0],
+      'Rubin Household': [255, 255, 0],
+      'Shopping': [0, 0, 255],
+      'Food and Dining': [0, 128, 255],
+      'Children': [255, 0, 255],
+      'Bills and Utilities': [255, 128, 0],
+      'Health and Wellness': [0, 255, 128],
+      'Auto and Transport': [128, 255, 0],
+      'Pets': [255, 255, 128],
+      'Morgan Rose': [128, 64, 64],
+      'Gifts and Donations': [128, 128, 128],
+      'Other': [255, 128, 64]
+    };
+    const BREAKDOWN_DEFAULT_GROUP_COLOR = [128, 128, 128];
+    function createBreakdownChart(config) {
+      const { canvasId, legendId, wrapId, toggleId, titleId, getData, getGroupData } = config;
+      return {
+        instance: null,
+        legendCollapsed: false,
+        pieData: [],
+        async init() {
+          await budgetChart.init();
+          this.render();
+        },
+        render() {
+          const data = getData();
+          this.pieData = data;
+          const canvas = document.getElementById(canvasId);
+          const legendEl = document.getElementById(legendId);
+          const wrapEl = document.getElementById(wrapId);
+          if (!canvas || !legendEl) return;
+          if (this.instance) { this.instance.destroy(); this.instance = null; }
+          if (!data.length) { legendEl.innerHTML = '<span class="budget-ignored-note">No data.</span>'; return; }
+          const ctx = canvas.getContext('2d');
+          this.instance = new Chart(ctx, {
+            type: 'pie',
+            data: { labels: [], datasets: [{ data: [], backgroundColor: [], borderWidth: 0 }] },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  callbacks: {
+                    label: (ctx) => {
+                      const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                      const pct = total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0;
+                      return ctx.label + ': $' + Math.round(ctx.raw).toLocaleString() + ' (' + pct + '%)';
+                    }
+                  }
+                }
+              }
+            }
+          });
+          this.updateChart(getGroupData);
+          setTimeout(() => { if (this.instance) this.instance.resize(); }, 100);
+          wrapEl?.classList.toggle('collapsed', this.legendCollapsed);
+          const titleEl = document.getElementById(titleId);
+          if (titleEl) titleEl.textContent = this.legendCollapsed ? 'Group' : 'Group and Category';
+          this.renderLegend(legendEl, getGroupData);
+          const toggleBtn = document.getElementById(toggleId);
+          if (toggleBtn && !toggleBtn.dataset.listenerAttached) {
+            toggleBtn.dataset.listenerAttached = '1';
+            toggleBtn.addEventListener('click', () => {
+              this.legendCollapsed = !this.legendCollapsed;
+              wrapEl?.classList.toggle('collapsed', this.legendCollapsed);
+              if (titleEl) titleEl.textContent = this.legendCollapsed ? 'Group' : 'Group and Category';
+              this.updateChart(getGroupData);
+              this.renderLegend(legendEl, getGroupData);
+            });
+          }
+        },
+        updateChart(getGroupData) {
+          if (!this.instance || !this.pieData.length) return;
+          if (this.legendCollapsed) {
+            const groupData = getGroupData().filter(d => d.inChart);
+            this.instance.data.labels = groupData.map(d => d.grouping);
+            this.instance.data.datasets[0].data = groupData.map(d => d.value);
+            this.instance.data.datasets[0].backgroundColor = groupData.map(d => d.color);
+          } else {
+            const chartData = this.pieData.filter(d => d.inChart);
+            this.instance.data.labels = chartData.map(d => d.category);
+            this.instance.data.datasets[0].data = chartData.map(d => d.value);
+            this.instance.data.datasets[0].backgroundColor = chartData.map(d => d.color);
+          }
+          this.instance.update();
+        },
+        renderLegend(el, getGroupData) {
+          if (!el || !this.pieData.length) return;
+          const byGroup = {};
+          this.pieData.forEach(d => {
+            if (!byGroup[d.grouping]) byGroup[d.grouping] = [];
+            byGroup[d.grouping].push(d);
+          });
+          const total = this.pieData.reduce((s, d) => s + d.value, 0);
+          const fmtVal = (val) => '$' + Math.round(val).toLocaleString() + ', ' + (total > 0 ? ((val / total) * 100).toFixed(1) : '0') + '%';
+          if (this.legendCollapsed) {
+            const groupData = getGroupData();
+            const groupTotal = groupData.reduce((s, d) => s + d.value, 0);
+            const fmtGroupVal = (val) => '$' + Math.round(val).toLocaleString() + ', ' + (groupTotal > 0 ? ((val / groupTotal) * 100).toFixed(1) : '0') + '%';
+            el.innerHTML = groupData.map(d => {
+              const swatch = d.inChart ? '<span class="breakdown-legend-swatch" style="background:' + d.color + '"></span>' : '';
+              return '<div class="breakdown-legend-item">' + swatch + '<span class="breakdown-legend-item-name">' + d.grouping + '</span><span class="breakdown-legend-value">' + fmtGroupVal(d.value) + '</span></div>';
+            }).join('');
+          } else {
+            el.innerHTML = Object.entries(byGroup).map(([group, items]) => {
+              const groupTotal = items.reduce((s, d) => s + d.value, 0);
+              const title = '<div class="breakdown-legend-group-title"><span class="breakdown-legend-item-name">' + group + '</span><span class="breakdown-legend-value">' + fmtVal(groupTotal) + '</span></div>';
+              const rows = items.map(d => {
+                const swatch = d.inChart ? '<span class="breakdown-legend-swatch" style="background:' + d.color + '"></span>' : '';
+                return '<div class="breakdown-legend-category-row">' + swatch + '<span class="breakdown-legend-item-name">' + d.category + '</span><span class="breakdown-legend-value">' + fmtVal(d.value) + '</span></div>';
+              }).join('');
+              return title + rows;
+            }).join('');
+          }
+        }
+      };
+    }
+    function getBudgetBreakdownData() {
+      const expenseEntries = BUDGET_CATEGORIES.filter(({ category }) => !budgetChart.isIncomeCategory(category));
+      const raw = [];
+      expenseEntries.forEach(({ grouping, category }) => {
+        const budget = budgetChart.getBudget(category);
+        const amount = Math.abs(budget);
+        if (amount <= 0) return;
+        raw.push({ grouping, category, value: amount });
+      });
+      const byGroup = {};
+      raw.forEach(d => {
+        if (!byGroup[d.grouping]) byGroup[d.grouping] = [];
+        byGroup[d.grouping].push(d);
+      });
+      const groupTotals = {};
+      Object.keys(byGroup).forEach(g => {
+        groupTotals[g] = byGroup[g].reduce((s, d) => s + d.value, 0);
+      });
+      const sortedGroups = Object.keys(byGroup).sort((a, b) => (groupTotals[b] || 0) - (groupTotals[a] || 0));
+      const sorted = [];
+      sortedGroups.forEach(g => {
+        byGroup[g].sort((a, b) => b.value - a.value);
+        byGroup[g].forEach((d, catIdx) => {
+          const baseRgb = BREAKDOWN_GROUP_COLORS[g] || BREAKDOWN_DEFAULT_GROUP_COLOR;
+          const darken = 1 - catIdx * 0.10;
+          const r = Math.round(Math.max(0, baseRgb[0] * darken));
+          const gr = Math.round(Math.max(0, baseRgb[1] * darken));
+          const b = Math.round(Math.max(0, baseRgb[2] * darken));
+          sorted.push({ grouping: g, category: d.category, value: d.value, color: 'rgb(' + r + ',' + gr + ',' + b + ')' });
+        });
+      });
+      const total = sorted.reduce((s, d) => s + d.value, 0);
+      const threshold = total * 0.0025;
+      sorted.forEach(d => { d.inChart = d.value >= threshold; });
+      return sorted;
+    }
+    function getBudgetGroupAggregatedData() {
+      const categoryData = getBudgetBreakdownData();
+      const byGroup = {};
+      categoryData.forEach(d => {
+        if (!byGroup[d.grouping]) byGroup[d.grouping] = { grouping: d.grouping, value: 0, color: d.color };
+        byGroup[d.grouping].value += d.value;
+      });
+      const groups = Object.values(byGroup).sort((a, b) => b.value - a.value);
+      const total = groups.reduce((s, d) => s + d.value, 0);
+      const threshold = total * 0.0025;
+      groups.forEach(d => { d.inChart = d.value >= threshold; });
+      return groups;
+    }
+    const budgetBreakdownChart = createBreakdownChart({
+      canvasId: 'breakdown-budget-pie-canvas',
+      legendId: 'breakdown-budget-legend',
+      wrapId: 'breakdown-budget-legend-wrap',
+      toggleId: 'breakdown-budget-legend-toggle',
+      titleId: 'breakdown-budget-legend-title',
+      getData: getBudgetBreakdownData,
+      getGroupData: getBudgetGroupAggregatedData
+    });
+    function getSpendingBreakdownData() {
+      const expenseEntries = BUDGET_CATEGORIES.filter(({ category }) => !budgetChart.isIncomeCategory(category));
+      const raw = [];
+      expenseEntries.forEach(({ grouping, category }) => {
+        const txs = budgetChart.getTxsForCategory(category);
+        const spend = budgetChart.getSpending(txs);
+        const committed = budgetChart.getCommitted(category);
+        const amountSpent = Math.max(0, -(spend + committed));
+        if (amountSpent <= 0) return;
+        raw.push({ grouping, category, value: amountSpent });
+      });
+      const byGroup = {};
+      raw.forEach(d => {
+        if (!byGroup[d.grouping]) byGroup[d.grouping] = [];
+        byGroup[d.grouping].push(d);
+      });
+      const groupTotals = {};
+      Object.keys(byGroup).forEach(g => {
+        groupTotals[g] = byGroup[g].reduce((s, d) => s + d.value, 0);
+      });
+      const sortedGroups = Object.keys(byGroup).sort((a, b) => (groupTotals[b] || 0) - (groupTotals[a] || 0));
+      const sorted = [];
+      sortedGroups.forEach(g => {
+        byGroup[g].sort((a, b) => b.value - a.value);
+        byGroup[g].forEach((d, catIdx) => {
+          const baseRgb = BREAKDOWN_GROUP_COLORS[g] || BREAKDOWN_DEFAULT_GROUP_COLOR;
+          const darken = 1 - catIdx * 0.10;
+          const r = Math.round(Math.max(0, baseRgb[0] * darken));
+          const gr = Math.round(Math.max(0, baseRgb[1] * darken));
+          const b = Math.round(Math.max(0, baseRgb[2] * darken));
+          sorted.push({ grouping: g, category: d.category, value: d.value, color: 'rgb(' + r + ',' + gr + ',' + b + ')' });
+        });
+      });
+      const total = sorted.reduce((s, d) => s + d.value, 0);
+      const threshold = total * 0.0025;
+      sorted.forEach(d => { d.inChart = d.value >= threshold; });
+      return sorted;
+    }
+    function getSpendingGroupAggregatedData() {
+      const categoryData = getSpendingBreakdownData();
+      const byGroup = {};
+      categoryData.forEach(d => {
+        if (!byGroup[d.grouping]) byGroup[d.grouping] = { grouping: d.grouping, value: 0, color: d.color };
+        byGroup[d.grouping].value += d.value;
+      });
+      const groups = Object.values(byGroup).sort((a, b) => b.value - a.value);
+      const total = groups.reduce((s, d) => s + d.value, 0);
+      const threshold = total * 0.0025;
+      groups.forEach(d => { d.inChart = d.value >= threshold; });
+      return groups;
+    }
+    const breakdownChart = createBreakdownChart({
+      canvasId: 'breakdown-spending-pie-canvas',
+      legendId: 'breakdown-spending-legend',
+      wrapId: 'breakdown-spending-legend-wrap',
+      toggleId: 'breakdown-spending-legend-toggle',
+      titleId: 'breakdown-spending-legend-title',
+      getData: getSpendingBreakdownData,
+      getGroupData: getSpendingGroupAggregatedData
+    });
+
     document.querySelectorAll('.page-tab').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         e.preventDefault();
@@ -3340,7 +3729,12 @@ For each scenario, net investments, real estate, and net worth are projected yea
         document.querySelectorAll('.page-tab').forEach(b => b.setAttribute('data-active', b.getAttribute('data-page') === page ? 'true' : 'false'));
         document.getElementById('page-investments').setAttribute('data-visible', page === 'investments' ? 'true' : 'false');
         document.getElementById('page-budget').setAttribute('data-visible', page === 'budget' ? 'true' : 'false');
+        document.getElementById('page-breakdown').setAttribute('data-visible', page === 'breakdown' ? 'true' : 'false');
         if (page === 'budget') await budgetChart.init();
+        if (page === 'breakdown') {
+          await budgetBreakdownChart.init();
+          await breakdownChart.init();
+        }
       });
     });
 
