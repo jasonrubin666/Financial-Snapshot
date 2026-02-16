@@ -3098,7 +3098,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           const barData1 = Math.abs(val);
           const todayLineValue = Math.abs(budget) * todayProgress;
           const budgetLineValue = Math.abs(budget);
-          const pctForColor = maxVal > 0 ? Math.abs(totalWithCommitted) / maxVal : 0;
+          const pctForColor = Math.abs(budget) > 0 ? Math.abs(totalWithCommitted) / Math.abs(budget) : 0;
           const spendingForPlugin = Math.abs(totalWithCommitted);
           const barColor = pctForColor <= 0.8 ? '#22c55e' : (pctForColor <= 1 ? '#eab308' : '#ef4444');
           const [r, g, b] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
@@ -3200,7 +3200,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
             const maxVal = Math.max(Math.abs(b), Math.abs(totalWithComm), 1);
             const scaleMin = 0;
             const scaleMax = maxVal;
-            const pctForColor = maxVal > 0 ? Math.abs(totalWithComm) / maxVal : 0;
+            const pctForColor = Math.abs(b) > 0 ? Math.abs(totalWithComm) / Math.abs(b) : 0;
             const barColor = pctForColor <= 0.8 ? '#22c55e' : (pctForColor <= 1 ? '#eab308' : '#ef4444');
             const [r, g, bVal] = barColor === '#22c55e' ? [34, 197, 94] : (barColor === '#eab308' ? [234, 179, 8] : [239, 68, 68]);
             const commCurOrPast = this.getCommittedCurrentOrPast(category);
@@ -3235,7 +3235,12 @@ For each scenario, net investments, real estate, and net worth are projected yea
           this.updateTotals();
         };
         el.addEventListener('change', (e) => { if (e.target.classList.contains('budget-input')) applyBudgetChange(e.target); });
-        el.addEventListener('blur', (e) => { if (e.target.classList.contains('budget-input')) applyBudgetChange(e.target); }, true);
+        el.addEventListener('blur', (e) => {
+          if (e.target.classList.contains('budget-input')) {
+            const inputEl = e.target;
+            setTimeout(() => applyBudgetChange(inputEl), 0);
+          }
+        }, true);
         el.addEventListener('keydown', (e) => {
           if (e.target.classList.contains('budget-input') && e.key === 'Enter') {
             e.preventDefault();
