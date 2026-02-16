@@ -1110,7 +1110,6 @@ For each scenario, net investments, real estate, and net worth are projected yea
     ];
     const BUDGET_DEFAULT = 100000;
     const BUDGET_STORAGE_KEY = 'financial-snapshot-budget-limits';
-    const CATEGORY_ALIASES = {};
     const IGNORED_CATEGORIES = [
       'Transfer', 'Rental Income', 'Rental Expense', 'Rental Maintenance',
       'Credit Card Payment', 'Balance Adjustment', 'Buy', 'Sell',
@@ -1123,11 +1122,11 @@ For each scenario, net investments, real estate, and net worth are projected yea
     function resolveCategory(csvCategory) {
       const key = normalizeCategoryKey(csvCategory);
       if (IGNORED_CATEGORIES.some(ig => ig.toLowerCase() === key)) return null;
-      return CATEGORY_ALIASES[key] || BUDGET_CATEGORIES.find(b => b.category.toLowerCase() === key)?.category || 'Categorized but not Budgeted';
+      return BUDGET_CATEGORIES.find(b => b.category.toLowerCase() === key)?.category || 'Categorized but not Budgeted';
     }
     function resolveBudgetCategory(csvCategory) {
       const key = normalizeCategoryKey(csvCategory);
-      return CATEGORY_ALIASES[key] || BUDGET_CATEGORIES.find(b => b.category.toLowerCase() === key)?.category || null;
+      return BUDGET_CATEGORIES.find(b => b.category.toLowerCase() === key)?.category || null;
     }
     // Get a free key at https://fred.stlouisfed.org/docs/api/api_key.html — required for FRED data
     const FRED_API_KEY = 'bcee1688a7c679db8c1fc2cd60045012';
@@ -1294,7 +1293,6 @@ For each scenario, net investments, real estate, and net worth are projected yea
               if (text && text.length > 100) break;
             } catch (_) { continue; }
           }
-          // FRED .txt returns HTML table; support HTML cells, pipe-delimited, or space-separated
           const res = [
             /(\d{4}-\d{2}-\d{2})<\/td>\s*<td[^>]*>([\d.,]+)/gi,
             /(\d{4}-\d{2}-\d{2})[\s|>]+([\d.,]+)/g
@@ -3267,7 +3265,6 @@ For each scenario, net investments, real estate, and net worth are projected yea
         if (bal.balance_exclude_automobiles !== undefined && el('balance-exclude-automobiles')) el('balance-exclude-automobiles').checked = !!bal.balance_exclude_automobiles;
         if (bal.balance_exclude_nonmerrill !== undefined && el('balance-exclude-nonmerrill')) el('balance-exclude-nonmerrill').checked = !!bal.balance_exclude_nonmerrill;
       }
-      // await netInvestmentsChart.init();  // commented out - using balanceChart (Balances.csv) instead
       await balanceChart.init();
       fetchKeyFigures();
       await wealthProjectionChart.init();
