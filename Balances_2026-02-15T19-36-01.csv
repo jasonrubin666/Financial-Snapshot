@@ -11795,6 +11795,7 @@ Date,Balance,Account
 2026-02-04,653978.06,Merrill BLKSTN - Real Estate
 2026-02-04,9544513.33,Merrill BLKRK - Munis
 2026-02-04,2197821.29,Merrill IRA
+2026-02-05,2149409.19,Merrill MFS Intl Growth
 2026-02-05,0.00,Merrill DAVE
 2026-02-05,0.00,Merrill Life Insurance Trust
 2026-02-05,104741.00,Juicy Miles / Point.me
@@ -11813,21 +11814,20 @@ Date,Balance,Account
 2026-02-05,288.46,FSA
 2026-02-05,1001.01,Optum HSA
 2026-02-05,0.00,Assetario
-2026-02-05,-3143.64,Bank Of America Alex's Visa (...9604)
-2026-02-05,17925.84,Jason and Agnes Checking (...8486)
-2026-02-05,-170.10,Delta SkyMiles® Reserve Card (...2004)
+2026-02-05,861558.29,Fidelity BROKERAGELINK
+2026-02-05,57144.45,Fidelity META 401(k)
+2026-02-05,661398.55,Fidelity ROTH IRA
+2026-02-05,2443.80,HSA
+2026-02-05,654002.89,Merrill BLKSTN - Real Estate
+2026-02-05,9552555.08,Merrill BLKRK - Munis
+2026-02-05,2593825.07,Merrill TFDXX - Cash
 2026-02-05,3962493.57,Merrill Bahl Gaynor - Stock
 2026-02-05,7357426.11,Merrill JHancock - Stock
 2026-02-05,11023249.65,Merrill Advisory - SPY
 2026-02-05,2166450.89,Merrill IRA
-2026-02-05,2593825.07,Merrill TFDXX - Cash
-2026-02-05,9552555.08,Merrill BLKRK - Munis
-2026-02-05,654002.89,Merrill BLKSTN - Real Estate
-2026-02-05,2149409.19,Merrill MFS Intl Growth
-2026-02-05,2443.80,HSA
-2026-02-05,661398.55,Fidelity ROTH IRA
-2026-02-05,57144.45,Fidelity META 401(k)
-2026-02-05,861558.29,Fidelity BROKERAGELINK
+2026-02-05,-170.10,Delta SkyMiles® Reserve Card (...2004)
+2026-02-05,17925.84,Jason and Agnes Checking (...8486)
+2026-02-05,-3143.64,Bank Of America Alex's Visa (...9604)
 2026-02-05,605055.38,My529 Josephine
 2026-02-05,20153.00,Goldman Sachs
 2026-02-05,1025343.52,My529 Morgan
@@ -11841,19 +11841,12 @@ Date,Balance,Account
 2026-02-05,25557500.26,1540 Skylark Lane
 2026-02-05,631660.00,Rubin Ambrus Charity Fund (Manual)
 2026-02-05,18948.00,Inky Technologies
+2026-02-06,597831.64,My529 Josephine
 2026-02-06,104741.00,Juicy Miles / Point.me
 2026-02-06,50510.88,Operative Games
 2026-02-06,-4000000.00,Bank of America Mortgage
 2026-02-06,25025.70,Dynasty Studios
 2026-02-06,91644.35,2018 Porsche 911 Carrera
-2026-02-06,56157.95,Fidelity META 401(k)
-2026-02-06,2434.65,HSA
-2026-02-06,653021.15,Fidelity ROTH IRA
-2026-02-06,2593825.07,Merrill TFDXX - Cash
-2026-02-06,9564518.39,Merrill BLKRK - Munis
-2026-02-06,7413532.88,Merrill JHancock - Stock
-2026-02-06,2225538.20,Merrill IRA
-2026-02-06,852835.37,Fidelity BROKERAGELINK
 2026-02-06,-501.04,Chase Amazon Card (...3726)
 2026-02-06,89371.99,2025 Land Rover Range Rover Sport P400 Dynamic SE
 2026-02-06,9489647.47,1536 Skylark Lane
@@ -11863,6 +11856,24 @@ Date,Balance,Account
 2026-02-06,18479.54,Optum HSA
 2026-02-06,49943.97,Sprinter Health
 2026-02-06,288.46,FSA
+2026-02-06,1001.01,Optum HSA
+2026-02-06,0.00,Assetario
+2026-02-06,-23428.96,Bank of America Premium Rewards (...6538)
+2026-02-06,-3435.59,Bank Of America Alex's Visa (...9604)
+2026-02-06,17685.63,Jason and Agnes Checking (...8486)
+2026-02-06,1503.89,1536 Skylark LLC (...2984)
+2026-02-06,-170.10,Delta SkyMiles® Reserve Card (...2004)
+2026-02-06,-11824.37,Centurion® Card (...1009)
+2026-02-06,0.00,Merrill Loan Management Acct
+2026-02-06,1013062.18,My529 Morgan
+2026-02-06,20153.00,Goldman Sachs
+2026-02-06,56157.95,Fidelity META 401(k)
+2026-02-06,2434.65,HSA
+2026-02-06,18948.00,Inky Technologies
+2026-02-06,0.00,Merrill Life Insurance Trust
+2026-02-06,0.00,Merrill DAVE
+2026-02-06,654002.89,Merrill BLKSTN - Real Estate
+2026-02-06,11228779.65,Merrill Advisory - SPY
 2026-02-06,4040196.70,Merrill Bahl Gaynor - Stock
 2026-02-06,2186746.34,Merrill MFS Intl Growth
 2026-02-06,631660.00,Rubin Ambrus Charity Fund (Manual)
@@ -11870,29 +11881,13 @@ Date,Balance,Account
 2026-02-06,49967.32,One More Game
 2026-02-06,50000.00,Orb
 2026-02-06,43374.37,eGateway
-2026-02-06,654002.89,Merrill BLKSTN - Real Estate
-2026-02-06,1001.01,Optum HSA
-2026-02-06,0.00,Assetario
-2026-02-06,-23428.96,Bank of America Premium Rewards (...6538)
-2026-02-06,-3435.59,Bank Of America Alex's Visa (...9604)
-2026-02-06,17685.63,Jason and Agnes Checking (...8486)
-2026-02-06,11228779.65,Merrill Advisory - SPY
-2026-02-06,1503.89,1536 Skylark LLC (...2984)
-2026-02-06,-170.10,Delta SkyMiles® Reserve Card (...2004)
-2026-02-06,-11824.37,Centurion® Card (...1009)
-2026-02-06,0.00,Merrill Loan Management Acct
-2026-02-06,1013062.18,My529 Morgan
-2026-02-06,20153.00,Goldman Sachs
-2026-02-06,597831.64,My529 Josephine
-2026-02-06,0.00,Merrill DAVE
-2026-02-06,0.00,Merrill Life Insurance Trust
-2026-02-06,18948.00,Inky Technologies
+2026-02-06,653021.15,Fidelity ROTH IRA
+2026-02-06,2593825.07,Merrill TFDXX - Cash
+2026-02-06,9564518.39,Merrill BLKRK - Munis
+2026-02-06,7413532.88,Merrill JHancock - Stock
+2026-02-06,2225538.20,Merrill IRA
+2026-02-06,852835.37,Fidelity BROKERAGELINK
 2026-02-07,1001.01,Optum HSA
-2026-02-07,2434.65,HSA
-2026-02-07,56157.95,Fidelity META 401(k)
-2026-02-07,852835.37,Fidelity BROKERAGELINK
-2026-02-07,20153.00,Goldman Sachs
-2026-02-07,0.00,Merrill Loan Management Acct
 2026-02-07,-11824.37,Centurion® Card (...1009)
 2026-02-07,-170.10,Delta SkyMiles® Reserve Card (...2004)
 2026-02-07,1503.89,1536 Skylark LLC (...2984)
@@ -11907,6 +11902,11 @@ Date,Balance,Account
 2026-02-07,0.00,Merrill Life Insurance Trust
 2026-02-07,0.00,Merrill DAVE
 2026-02-07,4040196.70,Merrill Bahl Gaynor - Stock
+2026-02-07,653021.15,Fidelity ROTH IRA
+2026-02-07,2434.65,HSA
+2026-02-07,56157.95,Fidelity META 401(k)
+2026-02-07,852835.37,Fidelity BROKERAGELINK
+2026-02-07,20153.00,Goldman Sachs
 2026-02-07,11229039.38,Merrill Advisory - SPY
 2026-02-07,50000.00,Pulsetera
 2026-02-07,50033.62,Live Art
@@ -11925,7 +11925,7 @@ Date,Balance,Account
 2026-02-07,49967.32,One More Game
 2026-02-07,50000.00,Orb
 2026-02-07,43374.37,eGateway
-2026-02-07,653021.15,Fidelity ROTH IRA
+2026-02-07,0.00,Merrill Loan Management Acct
 2026-02-07,610378.48,My529 Josephine
 2026-02-07,1034330.77,My529 Morgan
 2026-02-07,7413532.88,Merrill JHancock - Stock
@@ -11933,19 +11933,6 @@ Date,Balance,Account
 2026-02-07,2593825.07,Merrill TFDXX - Cash
 2026-02-07,9564518.39,Merrill BLKRK - Munis
 2026-02-07,2225538.20,Merrill IRA
-2026-02-08,25557500.26,1540 Skylark Lane
-2026-02-08,-3495.96,Bank Of America Alex's Visa (...9604)
-2026-02-08,17685.63,Jason and Agnes Checking (...8486)
-2026-02-08,0.00,Schwab (Meta)
-2026-02-08,631660.00,Rubin Ambrus Charity Fund (Manual)
-2026-02-08,18948.00,Inky Technologies
-2026-02-08,104741.00,Juicy Miles / Point.me
-2026-02-08,663369.55,Fidelity ROTH IRA
-2026-02-08,2446.88,HSA
-2026-02-08,57363.65,Fidelity META 401(k)
-2026-02-08,863721.20,Fidelity BROKERAGELINK
-2026-02-08,20153.00,Goldman Sachs
-2026-02-08,0.00,Merrill Loan Management Acct
 2026-02-08,-11824.37,Centurion® Card (...1009)
 2026-02-08,-170.10,Delta SkyMiles® Reserve Card (...2004)
 2026-02-08,1503.89,1536 Skylark LLC (...2984)
@@ -11966,8 +11953,18 @@ Date,Balance,Account
 2026-02-08,25025.70,Dynasty Studios
 2026-02-08,-4000000.00,Bank of America Mortgage
 2026-02-08,50510.88,Operative Games
+2026-02-08,104741.00,Juicy Miles / Point.me
+2026-02-08,18948.00,Inky Technologies
+2026-02-08,631660.00,Rubin Ambrus Charity Fund (Manual)
+2026-02-08,0.00,Schwab (Meta)
+2026-02-08,-3495.96,Bank Of America Alex's Visa (...9604)
+2026-02-08,17685.63,Jason and Agnes Checking (...8486)
 2026-02-08,1034330.77,My529 Morgan
 2026-02-08,610378.48,My529 Josephine
+2026-02-08,43374.37,eGateway
+2026-02-08,50000.00,Orb
+2026-02-08,49967.32,One More Game
+2026-02-08,25557500.26,1540 Skylark Lane
 2026-02-08,654015.30,Merrill BLKSTN - Real Estate
 2026-02-08,4040199.98,Merrill Bahl Gaynor - Stock
 2026-02-08,7413532.88,Merrill JHancock - Stock
@@ -11976,10 +11973,18 @@ Date,Balance,Account
 2026-02-08,2225538.20,Merrill IRA
 2026-02-08,11229039.38,Merrill Advisory - SPY
 2026-02-08,2593825.07,Merrill TFDXX - Cash
-2026-02-08,43374.37,eGateway
-2026-02-08,50000.00,Orb
-2026-02-08,49967.32,One More Game
-2026-02-09,1034330.77,My529 Morgan
+2026-02-08,663369.55,Fidelity ROTH IRA
+2026-02-08,2446.88,HSA
+2026-02-08,57363.65,Fidelity META 401(k)
+2026-02-08,863721.20,Fidelity BROKERAGELINK
+2026-02-08,20153.00,Goldman Sachs
+2026-02-08,0.00,Merrill Loan Management Acct
+2026-02-09,-946.77,Chase Amazon Card (...3726)
+2026-02-09,25025.70,Dynasty Studios
+2026-02-09,-4000000.00,Bank of America Mortgage
+2026-02-09,0.00,Merrill DAVE
+2026-02-09,0.00,Merrill Life Insurance Trust
+2026-02-09,0.00,Schwab (Meta)
 2026-02-09,50510.88,Operative Games
 2026-02-09,104741.00,Juicy Miles / Point.me
 2026-02-09,18948.00,Inky Technologies
@@ -11988,12 +11993,8 @@ Date,Balance,Account
 2026-02-09,49967.32,One More Game
 2026-02-09,50000.00,Orb
 2026-02-09,43374.37,eGateway
-2026-02-09,865.38,FSA
-2026-02-09,19505.50,Optum HSA
-2026-02-09,0.00,Assetario
-2026-02-09,-24353.27,Bank of America Premium Rewards (...6538)
-2026-02-09,-3495.96,Bank Of America Alex's Visa (...9604)
 2026-02-09,17685.63,Jason and Agnes Checking (...8486)
+2026-02-09,20153.00,Goldman Sachs
 2026-02-09,1503.89,1536 Skylark LLC (...2984)
 2026-02-09,0.00,Merrill Loan Management Acct
 2026-02-09,863721.20,Fidelity BROKERAGELINK
@@ -12001,7 +12002,16 @@ Date,Balance,Account
 2026-02-09,2446.88,HSA
 2026-02-09,663369.55,Fidelity ROTH IRA
 2026-02-09,2593825.07,Merrill TFDXX - Cash
-2026-02-09,0.00,Schwab (Meta)
+2026-02-09,1034330.77,My529 Morgan
+2026-02-09,-16824.37,Centurion® Card (...1009)
+2026-02-09,-170.10,Delta SkyMiles® Reserve Card (...2004)
+2026-02-09,18479.54,Optum HSA
+2026-02-09,49943.97,Sprinter Health
+2026-02-09,865.38,FSA
+2026-02-09,19505.50,Optum HSA
+2026-02-09,0.00,Assetario
+2026-02-09,-24353.27,Bank of America Premium Rewards (...6538)
+2026-02-09,-3495.96,Bank Of America Alex's Visa (...9604)
 2026-02-09,2210119.78,Merrill MFS Intl Growth
 2026-02-09,192.83,Merrill JHancock - Stock
 2026-02-09,2244327.65,Merrill IRA
@@ -12009,49 +12019,19 @@ Date,Balance,Account
 2026-02-09,11281686.68,Merrill Advisory - SPY
 2026-02-09,610378.48,My529 Josephine
 2026-02-09,9564769.20,Merrill BLKRK - Munis
-2026-02-09,20153.00,Goldman Sachs
 2026-02-09,4057480.52,Merrill Bahl Gaynor - Stock
 2026-02-09,7445000.00,Merrill - Temp balance
-2026-02-09,-16824.37,Centurion® Card (...1009)
-2026-02-09,-170.10,Delta SkyMiles® Reserve Card (...2004)
-2026-02-09,-946.77,Chase Amazon Card (...3726)
-2026-02-09,89371.99,2025 Land Rover Range Rover Sport P400 Dynamic SE
-2026-02-09,9489647.47,1536 Skylark Lane
-2026-02-09,50033.62,Live Art
 2026-02-09,50000.00,Pulsetera
-2026-02-09,18479.54,Optum HSA
-2026-02-09,49943.97,Sprinter Health
+2026-02-09,50033.62,Live Art
+2026-02-09,9489647.47,1536 Skylark Lane
+2026-02-09,89371.99,2025 Land Rover Range Rover Sport P400 Dynamic SE
 2026-02-09,91644.35,2018 Porsche 911 Carrera
-2026-02-09,25025.70,Dynasty Studios
-2026-02-09,-4000000.00,Bank of America Mortgage
-2026-02-09,0.00,Merrill DAVE
-2026-02-09,0.00,Merrill Life Insurance Trust
-2026-02-10,11253014.12,Merrill Advisory - SPY
-2026-02-10,1503.89,1536 Skylark LLC (...2984)
-2026-02-10,-25306.93,Bank of America Premium Rewards (...6538)
-2026-02-10,17645.63,Jason and Agnes Checking (...8486)
-2026-02-10,-3757.88,Bank Of America Alex's Visa (...9604)
-2026-02-10,2236950.17,Merrill IRA
-2026-02-10,43374.37,eGateway
-2026-02-10,50000.00,Orb
-2026-02-10,49967.32,One More Game
-2026-02-10,25557500.26,1540 Skylark Lane
-2026-02-10,631660.00,Rubin Ambrus Charity Fund (Manual)
-2026-02-10,18948.00,Inky Technologies
-2026-02-10,104741.00,Juicy Miles / Point.me
 2026-02-10,50510.88,Operative Games
 2026-02-10,-4000000.00,Bank of America Mortgage
 2026-02-10,25025.70,Dynasty Studios
 2026-02-10,91644.35,2018 Porsche 911 Carrera
 2026-02-10,-1698.58,Chase Amazon Card (...3726)
 2026-02-10,89371.99,2025 Land Rover Range Rover Sport P400 Dynamic SE
-2026-02-10,49943.97,Sprinter Health
-2026-02-10,865.38,FSA
-2026-02-10,19505.50,Optum HSA
-2026-02-10,0.00,Assetario
-2026-02-10,0.00,Merrill Loan Management Acct
-2026-02-10,0.00,Merrill JHancock - Stock
-2026-02-10,20153.00,Goldman Sachs
 2026-02-10,9489647.47,1536 Skylark Lane
 2026-02-10,50033.62,Live Art
 2026-02-10,50000.00,Pulsetera
@@ -12059,20 +12039,40 @@ Date,Balance,Account
 2026-02-10,0.00,Merrill DAVE
 2026-02-10,0.00,Merrill Life Insurance Trust
 2026-02-10,7445000.00,Merrill - Temp balance
-2026-02-10,614644.98,My529 Josephine
-2026-02-10,4063425.43,Merrill Bahl Gaynor - Stock
-2026-02-10,2213221.23,Merrill MFS Intl Growth
-2026-02-10,57655.94,Fidelity META 401(k)
+2026-02-10,0.00,Schwab (Meta)
+2026-02-10,18479.54,Optum HSA
+2026-02-10,49943.97,Sprinter Health
+2026-02-10,865.38,FSA
+2026-02-10,19505.50,Optum HSA
+2026-02-10,0.00,Assetario
+2026-02-10,0.00,Merrill Loan Management Acct
+2026-02-10,0.00,Merrill JHancock - Stock
+2026-02-10,20153.00,Goldman Sachs
+2026-02-10,2455.33,HSA
 2026-02-10,871089.68,Fidelity BROKERAGELINK
-2026-02-10,670352.35,Fidelity ROTH IRA
+2026-02-10,57655.94,Fidelity META 401(k)
+2026-02-10,2213221.23,Merrill MFS Intl Growth
 2026-02-10,2593825.07,Merrill TFDXX - Cash
 2026-02-10,9566563.48,Merrill BLKRK - Munis
 2026-02-10,1041622.29,My529 Morgan
-2026-02-10,2455.33,HSA
+2026-02-10,614644.98,My529 Josephine
 2026-02-10,-16886.20,Centurion® Card (...1009)
-2026-02-10,0.00,Schwab (Meta)
-2026-02-10,18479.54,Optum HSA
+2026-02-10,4063425.43,Merrill Bahl Gaynor - Stock
+2026-02-10,670352.35,Fidelity ROTH IRA
 2026-02-10,-170.10,Delta SkyMiles® Reserve Card (...2004)
+2026-02-10,2236950.17,Merrill IRA
+2026-02-10,11253014.12,Merrill Advisory - SPY
+2026-02-10,1503.89,1536 Skylark LLC (...2984)
+2026-02-10,-25306.93,Bank of America Premium Rewards (...6538)
+2026-02-10,17645.63,Jason and Agnes Checking (...8486)
+2026-02-10,-3757.88,Bank Of America Alex's Visa (...9604)
+2026-02-10,43374.37,eGateway
+2026-02-10,50000.00,Orb
+2026-02-10,49967.32,One More Game
+2026-02-10,25557500.26,1540 Skylark Lane
+2026-02-10,631660.00,Rubin Ambrus Charity Fund (Manual)
+2026-02-10,18948.00,Inky Technologies
+2026-02-10,104741.00,Juicy Miles / Point.me
 2026-02-11,0.00,Merrill Life Insurance Trust
 2026-02-11,-4000000.00,Bank of America Mortgage
 2026-02-11,25025.70,Dynasty Studios
@@ -12094,28 +12094,28 @@ Date,Balance,Account
 2026-02-11,18948.00,Inky Technologies
 2026-02-11,631660.00,Rubin Ambrus Charity Fund (Manual)
 2026-02-11,25557500.26,1540 Skylark Lane
-2026-02-11,4079481.40,Merrill Bahl Gaynor - Stock
+2026-02-11,7428888.31,Merrill - APERIO Stock
+2026-02-11,2543825.07,Merrill TFDXX - Cash
+2026-02-11,9573080.25,Merrill BLKRK - Munis
+2026-02-11,654015.30,Merrill BLKSTN - Real Estate
+2026-02-11,2228998.93,Merrill MFS Intl Growth
+2026-02-11,1039716.24,My529 Morgan
+2026-02-11,-17074.26,Centurion® Card (...1009)
 2026-02-11,-170.10,Delta SkyMiles® Reserve Card (...2004)
 2026-02-11,1503.89,1536 Skylark LLC (...2984)
-2026-02-11,-4006.24,Bank Of America Alex's Visa (...9604)
+2026-02-11,-25895.43,Bank of America Premium Rewards (...6538)
 2026-02-11,17645.63,Jason and Agnes Checking (...8486)
+2026-02-11,-4006.24,Bank Of America Alex's Visa (...9604)
+2026-02-11,4079481.40,Merrill Bahl Gaynor - Stock
 2026-02-11,0.00,Merrill JHancock - Stock
 2026-02-11,2237262.14,Merrill IRA
 2026-02-11,11250224.78,Merrill Advisory - SPY
-2026-02-11,2228998.93,Merrill MFS Intl Growth
-2026-02-11,654015.30,Merrill BLKSTN - Real Estate
-2026-02-11,9573080.25,Merrill BLKRK - Munis
-2026-02-11,2543825.07,Merrill TFDXX - Cash
-2026-02-11,7428888.31,Merrill - APERIO Stock
-2026-02-11,667976.15,Fidelity ROTH IRA
 2026-02-11,868321.46,Fidelity BROKERAGELINK
 2026-02-11,57473.25,Fidelity META 401(k)
-2026-02-11,2450.27,HSA
-2026-02-11,-1698.58,Chase Amazon Card (...3726)
 2026-02-11,613521.43,My529 Josephine
-2026-02-11,1039716.24,My529 Morgan
-2026-02-11,-25895.43,Bank of America Premium Rewards (...6538)
-2026-02-11,-17074.26,Centurion® Card (...1009)
+2026-02-11,-1698.58,Chase Amazon Card (...3726)
+2026-02-11,2450.27,HSA
+2026-02-11,667976.15,Fidelity ROTH IRA
 2026-02-11,104741.00,Juicy Miles / Point.me
 2026-02-11,50510.88,Operative Games
 2026-02-11,43374.37,eGateway
@@ -12123,20 +12123,30 @@ Date,Balance,Account
 2026-02-11,0.00,Merrill DAVE
 2026-02-12,11081735.35,Merrill Advisory - SPY
 2026-02-12,2518825.07,Merrill TFDXX - Cash
+2026-02-12,-1783.02,Chase Amazon Card (...3726)
 2026-02-12,2206802.89,Merrill MFS Intl Growth
 2026-02-12,7346608.94,Merrill - APERIO Stock
 2026-02-12,654040.13,Merrill BLKSTN - Real Estate
-2026-02-12,-1783.02,Chase Amazon Card (...3726)
+2026-02-12,25557500.26,1540 Skylark Lane
+2026-02-12,89371.99,2025 Land Rover Range Rover Sport P400 Dynamic SE
+2026-02-12,50033.62,Live Art
+2026-02-12,9489647.47,1536 Skylark Lane
+2026-02-12,0.00,Merrill - Temp balance
+2026-02-12,43374.37,eGateway
+2026-02-12,49967.32,One More Game
+2026-02-12,50000.00,Pulsetera
+2026-02-12,18948.00,Inky Technologies
+2026-02-12,50000.00,Orb
+2026-02-12,0.00,Schwab (Meta)
 2026-02-12,-4000000.00,Bank of America Mortgage
 2026-02-12,0.00,Merrill Life Insurance Trust
 2026-02-12,0.00,Merrill DAVE
 2026-02-12,306.65,Merrill JHancock - Stock
-2026-02-12,25025.70,Dynasty Studios
-2026-02-12,104741.00,Juicy Miles / Point.me
-2026-02-12,50510.88,Operative Games
-2026-02-12,91644.35,2018 Porsche 911 Carrera
-2026-02-12,9489647.47,1536 Skylark Lane
 2026-02-12,631660.00,Rubin Ambrus Charity Fund (Manual)
+2026-02-12,91644.35,2018 Porsche 911 Carrera
+2026-02-12,50510.88,Operative Games
+2026-02-12,104741.00,Juicy Miles / Point.me
+2026-02-12,25025.70,Dynasty Studios
 2026-02-12,18479.54,Optum HSA
 2026-02-12,49943.97,Sprinter Health
 2026-02-12,865.38,FSA
@@ -12149,37 +12159,18 @@ Date,Balance,Account
 2026-02-12,-170.10,Delta SkyMiles® Reserve Card (...2004)
 2026-02-12,-283.05,Centurion® Card (...1009)
 2026-02-12,2195239.40,Merrill IRA
-2026-02-12,614746.14,My529 Josephine
-2026-02-12,667976.15,Fidelity ROTH IRA
-2026-02-12,2450.27,HSA
-2026-02-12,89371.99,2025 Land Rover Range Rover Sport P400 Dynamic SE
-2026-02-12,50033.62,Live Art
-2026-02-12,25557500.26,1540 Skylark Lane
-2026-02-12,0.00,Merrill - Temp balance
-2026-02-12,43374.37,eGateway
-2026-02-12,49967.32,One More Game
-2026-02-12,50000.00,Pulsetera
-2026-02-12,18948.00,Inky Technologies
-2026-02-12,50000.00,Orb
-2026-02-12,0.00,Schwab (Meta)
-2026-02-12,57473.25,Fidelity META 401(k)
-2026-02-12,868321.46,Fidelity BROKERAGELINK
-2026-02-12,20153.00,Goldman Sachs
-2026-02-12,1041777.29,My529 Morgan
-2026-02-12,9574000.99,Merrill BLKRK - Munis
 2026-02-12,0.00,Merrill Loan Management Acct
+2026-02-12,9574000.99,Merrill BLKRK - Munis
+2026-02-12,1041777.29,My529 Morgan
+2026-02-12,20153.00,Goldman Sachs
+2026-02-12,868321.46,Fidelity BROKERAGELINK
+2026-02-12,57473.25,Fidelity META 401(k)
+2026-02-12,2450.27,HSA
+2026-02-12,667976.15,Fidelity ROTH IRA
+2026-02-12,614746.14,My529 Josephine
 2026-02-12,4055000.01,Merrill Bahl Gaynor - Stock
 2026-02-13,2204350.52,Merrill MFS Intl Growth
 2026-02-13,4081639.07,Merrill Bahl Gaynor - Stock
-2026-02-13,-4065.36,Bank Of America Alex's Visa (...9604)
-2026-02-13,40540.16,Jason and Agnes Checking (...8486)
-2026-02-13,487.37,Merrill JHancock - Stock
-2026-02-13,-1892.49,Chase Amazon Card (...3726)
-2026-02-13,11089583.89,Merrill Advisory - SPY
-2026-02-13,0.00,Merrill Life Insurance Trust
-2026-02-13,0.00,Merrill DAVE
-2026-02-13,-4000000.00,Bank of America Mortgage
-2026-02-13,50000.00,Orb
 2026-02-13,606236.88,My529 Josephine
 2026-02-13,668174.95,Fidelity ROTH IRA
 2026-02-13,2450.02,HSA
@@ -12214,10 +12205,19 @@ Date,Balance,Account
 2026-02-13,49967.32,One More Game
 2026-02-13,50000.00,Pulsetera
 2026-02-13,18948.00,Inky Technologies
+2026-02-13,50000.00,Orb
+2026-02-13,-4000000.00,Bank of America Mortgage
+2026-02-13,0.00,Merrill DAVE
+2026-02-13,0.00,Merrill Life Insurance Trust
+2026-02-13,-4065.36,Bank Of America Alex's Visa (...9604)
+2026-02-13,-1892.49,Chase Amazon Card (...3726)
+2026-02-13,40540.16,Jason and Agnes Checking (...8486)
+2026-02-13,487.37,Merrill JHancock - Stock
+2026-02-13,11089583.89,Merrill Advisory - SPY
 2026-02-13,7376589.09,Merrill - APERIO Stock
 2026-02-13,2518825.07,Merrill TFDXX - Cash
 2026-02-13,654052.55,Merrill BLKSTN - Real Estate
-2026-02-14,-4224.23,Centurion® Card (...1009)
+2026-02-14,0.00,Schwab (Meta)
 2026-02-14,7376589.09,Merrill - APERIO Stock
 2026-02-14,11089583.89,Merrill Advisory - SPY
 2026-02-14,654052.55,Merrill BLKSTN - Real Estate
@@ -12244,7 +12244,6 @@ Date,Balance,Account
 2026-02-14,9489647.47,1536 Skylark Lane
 2026-02-14,631660.00,Rubin Ambrus Charity Fund (Manual)
 2026-02-14,18479.54,Optum HSA
-2026-02-14,0.00,Schwab (Meta)
 2026-02-14,49943.97,Sprinter Health
 2026-02-14,865.38,FSA
 2026-02-14,19505.50,Optum HSA
@@ -12254,6 +12253,7 @@ Date,Balance,Account
 2026-02-14,40500.16,Jason and Agnes Checking (...8486)
 2026-02-14,1503.89,1536 Skylark LLC (...2984)
 2026-02-14,-170.10,Delta SkyMiles® Reserve Card (...2004)
+2026-02-14,-4224.23,Centurion® Card (...1009)
 2026-02-14,2197322.72,Merrill IRA
 2026-02-14,0.00,Merrill Loan Management Acct
 2026-02-14,9583458.18,Merrill BLKRK - Munis
@@ -12263,29 +12263,37 @@ Date,Balance,Account
 2026-02-14,2422.17,HSA
 2026-02-14,654440.55,Fidelity ROTH IRA
 2026-02-14,1029841.38,My529 Morgan
-2026-02-14,-1916.48,Chase Amazon Card (...3726)
 2026-02-14,607732.85,My529 Josephine
-2026-02-15,0.00,Merrill DAVE
-2026-02-15,4081639.07,Merrill Bahl Gaynor - Stock
+2026-02-14,-1916.48,Chase Amazon Card (...3726)
 2026-02-15,2518825.07,Merrill TFDXX - Cash
-2026-02-15,654052.55,Merrill BLKSTN - Real Estate
+2026-02-15,7376589.09,Merrill - APERIO Stock
 2026-02-15,11089583.89,Merrill Advisory - SPY
+2026-02-15,657383.76,Merrill BLKSTN - Real Estate
 2026-02-15,487.37,Merrill JHancock - Stock
+2026-02-15,2197322.72,Merrill IRA
+2026-02-15,4081639.07,Merrill Bahl Gaynor - Stock
+2026-02-15,2204350.52,Merrill MFS Intl Growth
+2026-02-15,853439.08,Fidelity BROKERAGELINK
+2026-02-15,2740.60,HSA
+2026-02-15,66785.91,Fidelity META 401(k)
+2026-02-15,0.00,Merrill Life Insurance Trust
+2026-02-15,0.00,Merrill DAVE
 2026-02-15,-4000000.00,Bank of America Mortgage
+2026-02-15,-255.42,Delta SkyMiles® Reserve Card (...2004)
 2026-02-15,50000.00,Orb
 2026-02-15,18948.00,Inky Technologies
-2026-02-15,-170.10,Delta SkyMiles® Reserve Card (...2004)
 2026-02-15,50000.00,Pulsetera
 2026-02-15,49967.32,One More Game
 2026-02-15,43374.37,eGateway
 2026-02-15,0.00,Merrill - Temp balance
 2026-02-15,50033.62,Live Art
+2026-02-15,-4671.26,Centurion® Card (...1009)
+2026-02-15,0.00,Merrill Loan Management Acct
+2026-02-15,20153.00,Goldman Sachs
+2026-02-15,655174.15,Fidelity ROTH IRA
 2026-02-15,89371.99,2025 Land Rover Range Rover Sport P400 Dynamic SE
 2026-02-15,25557500.26,1540 Skylark Lane
 2026-02-15,25025.70,Dynasty Studios
-2026-02-15,2422.17,HSA
-2026-02-15,654440.55,Fidelity ROTH IRA
-2026-02-15,607732.85,My529 Josephine
 2026-02-15,104741.00,Juicy Miles / Point.me
 2026-02-15,50510.88,Operative Games
 2026-02-15,91644.35,2018 Porsche 911 Carrera
@@ -12298,18 +12306,10 @@ Date,Balance,Account
 2026-02-15,865.38,FSA
 2026-02-15,19505.50,Optum HSA
 2026-02-15,0.00,Assetario
-2026-02-15,-5629.09,Bank of America Premium Rewards (...6538)
-2026-02-15,-4342.52,Bank Of America Alex's Visa (...9604)
+2026-02-15,-5855.36,Bank of America Premium Rewards (...6538)
+2026-02-15,-4406.09,Bank Of America Alex's Visa (...9604)
 2026-02-15,40500.16,Jason and Agnes Checking (...8486)
 2026-02-15,1503.89,1536 Skylark LLC (...2984)
-2026-02-15,-4224.23,Centurion® Card (...1009)
-2026-02-15,2197322.72,Merrill IRA
-2026-02-15,0.00,Merrill Loan Management Acct
-2026-02-15,9583458.18,Merrill BLKRK - Munis
+2026-02-15,607732.85,My529 Josephine
 2026-02-15,1029841.38,My529 Morgan
-2026-02-15,20153.00,Goldman Sachs
-2026-02-15,852635.96,Fidelity BROKERAGELINK
-2026-02-15,66785.91,Fidelity META 401(k)
-2026-02-15,7376589.09,Merrill - APERIO Stock
-2026-02-15,0.00,Merrill Life Insurance Trust
-2026-02-15,2204350.52,Merrill MFS Intl Growth
+2026-02-15,9584755.48,Merrill BLKRK - Munis

@@ -60,12 +60,25 @@
     .chart-wrapper {
       width: 100%;
       height: 800px;
-      background: var(--bg-card);
+      background: rgb(64,64,64);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
       border: 1px solid var(--border);
+      padding: 0;
+      overflow: hidden;
+    }
+    .chart-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      margin: 0.5rem 0.75rem 0.75rem 0.75rem;
+      padding: 0.75rem;
+      background: #f8f9fa;
+      border: 1px solid var(--border);
+      border-radius: 10px;
     }
     .chart-header {
       display: flex;
@@ -121,6 +134,9 @@
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.2);
+    }
+    .chart-body .chart-container {
+      padding: 0.5rem 0;
     }
     .chart-container {
       flex: 1;
@@ -274,14 +290,22 @@
       width: 100%;
       padding: 1.25rem 1.5rem;
       background: var(--bg-card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
       display: flex;
       align-items: center;
       justify-content: space-around;
       flex-wrap: wrap;
       gap: 1rem 0;
-      border: 1px solid var(--border);
+    }
+    .key-figures-chart-wrapper {
+      height: auto;
+      min-height: 0;
+      background: var(--bg-card);
+      border: 1px solid black;
+      box-shadow: none;
+      border-radius: var(--radius);
+    }
+    .key-figures-chart-wrapper .key-figures-wrapper {
+      margin-top: 0.5rem;
     }
     .key-figures-wrapper .key-fig-item {
       display: flex;
@@ -703,6 +727,19 @@
   </header>
   <div id="page-investments" class="page-content" data-visible="true">
   <div id="chart-sections">
+    <section id="chart-key-figures" class="chart-section" data-chart-id="key-figures" data-visible="true">
+      <div class="chart-wrapper key-figures-chart-wrapper">
+        <div class="chart-header">
+          <h2>Key Figures</h2>
+        </div>
+      <div class="key-figures-wrapper">
+        <div class="key-fig-item"><span class="key-fig-label">CPI</span><span class="key-fig-value" id="keyfig-cpi">—</span></div>
+        <div class="key-fig-item"><span class="key-fig-label">Fed Funds Rate</span><span class="key-fig-value" id="keyfig-fedfunds">—</span></div>
+        <div class="key-fig-item"><span class="key-fig-label">TFDXX</span><span class="key-fig-value" id="keyfig-tfdxx">—</span></div>
+        <div class="key-fig-item"><span class="key-fig-label">LA Home Index</span><span class="key-fig-value" id="keyfig-laHome">—</span></div>
+      </div>
+      </div>
+    </section>
     <section id="chart-balance" class="chart-section" data-chart-id="balance" data-visible="true">
       <div class="chart-wrapper chart-full-width">
         <div class="chart-header">
@@ -716,6 +753,7 @@
             </select>
           </div>
         </div>
+        <div class="chart-body">
         <div class="projection-inputs balance-exclusions">
           <div class="projection-inputs-row row1">
             <label><input type="checkbox" id="balance-exclude-realestate" checked> Exclude Real Estate</label>
@@ -730,14 +768,7 @@
           <summary>Data</summary>
           <div id="balance-data-breakdown" class="breakdown-content" style="max-height: 200px; overflow: auto;"></div>
         </details>
-      </div>
-    </section>
-    <section id="chart-key-figures" class="chart-section" data-chart-id="key-figures" data-visible="true">
-      <div class="key-figures-wrapper">
-        <div class="key-fig-item"><span class="key-fig-label">CPI</span><span class="key-fig-value" id="keyfig-cpi">—</span></div>
-        <div class="key-fig-item"><span class="key-fig-label">Fed Funds Rate</span><span class="key-fig-value" id="keyfig-fedfunds">—</span></div>
-        <div class="key-fig-item"><span class="key-fig-label">TFDXX</span><span class="key-fig-value" id="keyfig-tfdxx">—</span></div>
-        <div class="key-fig-item"><span class="key-fig-label">LA Home Index</span><span class="key-fig-value" id="keyfig-laHome">—</span></div>
+        </div>
       </div>
     </section>
     <section id="chart-wealth-projection" class="chart-section" data-chart-id="wealth-projection" data-visible="true">
@@ -749,6 +780,7 @@
             <button type="button" id="wealth-reset" class="chart-select">Reset</button>
           </div>
         </div>
+        <div class="chart-body">
         <div class="projection-inputs">
           <div class="projection-inputs-row row1">
             <label>Pre Tax Return <input type="text" class="input-narrow" id="wealth-preTaxReturn" value="7.30">%</label>
@@ -775,6 +807,7 @@
           <summary>Year-by-year breakdown</summary>
           <div id="wealth-breakdown" class="breakdown-content" style="max-height: 200px; overflow: auto;"></div>
         </details>
+        </div>
       </div>
     </section>
     <section id="chart-wealth-montecarlo" class="chart-section" data-chart-id="wealth-montecarlo" data-visible="true">
@@ -795,6 +828,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
             <button type="button" id="mc-reset" class="chart-select">Reset</button>
           </div>
         </div>
+        <div class="chart-body">
         <div class="projection-inputs">
           <div class="projection-inputs-row row1">
             <label>Simulations <input type="text" class="input-narrow input-simulations" id="mc-simulations" value="10000"></label>
@@ -812,6 +846,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
           <summary>Year-by-year breakdown (50% Net Investment path)</summary>
           <div id="mc-breakdown" class="breakdown-content" style="max-height: 200px; overflow: auto;"></div>
         </details>
+        </div>
       </div>
     </section>
   </div>
@@ -1064,8 +1099,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
       { grouping: 'Home Maintenance', category: 'Property Taxes' }, { grouping: 'Home Maintenance', category: 'Insurance' }, { grouping: 'Home Maintenance', category: 'Home Improvement' }, { grouping: 'Home Maintenance', category: 'Misc Maintenance' }, { grouping: 'Home Maintenance', category: 'Pool Maintenance' }, { grouping: 'Home Maintenance', category: 'Gardening Maintenance' }, { grouping: 'Home Maintenance', category: 'Gallo Maintenance' },
       { grouping: 'Bills and Utilities', category: 'Power and Water' }, { grouping: 'Bills and Utilities', category: 'Phone' }, { grouping: 'Bills and Utilities', category: 'Internet' }, { grouping: 'Bills and Utilities', category: 'Subscriptions' }, { grouping: 'Bills and Utilities', category: 'Natural Gas' },
       { grouping: 'Food and Dining', category: 'Groceries' }, { grouping: 'Food and Dining', category: 'Restaurants' },
-      { grouping: 'Travel & Entertainment', category: 'Travel' }, { grouping: 'Travel & Entertainment', category: 'Entertainment' }, { grouping: 'Travel & Entertainment', category: 'Airfaire and Transportation' },
-      { grouping: 'Shopping', category: 'Shopping' }, { grouping: 'Shopping', category: 'Clothing' }, { grouping: 'Shopping', category: 'Electronics' }, { grouping: 'Shopping', category: 'Postage and Handling' },
+      { grouping: 'Travel & Entertainment', category: 'Travel' }, { grouping: 'Travel & Entertainment', category: 'Entertainment' }, { grouping: 'Travel & Entertainment', category: 'Airfare and Transportation' },
+      { grouping: 'Shopping', category: 'Shopping' }, { grouping: 'Shopping', category: 'Clothing' }, { grouping: 'Shopping', category: 'Electronics' }, { grouping: 'Shopping', category: 'Postage and Shipping' },
       { grouping: 'Pets', category: 'Pet Food and Treats' }, { grouping: 'Pets', category: 'Pet Health' }, { grouping: 'Pets', category: 'Pet Wash' },
       { grouping: 'Children', category: 'Education' }, { grouping: 'Children', category: 'Child Activities' }, { grouping: 'Children', category: 'Kids Allowance' }, { grouping: 'Children', category: 'Tutoring' },
       { grouping: 'Health and Wellness', category: 'Health and Medical' }, { grouping: 'Health and Wellness', category: 'Personal Care' },
@@ -1075,39 +1110,28 @@ For each scenario, net investments, real estate, and net worth are projected yea
     ];
     const BUDGET_DEFAULT = 100000;
     const BUDGET_STORAGE_KEY = 'financial-snapshot-budget-limits';
-    const CATEGORY_ALIASES = {
-      'airfare & transportation': 'Airfaire and Transportation', 'airfare and transportation': 'Airfaire and Transportation',
-      'power & water': 'Power and Water', 'power and water': 'Power and Water',
-      'taxi & ride shares': 'Taxi and Ride Share', 'taxi and ride share': 'Taxi and Ride Share', 'taxi and rideshare': 'Taxi and Ride Share',
-      'cash & atm': 'Cash and ATM', 'cash and atm': 'Cash and ATM',
-      'postage & shipping': 'Postage and Handling', 'postage and handling': 'Postage and Handling',
-      'postage & handling': 'Postage and Handling',
-      'health & medical': 'Health and Medical', 'health and medical': 'Health and Medical',
-      'automotive maintenance': 'Automotive Maintenance', 'automobile maintenance': 'Automotive Maintenance',
-      'subsciptions': 'Subscriptions', 'subscriptions': 'Subscriptions',
-      'misc maintenance': 'Misc Maintenance', 'misc maintanance': 'Misc Maintenance',
-      'pool maintenance': 'Pool Maintenance', 'pool maintanance': 'Pool Maintenance',
-      'gardening maintenance': 'Gardening Maintenance', 'gardening maintanance': 'Gardening Maintenance', 'gardening mantanance': 'Gardening Maintenance',
-      'gallo maintenance': 'Gallo Maintenance', 'gallo maintanance': 'Gallo Maintenance',
-      'rental maintanance': 'Rental Maintenance'
-    };
+    const CATEGORY_ALIASES = {};
     const IGNORED_CATEGORIES = [
       'Transfer', 'Rental Income', 'Rental Expense', 'Rental Maintenance',
       'Credit Card Payment', 'Balance Adjustment', 'Buy', 'Sell',
       'Income Taxes', 'Agnes Ambrus', 'Mortgage'
     ];
     const IGNORED_TAGS = ['1536 Rental'];
+    function normalizeCategoryKey(s) {
+      return (s || '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*&\s*/g, ' and ');
+    }
     function resolveCategory(csvCategory) {
-      const key = (csvCategory || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      const key = normalizeCategoryKey(csvCategory);
       if (IGNORED_CATEGORIES.some(ig => ig.toLowerCase() === key)) return null;
       return CATEGORY_ALIASES[key] || BUDGET_CATEGORIES.find(b => b.category.toLowerCase() === key)?.category || 'Categorized but not Budgeted';
     }
     function resolveBudgetCategory(csvCategory) {
-      const key = (csvCategory || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      const key = normalizeCategoryKey(csvCategory);
       return CATEGORY_ALIASES[key] || BUDGET_CATEGORIES.find(b => b.category.toLowerCase() === key)?.category || null;
     }
     // Get a free key at https://fred.stlouisfed.org/docs/api/api_key.html — required for FRED data
-    const FRED_API_KEY = '';
+    const FRED_API_KEY = 'bcee1688a7c679db8c1fc2cd60045012';
+    const corsProxy = 'https://corsproxy.io/?';
 
     async function fetchFredObservations(seriesId, opts = {}) {
       if (!FRED_API_KEY) return null;
@@ -1116,8 +1140,9 @@ For each scenario, net investments, real estate, and net worth are projected yea
       if (opts.limit) params.set('limit', opts.limit);
       if (opts.observation_start) params.set('observation_start', opts.observation_start);
       if (opts.observation_end) params.set('observation_end', opts.observation_end);
+      const url = 'https://api.stlouisfed.org/fred/series/observations?' + params;
       try {
-        const r = await fetch('https://api.stlouisfed.org/fred/series/observations?' + params);
+        const r = await fetch(corsProxy + encodeURIComponent(url));
         const j = await r.json();
         return j?.observations?.filter(o => o.value !== '.') || [];
       } catch (_) { return null; }
@@ -1172,7 +1197,6 @@ For each scenario, net investments, real estate, and net worth are projected yea
     };
 
     // Key figures: fetch CPI, Fed Funds Rate, TFDXX (uses CORS proxy for cross-origin)
-    const corsProxy = 'https://corsproxy.io/?';
     async function fetchKeyFigures() {
       const setCpi = v => { const el = document.getElementById('keyfig-cpi'); if (el) el.textContent = v; };
       const setFedFunds = v => { const el = document.getElementById('keyfig-fedfunds'); if (el) el.textContent = v; };
@@ -1196,7 +1220,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
       let fedVal = null;
       if (FRED_API_KEY) {
         try {
-          const r = await fetch('https://api.stlouisfed.org/fred/series/observations?series_id=FEDFUNDS&api_key=' + FRED_API_KEY + '&file_type=json&sort_order=desc&limit=2');
+          const fedUrl = 'https://api.stlouisfed.org/fred/series/observations?series_id=FEDFUNDS&api_key=' + FRED_API_KEY + '&file_type=json&sort_order=desc&limit=2';
+          const r = await fetch(corsProxy + encodeURIComponent(fedUrl));
           const j = await r.json();
           const obs = j?.observations?.filter(o => o.value !== '.') || [];
           if (obs.length >= 1) fedVal = parseFloat(obs[0].value);
@@ -1269,20 +1294,28 @@ For each scenario, net investments, real estate, and net worth are projected yea
               if (text && text.length > 100) break;
             } catch (_) { continue; }
           }
-          const re = /(\d{4}-\d{2}-\d{2})\|([\d.,]+)/g;
+          // FRED .txt returns HTML table; support HTML cells, pipe-delimited, or space-separated
+          const res = [
+            /(\d{4}-\d{2}-\d{2})<\/td>\s*<td[^>]*>([\d.,]+)/gi,
+            /(\d{4}-\d{2}-\d{2})[\s|>]+([\d.,]+)/g
+          ];
           const map = new Map();
-          let m;
-          while ((m = re.exec(text)) !== null) {
-            const v = parseFloat(m[2].replace(/,/g, ''));
-            if (!isNaN(v) && m[2] !== '.') map.set(m[1], v);
+          for (const re of res) {
+            re.lastIndex = 0;
+            let m;
+            while ((m = re.exec(text)) !== null) {
+              const v = parseFloat(m[2].replace(/,/g, ''));
+              if (!isNaN(v) && m[2] !== '.') map.set(m[1], v);
+            }
+            if (map.size > 0) break;
           }
           const dates = [...map.keys()].sort();
           if (dates.length >= 1) {
             const latestDate = dates[dates.length - 1];
             latestVal = map.get(latestDate);
             const [y, mo] = latestDate.split('-').map(Number);
-            const yearAgoDate = (y - 1) + '-' + String(mo).padStart(2, '0') + '-01';
-            yearAgoVal = map.get(yearAgoDate);
+            const yearAgoPrefix = (y - 1) + '-' + String(mo).padStart(2, '0');
+            yearAgoVal = map.get(yearAgoPrefix + '-01') ?? map.get(yearAgoPrefix + '-15') ?? [...map.entries()].find(([d]) => d.startsWith(yearAgoPrefix))?.[1];
             if (latestVal != null && yearAgoVal != null && yearAgoVal > 0) {
               setLaHome((((latestVal / yearAgoVal) - 1) * 100).toFixed(2) + '%');
             } else setLaHome('—');

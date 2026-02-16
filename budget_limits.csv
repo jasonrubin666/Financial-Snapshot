@@ -1,50 +1,50 @@
-Category,Budget
-Rewards,5000
-Paychecks,450000
-Interest,25
-Other Income,1000
-RSU Income,2600000
-Charity,-2000
-Gifts,-1000
-Gas,-4500
-Automotive Maintenance,-5000
-Auto Accident,-10000
-Parking,-1800
-Taxi and Ride Share,-3000
-Property Taxes,-138600
-Insurance,-250000
-Home Improvement,-5000
-Misc Maintenance,-5000
-Pool Maintenance,-12000
-Gardening Maintenance,-10000
-Gallo Maintenance,-100000
-Power and Water,-25000
-Phone,-3500
-Internet,-1100
-Subscriptions,-7500
-Natural Gas,-18000
-Groceries,-35000
-Restaurants,-65000
-Travel,-250000
-Entertainment,-20000
-Airfaire and Transportation,-100000
-Shopping,-70000
-Clothing,-60000
-Electronics,-10000
-Postage and Handling,-1000
-Pet Food and Treats,-5000
-Pet Health,-3000
-Pet Wash,-6760
-Education,-59000
-Child Activities,-6000
-Kids Allowance,-2000
-Tutoring,-30000
-Health and Medical,-15000
-Personal Care,-30000
-Employee Wages,-255000
-Employee Gifts,-30000
-Cash and ATM,-30000
-Employee Misc,-20000
-Financial Services,-1000
-Business Services,-5000
-Categorized but not Budgeted,-1000
+"Category","Budget"
+"Rewards","5000"
+"Paychecks","450000"
+"Interest","25"
+"Other Income","1000"
+"RSU Income","2600000"
+"Charity","-2000"
+"Gifts","-1000"
+"Gas","-4500"
+"Automotive Maintenance","-5000"
+"Auto Accident","-10000"
+"Parking","-1800"
+"Taxi and Ride Share","-3000"
+"Property Taxes","-138600"
+"Insurance","-250000"
+"Home Improvement","-5000"
+"Misc Maintenance","-5000"
+"Pool Maintenance","-12000"
+"Gardening Maintenance","-10000"
+"Gallo Maintenance","-100000"
+"Power and Water","-25000"
+"Phone","-3500"
+"Internet","-1100"
+"Subscriptions","-7500"
+"Natural Gas","-18000"
+"Groceries","-35000"
+"Restaurants","-65000"
+"Travel","-250000"
+"Entertainment","-20000"
+"Airfare and Transportation","-100000"
+"Shopping","-70000"
+"Clothing","-60000"
+"Electronics","-10000"
+"Postage and Shipping","-1000"
+"Pet Food and Treats","-5000"
+"Pet Health","-3000"
+"Pet Wash","-6760"
+"Education","-59000"
+"Child Activities","-6000"
+"Kids Allowance","-2000"
+"Tutoring","-30000"
+"Health and Medical","-15000"
+"Personal Care","-30000"
+"Employee Wages","-255000"
+"Employee Gifts","-30000"
+"Cash and ATM","-30000"
+"Employee Misc","-20000"
+"Financial Services","-1000"
+"Business Services","-5000"
+"Categorized but not Budgeted","-1000"
