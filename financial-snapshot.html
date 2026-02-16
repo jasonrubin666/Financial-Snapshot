@@ -2544,6 +2544,14 @@ For each scenario, net investments, real estate, and net worth are projected yea
       isIncomeCategory(category) {
         return BUDGET_CATEGORIES.some(b => b.grouping === 'Income' && b.category === category);
       },
+      formatBudgetTick(v, isIncome) {
+        if (v === 0) return '$0';
+        const sign = isIncome ? '' : '-';
+        const abs = Math.abs(v);
+        if (abs >= 1000000) return sign + '$' + (abs / 1000000).toFixed(1) + 'm';
+        if (abs >= 1000) return sign + '$' + Math.round(abs / 1000) + 'k';
+        return sign + '$' + Math.round(abs);
+      },
       getBudget(category) {
         if (!this.storedBudgets) this.loadStoredBudgets();
         const v = this.storedBudgets[category];
@@ -2619,7 +2627,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
               const x = xScale.getPixelForValue(opts.todayValue);
               if (x >= left - 1 && x <= right + 1) {
                 ctx.save();
-                ctx.strokeStyle = '#7c3aed';
+                ctx.strokeStyle = '#000000';
                 ctx.lineWidth = 4;
                 ctx.beginPath();
                 ctx.moveTo(x, top);
@@ -2714,7 +2722,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
                   stacked: committed < 0,
                   border: { display: true, color: 'rgba(255,255,255,0.5)' },
                   grid: { display: true, drawOnChartArea: true, color: 'rgba(255,255,255,0.35)' },
-                  ticks: { color: 'rgba(255,255,255,0.9)', callback: v => v === 0 ? '$0' : '-$' + Math.round(v / 1000) + 'k', maxRotation: 0, font: { size: 16, weight: '600' } }
+                  ticks: { color: 'rgba(255,255,255,0.9)', maxTicksLimit: 6, callback: (v, i, vals) => { const s = this.formatBudgetTick(v, false); return (i > 0 && this.formatBudgetTick(vals[i - 1], false) === s) ? '' : s; }, maxRotation: 0, font: { size: 16, weight: '600' } }
                 },
                 y: { stacked: committed < 0, display: false }
               }
@@ -3017,7 +3025,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
               const x = xScale.getPixelForValue(opts.todayValue);
               if (x >= left - 1 && x <= right + 1) {
                 ctx.save();
-                ctx.strokeStyle = '#7c3aed';
+                ctx.strokeStyle = '#000000';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(x, top);
@@ -3095,7 +3103,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
                     min: scaleMin,
                     max: scaleMax,
                     stacked: hasStacked,
-                    ticks: { callback: v => v === 0 ? '$0' : (isIncome ? '' : '-') + '$' + Math.round(v / 1000) + 'k', maxRotation: 0, font: { size: 11 } }
+                    ticks: { maxTicksLimit: 6, callback: (v, i, vals) => { const s = this.formatBudgetTick(v, isIncome); return (i > 0 && this.formatBudgetTick(vals[i - 1], isIncome) === s) ? '' : s; }, maxRotation: 0, font: { size: 11 } }
                   },
                   y: { stacked: hasStacked, display: false }
                 }
