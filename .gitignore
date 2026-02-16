@@ -1,0 +1,10 @@
+# Dependencies
+node_modules/
+
+# Electron build output
+electron-app/out/
+electron-app/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
