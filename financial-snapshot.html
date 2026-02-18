@@ -329,23 +329,25 @@
     .page-header {
       margin-bottom: 1.5rem;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       gap: 1.3rem;
     }
     .page-header-logo {
-      height: 176px;
+      height: clamp(2.75rem, 9.9vw, 176px);
       width: auto;
       display: block;
       flex-shrink: 0;
+      align-self: center;
     }
     .page-header-right {
       flex: 1;
       min-width: 0;
       display: flex;
       flex-direction: column;
+      container-type: inline-size;
     }
     .page-header-brand {
-      padding: 0.15rem 0 0.05rem 1rem;
+      padding: 0.15rem 0 0 1rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -359,23 +361,26 @@
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
+      min-width: 0;
+      gap: 1rem;
     }
-    .page-header-year {
-      margin: 0;
-      font-family: 'Anton SC', sans-serif;
-      font-size: 5rem;
-      font-weight: 500;
-      color: var(--text);
-      flex-shrink: 0;
-      letter-spacing: 0.01em;
-    }
+    .page-header-year,
     .page-header-title {
       margin: 0;
       font-family: 'Anton SC', sans-serif;
-      font-size: 5rem;
       font-weight: 500;
       color: var(--text);
       letter-spacing: 0.01em;
+      white-space: nowrap;
+      font-size: clamp(1.25rem, 4.5vw, 5rem);
+    }
+    .page-header-year {
+      flex-shrink: 0;
+    }
+    .page-header-title {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .page-subtitle {
       margin: 0;
@@ -427,12 +432,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: 0.02rem;
+      padding-top: 0;
       padding-left: 1rem;
     }
     .page-header-csv-update {
       font-size: 0.8125rem;
       color: rgba(0, 0, 0, 0.5);
+      white-space: nowrap;
+    }
+    @container (max-width: 680px) {
+      .page-header-csv-update { display: none; }
     }
     .page-nav {
       display: flex;
@@ -573,6 +582,10 @@
       flex-direction: column;
       align-items: stretch;
       gap: 0.5rem;
+      container-type: inline-size;
+    }
+    @container (max-width: 480px) {
+      .budget-totals-summary .budget-totals-detail { display: none; }
     }
     .budget-committed-error {
       color: #ef4444;
@@ -586,6 +599,8 @@
       gap: 1.5rem;
       min-height: 400px;
       padding: 1rem 0;
+      overflow: hidden;
+      container-type: inline-size;
     }
     .breakdown-pie-wrap {
       flex: 1;
@@ -596,11 +611,13 @@
       padding: 0 0.5rem;
     }
     .breakdown-pie-square {
-      height: 100%;
-      width: auto;
+      width: 100%;
       aspect-ratio: 1;
-      position: relative;
       max-height: 100%;
+      position: relative;
+    }
+    @container (max-width: 500px) {
+      .breakdown-pie-wrap { display: none; }
     }
     .breakdown-pie-square canvas {
       width: 100% !important;
@@ -1990,6 +2007,20 @@ For each scenario, net investments, real estate, and net worth are projected yea
           }
           d.setTime(d.getTime() + dayMs);
         }
+        if ((view === 'year' || view === 'lifetime') && newDateObjs.length > 0) {
+          const lastExtended = new Date(newDateObjs[newDateObjs.length - 1]);
+          lastExtended.setHours(0, 0, 0, 0);
+          if (lastExtended < today) {
+            const dailyTotals = this.getFilteredDailyTotals();
+            const latestEntry = dailyTotals.length > 0 ? dailyTotals[dailyTotals.length - 1] : null;
+            const todayValue = latestEntry != null ? latestEntry.value : null;
+            if (todayValue != null) {
+              newLabels.push(view === 'lifetime' ? monthNames[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear() : monthNames[today.getMonth()] + ' ' + today.getDate());
+              newValues.push(todayValue);
+              newDateObjs.push(new Date(today));
+            }
+          }
+        }
         return { labels: newLabels, values: newValues, dateObjs: newDateObjs };
       },
 
@@ -2253,7 +2284,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
                 max: dollarMax,
                 title: { display: true, text: 'Balance ($M)', color: '#555', font: { size: 11 } },
                 grid: { drawOnChartArea: false },
-                ticks: { color: '#555', font: { size: 11 }, callback: (value) => value != null ? '$' + Math.round(value / 1000000) + 'm' : '' }
+                ticks: { color: '#555', font: { size: 11 }, callback: (value) => value != null ? '$' + (value / 1000000).toFixed(1) + 'm' : '' }
               }
             }
           }
@@ -2935,16 +2966,16 @@ For each scenario, net investments, real estate, and net worth are projected yea
           '<div class="budget-totals-group">' +
           '<div class="budget-totals-group-header">Spending</div>' +
           '<div class="budget-totals-group-items">' +
-          '<div class="budget-totals-group-item"><span class="budget-totals-label" style="color:rgb(255,0,0)">Spending to Date</span><span class="budget-totals-value" style="color:rgb(255,0,0)">' + fmtTotals(spend) + '</span></div>' +
-          '<div class="budget-totals-group-item"><span class="budget-totals-label" style="color:rgb(128,0,0)">Committed Spend</span><span class="budget-totals-value" style="color:rgb(128,0,0)">' + fmtTotals(committed) + '</span></div>' +
+          '<div class="budget-totals-group-item budget-totals-detail"><span class="budget-totals-label" style="color:rgb(255,0,0)">Spending to Date</span><span class="budget-totals-value" style="color:rgb(255,0,0)">' + fmtTotals(spend) + '</span></div>' +
+          '<div class="budget-totals-group-item budget-totals-detail"><span class="budget-totals-label" style="color:rgb(128,0,0)">Committed Spend</span><span class="budget-totals-value" style="color:rgb(128,0,0)">' + fmtTotals(committed) + '</span></div>' +
           '<div class="budget-totals-group-item"><span class="budget-totals-label" style="color:rgb(255,128,128)">Total Spend</span><span class="budget-totals-value" style="color:rgb(255,128,128)">' + fmtTotals(totalSpend) + '</span></div>' +
           '</div>' +
           '</div>' +
           '<div class="budget-totals-group">' +
           '<div class="budget-totals-group-header">Income</div>' +
           '<div class="budget-totals-group-items">' +
-          '<div class="budget-totals-group-item"><span class="budget-totals-label" style="color:rgb(0,255,0)">Income to Date</span><span class="budget-totals-value" style="color:rgb(0,255,0)">' + fmtTotals(totalIncome) + '</span></div>' +
-          '<div class="budget-totals-group-item"><span class="budget-totals-label" style="color:rgb(0,128,0)">Anticipated Income</span><span class="budget-totals-value" style="color:rgb(0,128,0)">' + fmtTotals(totalCommittedIncome) + '</span></div>' +
+          '<div class="budget-totals-group-item budget-totals-detail"><span class="budget-totals-label" style="color:rgb(0,255,0)">Income to Date</span><span class="budget-totals-value" style="color:rgb(0,255,0)">' + fmtTotals(totalIncome) + '</span></div>' +
+          '<div class="budget-totals-group-item budget-totals-detail"><span class="budget-totals-label" style="color:rgb(0,128,0)">Anticipated Income</span><span class="budget-totals-value" style="color:rgb(0,128,0)">' + fmtTotals(totalCommittedIncome) + '</span></div>' +
           '<div class="budget-totals-group-item"><span class="budget-totals-label" style="color:rgb(128,255,128)">Total Income</span><span class="budget-totals-value" style="color:rgb(128,255,128)">' + fmtTotals(totalIncomeSum) + '</span></div>' +
           '</div>' +
           '</div>' +

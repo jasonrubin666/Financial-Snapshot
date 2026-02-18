@@ -25,5 +25,5 @@ TRUE,Travel,Luxury Properties Jackson Hole,one-time,-143750,4,
 TRUE,Phone,Verizon,monthly,-240.5,2,12
 TRUE,Paychecks,Meta,one-time,256642.1,4,
 TRUE,Paychecks,Meta,one-time,180000,3,
-TRUE,RSU Income,Meta,one-time,1450000,2,
+FALSE,RSU Income,Meta,one-time,1450000,2,
 TRUE,RSU Income,Meta,one-time,1037848.5,4,
