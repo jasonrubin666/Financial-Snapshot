@@ -1468,6 +1468,8 @@ For each scenario, net investments, real estate, and net worth are projected yea
       return y + '-' + m + '-' + day;
     }
 
+    const APP_VERSION = '2026-02-26.1';
+
     function formatDateForCsv(d) {
       return (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear();
     }
@@ -1648,37 +1650,9 @@ For each scenario, net investments, real estate, and net worth are projected yea
       id: 'net-investments',
       instance: null,
       rawData: [],
-      lastRealDate: null,
 
       filterData(view) {
         const d = this.rawData;
-        if (view === '1month') {
-          const latest = d[d.length - 1]?.dateObj;
-          if (!latest) return { labels: [], values: [], dateObjs: [] };
-          const cutoff = new Date(latest);
-          cutoff.setMonth(cutoff.getMonth() - 1);
-          const filtered = d.filter(r => r.dateObj >= cutoff);
-          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value), dateObjs: filtered.map(r => r.dateObj) };
-        } else if (view === '90days') {
-          const latest = d[d.length - 1]?.dateObj;
-          if (!latest) return { labels: [], values: [], dateObjs: [] };
-          const cutoff = new Date(latest);
-          cutoff.setDate(cutoff.getDate() - 90);
-          const filtered = d.filter(r => r.dateObj >= cutoff);
-          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value), dateObjs: filtered.map(r => r.dateObj) };
-        } else {
-          const latest = d[d.length - 1]?.dateObj;
-          if (!latest) return { labels: [], values: [], dateObjs: [] };
-          const yearStart = new Date(latest.getFullYear(), 0, 1);
-          const filtered = d.filter(r => r.dateObj >= yearStart && r.dateObj.getDay() === 6);
-          return { labels: filtered.map(r => formatShortDate(r.dateStr)), values: filtered.map(r => r.value), dateObjs: filtered.map(r => r.dateObj) };
-        }
-      },
-
-      // Like filterData, but only over real (non-extended) dates up to lastRealDate.
-      filterRealData(view) {
-        const d = this.rawData.filter(r => !this.lastRealDate || r.dateObj <= this.lastRealDate);
-        if (d.length === 0) return { labels: [], values: [], dateObjs: [] };
         if (view === '1month') {
           const latest = d[d.length - 1]?.dateObj;
           if (!latest) return { labels: [], values: [], dateObjs: [] };
@@ -1764,10 +1738,11 @@ For each scenario, net investments, real estate, and net worth are projected yea
       async update(view) {
         const { labels, values, dateObjs } = this.filterData(view);
         const maWindow = (view === '1month' || view === '90days') ? 7 : 4;
-        // Compute moving average using only real data and map to visible dates.
-        const real = this.filterRealData(view);
-        const maReal = movingAverage(real.values, maWindow);
-        const maByTime = new Map(real.dateObjs.map((d, i) => [d.getTime(), maReal[i]]));
+        // Compute moving average on full history, then map to visible dates.
+        const fullDates = this.rawData.map(r => r.dateObj);
+        const fullValues = this.rawData.map(r => r.value);
+        const maAll = movingAverage(fullValues, maWindow);
+        const maByTime = new Map(fullDates.map((d, i) => [d.getTime(), maAll[i]]));
         const maValues = dateObjs.map(d => maByTime.get(d.getTime()) ?? null);
         await this.fetchSp500Cache();
         const sp500Values = this.alignSp500(dateObjs);
@@ -1892,14 +1867,14 @@ For each scenario, net investments, real estate, and net worth are projected yea
           .map(([dateStr, value]) => ({ dateStr, dateObj: parseDateIso(dateStr), value, rawRow: [dateStr, '', '', '', String(value)] }))
           .filter(r => !isNaN(r.dateObj.getTime()))
           .sort((a, b) => a.dateObj - b.dateObj);
-        this.lastRealDate = this.rawData.length ? new Date(this.rawData[this.rawData.length - 1].dateObj) : null;
 
         const view = document.getElementById('netInvestments-viewSelect').value;
         const { labels, values, dateObjs } = this.filterData(view);
         const maWindow = (view === '1month' || view === '90days') ? 7 : 4;
-        const real = this.filterRealData(view);
-        const maReal = movingAverage(real.values, maWindow);
-        const maByTime = new Map(real.dateObjs.map((d, i) => [d.getTime(), maReal[i]]));
+        const fullDates = this.rawData.map(r => r.dateObj);
+        const fullValues = this.rawData.map(r => r.value);
+        const maAll = movingAverage(fullValues, maWindow);
+        const maByTime = new Map(fullDates.map((d, i) => [d.getTime(), maAll[i]]));
         const maValues = dateObjs.map(d => maByTime.get(d.getTime()) ?? null);
         await this.fetchSp500Cache();
         const sp500Values = this.alignSp500(dateObjs);
@@ -3927,7 +3902,7 @@ For each scenario, net investments, real estate, and net worth are projected yea
         const el = document.getElementById('header-csv-update');
         if (!el) return;
         const d = await getEarliestCsvUpdateDate();
-        el.textContent = 'Last complete .csv update:    ' + (d ? formatLongDate(d) : '—');
+        el.textContent = 'Last complete .csv update:    ' + (d ? formatLongDate(d) : '—') + '   v. ' + APP_VERSION;
       })();
       fetchKeyFigures();
       await wealthProjectionChart.init();
