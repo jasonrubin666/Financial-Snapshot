@@ -620,9 +620,17 @@
       width: min(100cqw, 100cqh);
       height: min(100cqw, 100cqh);
       position: relative;
-      border: 2px solid #000;
+      border: none;
       border-radius: 50%;
       overflow: hidden;
+    }
+    .breakdown-pie-square::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 2px #000;
+      pointer-events: none;
     }
     @container (max-width: 500px) {
       .breakdown-pie-wrap { display: none; }
@@ -709,16 +717,16 @@
     }
     /* Pie only: 2px >75% full size, 1px 50–75%, 0 <50%. Legend lines stay 2px. */
     @container breakdown-chart (max-width: 299px) {
-      .breakdown-pie-square { border-width: 1px; }
+      .breakdown-pie-square::after { box-shadow: inset 0 0 0 1px #000; }
     }
     @container breakdown-chart (max-height: 299px) {
-      .breakdown-pie-square { border-width: 1px; }
+      .breakdown-pie-square::after { box-shadow: inset 0 0 0 1px #000; }
     }
     @container breakdown-chart (max-width: 199px) {
-      .breakdown-pie-square { border-width: 0; }
+      .breakdown-pie-square::after { box-shadow: none; }
     }
     @container breakdown-chart (max-height: 199px) {
-      .breakdown-pie-square { border-width: 0; }
+      .breakdown-pie-square::after { box-shadow: none; }
     }
     .breakdown-legend-category-row {
       display: flex;
