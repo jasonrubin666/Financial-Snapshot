@@ -125,10 +125,11 @@ function directoryListingHtml(dirPath, urlPath) {
 function setupProtocol(dataDir) {
   protocol.handle('app', (request) => {
     const url = new URL(request.url);
-    // Decode the path, strip leading slash on Windows-style paths
-    let reqPath = decodeURIComponent(url.pathname);
+    // Decode the path and strip leading slashes so path.join never sees an absolute path
+    // (otherwise path.join(dataDir, '/') would resolve to '/' and list the filesystem root)
+    let reqPath = decodeURIComponent(url.pathname).replace(/^\/+/, '') || '';
 
-    // Resolve to filesystem path
+    // Resolve to filesystem path (always relative to dataDir)
     const fsPath = path.join(dataDir, reqPath);
 
     try {

@@ -6,7 +6,9 @@
   "scripts": {
     "start": "electron .",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "install-app": "node install-app.js",
+    "update": "npm run make && npm run install-app"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.6.0",

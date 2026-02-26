@@ -27,13 +27,24 @@ npm start
 
 This launches the app in dev mode. On first launch, it auto-detects your Dropbox directory. If it can't find it, a folder picker dialog will appear — just point it at the folder containing your HTML and CSV files.
 
-### 4. Build the .app
+### 4. Build and install the .app
+
+**One command (build + install to Applications):**
 
 ```bash
-npm run make
+cd electron-app
+npm run update
 ```
 
-This creates the `.app` bundle in `out/Financial Snapshot-darwin-arm64/` (or `x64` on Intel Macs). Drag it to your Applications folder. Done.
+This runs `make` and copies the built app to `/Applications/Financial Snapshot.app`, so your Dock icon always launches the latest version.
+
+**Or from the project root:**
+
+```bash
+./build-and-install-app.sh
+```
+
+**Manual:** `npm run make` creates the `.app` in `out/Financial Snapshot-darwin-arm64/`. Then run `npm run install-app` to copy it to Applications, or drag it there yourself.
 
 ## Daily Workflow
 

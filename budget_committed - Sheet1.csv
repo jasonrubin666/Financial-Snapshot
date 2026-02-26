@@ -1,6 +1,6 @@
 False if Spent,Category,Merchant,Type,Amount,StartMonth,EndMonth
 TRUE,Internet,Spectrum ,monthly,-86.24,2,12
-TRUE,Property Taxes,Los Angeles Tax Assessor,one-time,-68605.43,2,
+FALSE,Property Taxes,Los Angeles Tax Assessor,one-time,-68605.43,2,
 TRUE,Property Taxes,Los Angeles Tax Assessor,one-time,-69977.5386,11,
 TRUE,Subscriptions,Netflix,monthly,-24.99,2,12
 TRUE,Subscriptions,Adobe,monthly,-29.99,2,12
@@ -24,6 +24,6 @@ TRUE,Travel,Safari Experts,one-time,-33000,8,
 TRUE,Travel,Luxury Properties Jackson Hole,one-time,-143750,4,
 TRUE,Phone,Verizon,monthly,-240.5,2,12
 TRUE,Paychecks,Meta,one-time,256642.1,4,
-TRUE,Paychecks,Meta,one-time,180000,3,
+TRUE,Paychecks,Meta,one-time,145000,3,
 FALSE,RSU Income,Meta,one-time,1450000,2,
 TRUE,RSU Income,Meta,one-time,1037848.5,4,
